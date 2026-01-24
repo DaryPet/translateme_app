@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset 
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Главная страница на русском -->
+  <url>
+    <loc>https://www.souldestiny.app/ru</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en"/>
+  </url>
+
+  <!-- Главная страница на украинском -->
+  <url>
+    <loc>https://www.souldestiny.app/uk</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en"/>
+  </url>
+
+  <!-- Главная страница на английском -->
+  <url>
+    <loc>https://www.souldestiny.app/en</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en"/>
+  </url>
+  <url>
+    <loc>https://www.souldestiny.app/es</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en"/>
+  </url>
+
+  <!-- НОВЫЕ СТРАНИЦЫ /[locale]/tarot-ai -->
+  <url>
+    <loc>https://www.souldestiny.app/ru/tarot-ai</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <lastmod>2025-09-01</lastmod>
+  </url>
+
+  <url>
+    <loc>https://www.souldestiny.app/uk/tarot-ai</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <lastmod>2025-09-01</lastmod>
+  </url>
+
+  <url>
+    <loc>https://www.souldestiny.app/en/tarot-ai</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <lastmod>2025-09-01</lastmod>
+  </url>
+
+  <url>
+    <loc>https://www.souldestiny.app/es/tarot-ai</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://www.souldestiny.app/ru/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.souldestiny.app/uk/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.souldestiny.app/es/tarot-ai"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.souldestiny.app/en/tarot-ai"/>
+    <lastmod>2025-09-01</lastmod>
+  </url>
+</urlset>

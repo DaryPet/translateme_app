@@ -1,0 +1,380 @@
+// content.js - Полная логика захвата и перевода видео
+console.log('🎯 Translateme content script loaded');
+
+let isTranslating = false;
+let audioContext = null;
+let sourceNode = null;
+let videoElement = null;
+let translationInterval = null;
+let subtitlesContainer = null;
+
+// Обработчик сообщений
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('📩 Message:', request.type);
+    
+    switch (request.type) {
+        case 'GET_TRANSLATION_STATUS':
+            sendResponse({ isTranslating, videoElement: !!videoElement });
+            break;
+            
+        case 'START_TRANSLATION':
+            const success = startTranslation(request.settings);
+            sendResponse({ success });
+            break;
+            
+        case 'STOP_TRANSLATION':
+            const stopped = stopTranslation();
+            sendResponse({ success: stopped });
+            break;
+            
+        case 'GET_VIDEO_INFO':
+            const videos = getPageVideos();
+            sendResponse({ videos: videos.length });
+            break;
+    }
+    return true;
+});
+
+// Основная функция старта перевода
+function startTranslation(settings = {}) {
+    if (isTranslating) {
+        console.log('⚠️ Already translating');
+        return false;
+    }
+    
+    const videos = getPageVideos();
+    if (videos.length === 0) {
+        console.error('❌ No video elements found');
+        showNotification('No video found on this page', 'error');
+        return false;
+    }
+    
+    videoElement = videos[0];
+    console.log('🎬 Video found:', videoElement.src);
+    
+    // Инициализация аудио контекста
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        sourceNode = audioContext.createMediaElementSource(videoElement);
+        
+        // Создаём цепочку обработки аудио
+        const analyzer = audioContext.createAnalyser();
+        const destination = audioContext.createMediaStreamDestination();
+        
+        sourceNode.connect(analyzer);
+        analyzer.connect(audioContext.destination);
+        
+        // Если нужно заглушить оригинал
+        if (settings.muteOriginal) {
+            videoElement.muted = true;
+            videoElement.volume = 0;
+        }
+        
+        isTranslating = true;
+        
+        // Создаём окно субтитров
+        if (settings.showSubtitles !== false) {
+            createSubtitlesContainer(settings.targetLanguage || 'ru');
+        }
+        
+        // Запускаем процесс перевода
+        startTranslationLoop(settings);
+        
+        showNotification('Translation started!', 'success');
+        console.log('✅ Translation started successfully');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Audio context error:', error);
+        showNotification('Audio capture failed', 'error');
+        return false;
+    }
+}
+
+// Функция остановки перевода
+function stopTranslation() {
+    if (!isTranslating) return true;
+    
+    isTranslating = false;
+    
+    // Очищаем интервалы
+    if (translationInterval) {
+        clearInterval(translationInterval);
+        translationInterval = null;
+    }
+    
+    // Восстанавливаем оригинальное аудио
+    if (videoElement) {
+        videoElement.muted = false;
+        videoElement.volume = 1.0;
+    }
+    
+    // Закрываем аудио контекст
+    if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+        sourceNode = null;
+    }
+    
+    // Убираем субтитры
+    if (subtitlesContainer) {
+        subtitlesContainer.remove();
+        subtitlesContainer = null;
+    }
+    
+    videoElement = null;
+    showNotification('Translation stopped', 'info');
+    console.log('🛑 Translation stopped');
+    return true;
+}
+
+// Основной цикл перевода
+function startTranslationLoop(settings) {
+    let lastProcessTime = 0;
+    const processInterval = 10000; // Каждые 10 секунд
+    
+    translationInterval = setInterval(async () => {
+        if (!isTranslating || !videoElement) return;
+        
+        const now = Date.now();
+        if (now - lastProcessTime < processInterval) return;
+        
+        try {
+            console.log('🔄 Processing audio chunk...');
+            
+            // 1. Захватываем аудио сегмент
+            const audioChunk = await captureAudioChunk();
+            if (!audioChunk) return;
+            
+            // 2. Отправляем в background для обработки
+            const result = await chrome.runtime.sendMessage({
+                type: 'PROCESS_AUDIO_CHUNK',
+                audioData: audioChunk,
+                settings: settings
+            });
+            
+            // 3. Получаем переведённый текст и аудио
+            if (result && result.success) {
+                console.log('📝 Translation:', result.text);
+                
+                // Показываем субтитры
+                if (subtitlesContainer && result.text) {
+                    updateSubtitles(result.text);
+                }
+                
+                // Воспроизводим переведённую речь
+                if (result.audioUrl) {
+                    playTranslatedAudio(result.audioUrl, settings.muteOriginal);
+                }
+                
+                // Отправляем статистику использования
+                chrome.runtime.sendMessage({
+                    type: 'LOG_USAGE',
+                    seconds: 10
+                });
+            }
+            
+            lastProcessTime = now;
+            
+        } catch (error) {
+            console.error('❌ Translation loop error:', error);
+        }
+    }, 1000); // Проверяем каждую секунду
+}
+
+// Захват аудио сегмента
+async function captureAudioChunk() {
+    if (!audioContext || !sourceNode) return null;
+    
+    try {
+        // Создаём MediaRecorder для захвата
+        const stream = audioContext.createMediaStreamDestination().stream;
+        const recorder = new MediaRecorder(stream);
+        
+        const chunks = [];
+        recorder.ondataavailable = (e) => chunks.push(e.data);
+        
+        const recordingPromise = new Promise(resolve => {
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                resolve(blob);
+            };
+        });
+        
+        recorder.start();
+        await new Promise(resolve => setTimeout(resolve, 5000)); // 5 секунд записи
+        recorder.stop();
+        
+        return await recordingPromise;
+        
+    } catch (error) {
+        console.error('❌ Audio capture error:', error);
+        return null;
+    }
+}
+
+// Создание контейнера для субтитров
+function createSubtitlesContainer(language) {
+    if (subtitlesContainer) {
+        subtitlesContainer.remove();
+    }
+    
+    subtitlesContainer = document.createElement('div');
+    subtitlesContainer.id = 'translateme-subtitles';
+    subtitlesContainer.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 500;
+        max-width: 70%;
+        text-align: center;
+        z-index: 999999;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: opacity 0.3s;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    `;
+    
+    const langBadge = document.createElement('div');
+    langBadge.textContent = `→ ${language.toUpperCase()}`;
+    langBadge.style.cssText = `
+        font-size: 12px;
+        opacity: 0.7;
+        margin-bottom: 5px;
+    `;
+    
+    subtitlesContainer.appendChild(langBadge);
+    
+    const textElement = document.createElement('div');
+    textElement.id = 'translateme-subtitle-text';
+    textElement.textContent = 'Waiting for translation...';
+    textElement.style.cssText = 'min-height: 24px;';
+    
+    subtitlesContainer.appendChild(textElement);
+    document.body.appendChild(subtitlesContainer);
+}
+
+// Обновление субтитров
+function updateSubtitles(text) {
+    if (!subtitlesContainer) return;
+    
+    const textElement = document.getElementById('translateme-subtitle-text');
+    if (textElement) {
+        textElement.textContent = text;
+        
+        // Анимация появления
+        subtitlesContainer.style.opacity = '0';
+        setTimeout(() => {
+            subtitlesContainer.style.opacity = '1';
+        }, 10);
+        
+        // Автоскрытие через 5 секунд
+        setTimeout(() => {
+            if (subtitlesContainer) {
+                subtitlesContainer.style.opacity = '0';
+            }
+        }, 5000);
+    }
+}
+
+// Воспроизведение переведённого аудио
+function playTranslatedAudio(audioUrl, muteOriginal = false) {
+    const audio = new Audio(audioUrl);
+    audio.volume = muteOriginal ? 1.0 : 0.7; // Громче если оригинал заглушён
+    
+    audio.play().catch(error => {
+        console.error('❌ Audio play error:', error);
+    });
+}
+
+// Поиск видео на странице
+function getPageVideos() {
+    return Array.from(document.querySelectorAll('video')).filter(video => {
+        // Игнорируем скрытые или очень маленькие видео
+        return video.offsetWidth > 100 && 
+               video.offsetHeight > 100 && 
+               !video.paused;
+    });
+}
+
+// Уведомления
+function showNotification(message, type = 'info') {
+    const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        info: '#3b82f6'
+    };
+    
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${colors[type] || colors.info};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 999999;
+        font-family: sans-serif;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: fadeIn 0.3s;
+    `;
+    
+    notification.textContent = `🎯 Translateme: ${message}`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Автоматическое определение видео
+document.addEventListener('DOMContentLoaded', () => {
+    const videos = getPageVideos();
+    if (videos.length > 0) {
+        console.log(`✅ Found ${videos.length} video(s) on page`);
+        
+        // Автостарт если включено в настройках
+        chrome.storage.local.get(['autoStart'], (result) => {
+            if (result.autoStart) {
+                console.log('⚡ Auto-starting translation');
+                startTranslation();
+            }
+        });
+    }
+    
+    // Добавляем стили для анимаций
+    if (!document.getElementById('translateme-styles')) {
+        const style = document.createElement('style');
+        style.id = 'translateme-styles';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+});
+
+// Очистка при закрытии страницы
+window.addEventListener('beforeunload', () => {
+    if (isTranslating) {
+        stopTranslation();
+    }
+});
+
+console.log('🚀 Translateme content script ready');

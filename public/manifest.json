@@ -1,0 +1,30 @@
+{
+  "name": "Soul Destiny",
+  "short_name": "SoulTarot",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1E1E3F",
+  "theme_color": "#DAB0FF",
+  "description": "AI-powered tarot readings for soul seekers.",
+  "icons": [
+    {
+      "src": "/icons/android/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/android/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot-main-540x720.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

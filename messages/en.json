@@ -1,0 +1,1677 @@
+{
+  "seo_h1_title": "AI-Powered Tarot Reading Online, Personalized Interpretations by SoulDestiny",
+  "aboutTheProject": "Let Tarot mirror your inner truth.",
+  "projectDescription": "A safe, aesthetic space to reconnect with your path.",
+  "keyFeatures": "This is not fortune-telling. It is deep, intuitive wisdom based on analytical psychology and the power of AI.",
+  "modernTechnologies": "We use modern technologies to ensure stability and ease of use, while focusing on user needs to make this project as useful as possible in various fields.",
+  "Hero": {
+    "seoTitle": "TranslateMe - Real-Time Audio Translation for Chrome",
+    "title": "Real-Time Audio Translation",
+    "subtitle": "Translate any video, meeting, or stream instantly. Works on YouTube, Zoom, and any website in your browser.",
+    "installButton": "Install Chrome Extension",
+    "demoButton": "Watch Demo",
+    "freeTrial": "3 free minutes every month • No credit card required"
+  },
+
+  "Header": {
+    "features": "Features",
+    "pricing": "Pricing", 
+    "howItWorks": "How It Works",
+    "install": "Install Extension"
+  },
+  "HowItWorks": {
+    "title": "How It Works",
+    "step1": {
+      "title": "Install Extension",
+      "description": "Add TranslateMe to Chrome in one click. No setup required."
+    },
+    "step2": {
+      "title": "Start Any Video",
+      "description": "Open YouTube, Zoom, Twitch or any site with audio. Click the extension icon."
+    },
+    "step3": {
+      "title": "Get Real-Time Translation",
+      "description": "Hear translated audio and see subtitles instantly. Control volume separately."
+    }
+  },
+   "Features": {
+    "title": "Why Choose TranslateMe",
+    "languages": {
+      "title": "50+ Languages",
+      "description": "Translate between English, Spanish, Russian, Ukrainian, French, German, Chinese, and 40+ more languages."
+    },
+    "speed": {
+      "title": "Low Latency",
+      "description": "Real-time translation with just 2-3 seconds delay. No more waiting for subtitles to catch up."
+    },
+    "volume": {
+      "title": "Separate Volume Control",
+      "description": "Adjust original audio and translation volume independently. Make translation louder or mute original."
+    },
+    "quality": {
+      "title": "AI-Powered Quality",
+      "description": "Uses DeepL for natural translations and OpenAI for accurate speech recognition."
+    },
+    "platforms": {
+      "title": "Works Everywhere",
+      "description": "YouTube, Zoom (web), Twitch, Netflix, online courses, meetings – any site with audio in Chrome."
+    },
+    "privacy": {
+      "title": "Your Privacy First",
+      "description": "Audio processing happens on secure servers. We don't store your conversations or personal data."
+    }
+  },
+  "openModal": "Open Modal",
+  "modalTitle": "Modal Title",
+  "modalContent": "This is the content inside the modal. More details can go here.",
+  "listOfUsers": "List of Users",
+  "email": "Email",
+  "createdAt": "Created At",
+  "updatedAt": "Updated At",
+  "listOfCompanies": "List of Companies",
+  "companyIndustry": "Industry",
+  "companyDescription": "Description",
+  "createdCompanyAt": "Created At",
+  "lastUpdated": "Last Updated",
+  "allRights": " © 2025 SoulDestiny. All rights reserved.",
+  "healthCheckAxios": "Health check Axios",
+  "healthCheckRedux": "Health check Redux",
+  "loginFormTitle": "Login",
+  "startchart": "Start jorney",
+  "about1": "Not fortune-telling — but deep, guided insight. AI meets the timeless language of Tarot to reveal what’s already within you. For reflection, clarity, and conscious direction.",
+  "aboutTarot": "🌘 The Mystery of Tarot — A Path to Truth Tarot is more than just fortune-telling. It’s an ancient mystical system that carries the wisdom of Egypt, Babylon, and Greece through the ages.",
+  "78cards": "Each of the 78 Tarot cards is not a random image, but a key to understanding the hidden processes unfolding in your life. The number 78 holds magical significance not only in esotericism but also in Kabbalah. It reflects the deep connection between the macrocosm and the microcosm — between you and the Universe. Through Tarot, you can do more than glimpse the future. You can uncover your true essence, reveal your purpose, and find a path through doubt and chaos.",
+  "aboutService": "On our website, we've created something far beyond a simple online Tarot reading. You won’t find generic spreads or vague phrases here. Every reading is crafted individually — attuned to your energy, your situation, your question. Because true Tarot is not a game or a form of entertainment. It is a genuine tool for insight, spiritual exploration, and illumination.",
+  "beforeBegin": "Before start...",
+  "preparation": "True Tarot calls for respect and stillness. Turn off your devices. Create a space of solitude. Light a candle. Take a few deep breaths. Turn inward and sense the question that wants to surface. It shouldn’t be a vague curiosity, but a true call from the heart. Only then can the cards speak to you with honesty and clarity. When you feel inwardly ready, choose your cards intuitively. Don’t overthink it — trust your inner knowing.",
+  "askYourQuestion": "Ask your question",
+  "enterYourQuestion": "Ask your question",
+  "getAnswer": "Get your Answer",
+  "answer": "Answer:",
+  "drawCard": "Draw a card",
+  "yourCard": "Your card",
+  "cardMeaning": "Card meaning",
+  "wantToGoDeeper": "Want to go deeper?",
+  "practicalAdvice": "Practical Advice",
+  "yourHistory": "Your tarot history",
+  "historyTitle": "History",
+  "pdfDownload": "Download your history as PDF",
+  "emptyHistory": "Your history is empty",
+  "historyQuestion": "Question",
+  "historyCard": "Card",
+  "askAnotherQuestion": "Or ask another question",
+  "password": "Password",
+  "confirmPassword": "Confirm your password",
+  "passwordsDontMatch": "Passwords do not match",
+  "invalidEmail": "Invalid emial",
+  "passwordTooShort": "Password must be at least 6 characters long",
+  "fieldRequired": "This field is requaried",
+  "registrationError": "Registration error:",
+  "registrationSuccess": "You have successfully registered",
+  "emailConfirmationSent": "We've sent you a confirmation email. Please check your inbox.",
+  "logout": "Logout",
+  "loginSuccess": "Successfully logged in",
+  "loginError": "Error during loggin",
+  "logoutError": "Logout Error",
+  "logoutSuccess": "Successfully logged out",
+  "continueWithGoogle": "Continue with Google",
+  "redirectingToGoogle": "Redirecting to Google...",
+  "youHaveFreeCards": "You have your 3 free cards",
+  "freelimit": "You have reached your free limit of 3 cards",
+  "usedFree": "cards userd from freelimit",
+  "buyCards": "Buy cards",
+  "purchasedCards": "Available cards",
+  "chooseDeck": "Choose your deck",
+  "startNewReading": "New reading",
+  "confirm": "Confirm",
+  "askYourFollowUp": "Write your follow-up question",
+  "loading": "Loading",
+  "deckVersion1": "Classic Rider-Waite",
+  "deckVersion2": "Modern metaphorical",
+  "offlineTarot": "Offline Tarot",
+  "enterCardName": "Enter the card name",
+  "getInterpretation": "Get Interpretation",
+  "notAuthorized": "You are not authorized",
+  "pleaseLoginToDraw": "Please login to perform a reading.",
+  "errorNotAuthorized": "Error: you are not logged in.",
+  "noMoreDraws": "You have no more readings available. Please top up your balance.",
+  "chooseMode": "How would you like to draw your card?",
+  "online": "Online deck",
+  "offline": "My own deck",
+  "showMeaning": "Show meaning",
+  "continue": "Continue",
+  "yourTarotHistory": "Your tarot history",
+  "newQuestionPrompt": "Enter your new question:",
+  "followUpConfirm": "Confirm",
+  "newReading": "New reading",
+  "enterCardInstruction": "Enter the name of the card you drew yourself",
+  "page_title": "AI-Powered Tarot Reading Online — SoulDestiny",
+  "page_description": "Personalized Tarot spreads for your question. Card interpretations powered by artificial intelligence.",
+  "generatingReading": "Generating your reading",
+  "keepYourMemory": "Keep a memory of your reading!",
+  "saveHistoryDescription": "While your session is open, you can download your tarot history as a PDF. If you close it or start a new reading, the history will be lost. To keep it for yourself, click the history button now and save it.",
+
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: June 24, 2025",
+    "intro": "This Policy describes how SoulDestiny App (\"we\", \"us\", \"our site\") collects, uses, stores, and shares your personal data when you use [yourdomain.com] and related services (\"Services\"). Please read this policy carefully.",
+    "principlesTitle": "Key Principles",
+    "principles": [
+      "Transparency: We clearly explain what data we collect and how we use it.",
+      "Security: We take measures to protect your data.",
+      "User Rights: We respect your rights to access, correct, or delete your data.",
+      "Accountability: We comply with applicable data protection laws."
+    ],
+    "section1Title": "1. What Data We Collect",
+    "section1TableTitle": "We collect data to provide and improve our Services, including:",
+    "section1Table": [
+      {
+        "category": "Account Data",
+        "examples": "Name, email",
+        "source": "Provided by you",
+        "purpose": "Account creation, personalization"
+      },
+      {
+        "category": "Usage Data",
+        "examples": "IP, device type, browser, logs",
+        "source": "Collected automatically",
+        "purpose": "Analytics, security, improvement"
+      },
+      {
+        "category": "Transactions",
+        "examples": "Purchase details, payment information",
+        "source": "Integrated payment systems",
+        "purpose": "Providing paid services, support"
+      },
+      {
+        "category": "Communication",
+        "examples": "Messages, support requests",
+        "source": "Provided by you",
+        "purpose": "Customer support, service enhancement"
+      },
+      {
+        "category": "Geolocation*",
+        "examples": "Approximate location",
+        "source": "From your device with your permission",
+        "purpose": "Localization, legal compliance"
+      }
+    ],
+    "section1Note": "*Geolocation data is collected only with your explicit consent. We do not collect sensitive data (e.g., social security numbers, full bank details) unless required by law or necessary for payment processing.",
+    "section2Title": "2. Legal Basis for Data Processing",
+    "section2Body": [
+      "We process your data based on the following legal grounds:",
+      "Your consent (e.g., newsletter subscriptions, cookies);",
+      "Contractual necessity (e.g., delivering purchased services);",
+      "Legal obligations (e.g., accounting laws);",
+      "Legitimate interests (e.g., service improvement, fraud prevention)."
+    ],
+    "section3Title": "3. How We Use Data",
+    "section3Body": [
+      "To provide and improve our Services;",
+      "To process transactions and manage your account;",
+      "To contact you (support, news);",
+      "For security and fraud prevention;",
+      "To fulfill legal obligations.",
+      "We do not use your data for automated decision-making or profiling."
+    ],
+    "section4Title": "4. Data Sharing",
+    "section4Body": [
+      "We do not sell your personal data. We may share it with:",
+      "Service providers: (hosting, analytics, support, AI)",
+      "Law enforcement: (as required by law)",
+      "Affiliated companies: (support, marketing)",
+      "Partners: (only with your consent)",
+      "If you use third-party services (Google, Apple, social networks, payment systems), their privacy policies apply."
+    ],
+    "section5Title": "5. Cookies and Tracking",
+    "section5Body": [
+      "We use cookies and similar technologies for the following purposes:",
+      "Analytics and performance optimization;",
+      "Personalized content and experience;",
+      "Security and fraud prevention.",
+      "You can disable cookies in your browser settings, but doing so may affect certain site functionalities.",
+      "We do not respond to 'Do Not Track' signals, as there is currently no industry-standard protocol for such requests."
+    ],
+    "section6Title": "6. AI Integration",
+    "section6Body": [
+      "Our Services include features powered by artificial intelligence (e.g., tarot readings), provided by OpenAI or similar third-party providers. Your inputs may be processed by these external AI services.",
+      "We do not use data processed by AI for marketing or profiling without your explicit consent.",
+      "AI-generated content may not always be factually accurate or appropriate for use in sensitive or high-stakes decisions."
+    ],
+    "section7Title": "7. Data Security",
+    "section7Body": [
+      "We are committed to protecting your personal data through the following measures:",
+      "Encryption during data transmission and storage;",
+      "Strict access controls and authentication procedures;",
+      "Regular security assessments and monitoring.",
+      "Your data may be stored within the EU or in other jurisdictions where our trusted service providers operate. We ensure appropriate safeguards are in place in accordance with applicable laws.",
+      "While no system can be guaranteed to be 100% secure, we strive to maintain the highest level of protection for your information."
+    ],
+    "section8Title": "8. Your Rights",
+    "section8Body": [
+      "Depending on your jurisdiction, you may have the right to:",
+      "Access the personal data we hold about you;",
+      "Request correction or deletion of your data;",
+      "Restrict or object to certain data processing activities;",
+      "Receive a copy of your data in a portable format (data portability);",
+      "Opt out of data-driven advertising and profiling.",
+      "To exercise any of these rights, please contact us at support@souldestiny.app."
+    ],
+    "section9Title": "9. Children’s Data",
+    "section9Body": [
+      "Our Services are not intended for individuals under the age of 18. We do not knowingly collect personal data from children.",
+      "If you believe that we have inadvertently collected such data, please contact us immediately."
+    ],
+    "section10Title": "10. Data Retention",
+    "section10Body": [
+      "We retain personal data only for as long as necessary to fulfill the purposes outlined in this Policy, comply with legal obligations, or operate our Services."
+    ],
+    "section11Title": "11. Policy Updates",
+    "section11Body": [
+      "We may update this Privacy Policy from time to time. Any significant changes will be posted on our website or sent to you via email.",
+      "By continuing to use our Services after such changes, you acknowledge and accept the updated terms."
+    ],
+    "section12Title": "12. Contact Information",
+    "section12Body": [
+      "If you have any questions or concerns about this Privacy Policy or your personal data, please contact us at:",
+      "support@souldestiny.app"
+    ]
+  },
+  "privacyPolicy": "Privacy Policy",
+  "termsOfUse": "Terms Of Use",
+  "loadingGreeting": "Welcome dear soul",
+
+  "terms": {
+    "title": "Terms of Use",
+    "lastUpdated": "Last updated: July 2, 2025",
+    "intro": "These Terms of Use (\"Terms\") govern your use of SoulDestiny (souldestiny.app) and all related services. Please read these terms carefully before using the Service.",
+    "purposeOfServiceTitle": "1. Purpose of the Service",
+    "purposeOfService": "SoulDestiny provides a tool for self-reflection and symbolic interpretation of personal questions through the archetypal images of Tarot cards and analytical psychology. We unequivocally state that our service is not a tool for predicting the future, fortune-telling, or forecasting specific events. All interpretations are abstract, symbolic, and intended solely to stimulate internal dialogue and personal contemplation. The information provided by SoulDestiny is not, and cannot be considered, professional, medical, psychological, legal, financial, or any other form of expert advice. It does not replace consultations with qualified professionals in the respective fields.",
+
+    "natureOfInformationTitle": "2. Nature of Information",
+    "natureOfInformation": "All interpretations provided by this site are symbolic, subjective, and algorithmically generated based on archetypal structures. They do not constitute personal evaluation or diagnosis. The user bears full responsibility for any decisions and actions taken by them based on or as a result of using this service. SoulDestiny shall not be liable for any direct, indirect, incidental, or consequential damages arising from such decisions or actions.As interpretations are generated by artificial intelligence, we cannot guarantee their absolute accuracy, completeness, or suitability for individual circumstances. AI-generated content is a tool for reflection, not an indisputable truth.",
+
+    "ageRestrictionsTitle": "3. Age Restrictions",
+    "ageRestrictions": "This service is intended for users aged 18 and older. Use by minors is strictly prohibited.",
+
+    "disclaimerOfLiabilityTitle": "4. Disclaimer of Liability",
+    "disclaimerOfLiability": "SoulDestiny assumes no responsibility for: (a) actions taken based on interpretations provided by the service; (b) emotional or psychological reactions to readings; (c) data loss, financial loss, or indirect damages; (d) technical failures or service interruptions.",
+
+    "emotionalDependencyRiskTitle": "5. Risk of Emotional Dependency",
+    "emotionalDependencyRisk": "Excessive or compulsive use of tarot readings may lead to emotional dependency or hinder independent thinking. We strongly recommend users engage with the service in moderation and view it as a supplement to their own intuition and capacity for self-analysis. If you feel you are developing a dependency on the service or experiencing psychological discomfort, we advise you to seek professional psychological help immediately. SoulDestiny is not responsible for any behavioral or psychological consequences arising from compulsive usage.",
+
+    "refundPolicyTitle": "6. Refund Policy",
+    "refundPolicy": "As our services are digital and consumed upon access (e.g., card usage or subscription time), we do not offer refunds for services already used or for unused portions of purchased cards/subscription time, except where explicitly required by applicable law in your jurisdiction. Please carefully review product descriptions before purchasing. All sales are final, except in cases where the service was not provided due to technical issues within our control.",
+
+    "processingTimeTitle": "7. Processing Time",
+    "processingTime": "Most purchases and subscription changes are processed instantly. However, due to technical or payment delays, changes may take up to 48 hours. Please allow this period before contacting support.",
+
+    "privacyAndDataTitle": "8. Privacy and Data",
+    "privacyAndData": "This website may collect technical and usage-related data (e.g., IP address, cookies). For detailed information, see our Privacy Policy. We do not share personal data with third parties without your consent.",
+
+    "jurisdictionTitle": "9. Jurisdiction",
+    "jurisdiction": "All disputes, claims, or disagreements arising from or in connection with these Terms of Use shall be governed by the laws of Germany, without regard to its conflict of law principles. The user agrees to the exclusive jurisdiction of the courts of Munich (Landgericht München) for the resolution of any such disputes.",
+
+    "entireAgreementTitle": "10. Entire Agreement",
+    "entireAgreement": "These Terms of Use, together with the Privacy Policy, constitute the entire agreement between you and SoulDestiny regarding the use of the service and supersede all prior or contemporaneous oral or written agreements concerning the subject matter hereof.",
+
+    "forceMajeureTitle": "11. Force Majeure",
+    "forceMajeure": "SoulDestiny shall not be liable for any failure or delay in performance of any of its obligations under these Terms if such failure or delay is caused by events beyond SoulDestiny's reasonable control, including, but not limited to, acts of God, war, terrorism, riots, embargoes, acts of civil or military authorities, fire, floods, accidents, network or internet interruptions, shortage of transportation facilities, fuel, energy, labor or materials, etc.",
+
+    "contactTitle": "12. Contact",
+    "contact": "Company name: SoulDestiny\nEmail: souldestiny.app@gmail.com",
+
+    "consentTitle": "13. Consent",
+    "consent": "By continuing to use this site, you confirm that you have read, understood, and agreed to these Terms of Use."
+  },
+  "purchaseTitle": "Purchase Tarot Draws",
+  "purchaseOption10": "10 card draws",
+  "purchaseOption100": "100 card draws",
+  "purchasePrice10": "€0.99",
+  "purchasePrice100": "€10",
+  "buy10": "Buy 10",
+  "buy100": "Buy 100",
+  "cancel": "Cancel",
+  "thankYouTitle": "Thank you for your payment!",
+  "thankYouCards": "{count} cards will be credited to your account. This may take a few seconds.",
+  "thankYouAuto": "Cards will be credited automatically within a few seconds.",
+  "thankYouRedirect": "You will be redirected automatically in 5 seconds...",
+  "thankYouGoNow": "Go to the tarot now",
+  "interpretationError": "Interpretation error. Please try again.",
+  "noAccount": "Don't have an account yet? Please sign up.",
+  "haveAccount": "Already have an account? Please log in.",
+  "offer": "🎁 Sign up now and get <highlight>5 free cards every week</highlight>!",
+  "signupNowToUnlock_part1": "Unlock your",
+  "signupNowToUnlock_digit": "5",
+  "signupNowToUnlock_highlight": "free weekly",
+  "signupNowToUnlock_part2": "Tarot crads right now",
+  "offerShort": "🎁 <highlight>Get your cards</highlight>",
+  "noCardRequired": "No credit card. No subscription. Completely free.",
+  "subscriptions": "Subscriptions",
+  "Subscriptions": {
+    "switchPlanConfirmTitle": "Are you sure you want to switch plans?",
+    "switchPlanConfirmMessage": "Your current plan will be replaced. Continue?",
+    "switchLockedMessage": "You have already submitted a plan change request. You can change again after {date}.",
+    "title": "Choose a subscription",
+    "processing": "Processing...",
+    "alreadySubscribed": "Plan active",
+    "pendingCancellation": "Cancellation in progress",
+    "notice": "Cancel anytime",
+    "medium": {
+      "title": "Standard",
+      "cta": "Get Standard",
+      "features": {
+        "1": "60 cards per month",
+        "2": "Basic interpretations",
+        "3": "Email support"
+      }
+    },
+    "premium": {
+      "title": "Premium",
+      "cta": "Get Premium",
+      "features": {
+        "1": "150 cards per month",
+        "2": "Detailed readings",
+        "3": "Priority 24/7 support",
+        "4": "Exclusive guides"
+      }
+    },
+    "cancelSubscription": "Unsubscribe",
+    "confirmCancellationTitle": "Confirm Cancellation",
+    "confirmCancellationMessage": "Are you sure you want to unsubscribe from your current plan?",
+    "yesButton": "Yes",
+    "noButton": "No"
+  },
+  "manageCardsHint": "Tap to manage",
+  "YourPath": {
+    "title": "Your Path",
+    "backToReadings": "Back To Readings",
+    "fetchDataError": "Error loading user data.",
+    "purchaseError": "Purchase error.",
+    "creditsBlock": {
+      "title": "Your Card Balance",
+      "availableCards": "Available Cards",
+      "getMoreCardsButton": "Get More Cards"
+    },
+    "confirmReactivateModal": {
+      "title": "Confirm Plan Change / Reactivation",
+      "descriptionReactivateNewPlan": "Your subscription is currently {currentPlan} and set to cancel at the end of the period on {periodEnd}. Do you want to change to the {newPlan} plan starting from then?",
+      "noButton": "No, keep current",
+      "yesButtonChangePlan": "Yes, Change Plan"
+    },
+    "confirmChangePlanModal": {
+      "title": "Confirm Plan Change",
+      "description": "Are you sure you want to change your current plan from {currentPlan} to {newPlan}? This change will take effect immediately, and your billing will be adjusted proportionally.",
+      "noButton": "No, Keep Current Plan",
+      "yesButton": "Yes, Change Plan"
+    },
+    "cards": "cards",
+    "processing": "Processing...",
+    "activePlanBlock": {
+      "title": "Active Plan",
+      "switchPlanOperationDismissed": "Switch plan operation dismissed.",
+      "switchPlanInitiatedToast": "Your plan switch request has been received.",
+      "yourCurrentPlan": "Your current plan",
+      "planPrivileges": "Plan Privileges",
+      "features": {
+        "medium1": "Feature 1 (Medium)",
+        "medium2": "Feature 2 (Medium)",
+        "medium3": "Feature 3 (Medium)",
+        "premium1": "Feature 1 (Premium)",
+        "premium2": "Feature 2 (Premium)",
+        "premium3": "Feature 3 (Premium)",
+        "premium4": "Feature 4 (Premium)"
+      },
+      "confirmResumeModal": {
+        "title": "Resume Subscription?",
+        "message": "Are you sure you want to resume your subscription? It will continue from the current paid period on the {planName} plan.",
+        "confirmButton": "Resume",
+        "cancelButton": "Cancel"
+      },
+      "renews": "Renews",
+      "charge": "Charge",
+      "manageSubscriptionButton": "Manage Subscription",
+      "cancelConfirm": "Are you sure you want to cancel your subscription?",
+      "cancelSuccess": "Subscription successfully canceled.",
+      "cancelSubscriptionButton": "Cancel Subscription",
+      "resumeSubscriptionButton": "Resume Subscription",
+      "resumeSuccessGeneric": "Subscription successfully resumed.",
+      "resuming": "Resuming...",
+      "noSubscriptionToResumeToast": "You don't have a subscription to resume.",
+      "resumeSubscriptionErrorToast": "Unable to resume subscription. Please try again.",
+      "networkErrorResumeSubscriptionToast": "Network error while trying to resume subscription.",
+      "infoUnavailable": "Information unavailable",
+      "willBeTransferredToPlan": "You will be automatically moved to the plan",
+      "startingFrom": "starting from",
+      "atEndOfCurrentPeriod": "at the end of the current period",
+      "subscriptionPendingCancel": "Your subscription is set to cancel at the end of the current billing cycle.",
+      "cancelling": "Cancelling...",
+      "subscriptionWillBeCanceledOn": "Your subscription will be canceled on"
+    },
+    "noPlanBlock": {
+      "title": "No Active Subscription",
+      "description": "You don’t currently have a subscription. Choose one of the plans below to unlock additional features."
+    },
+    "oneTimePurchaseBlock": {
+      "title": "One-Time Card Purchase",
+      "needsMoreCards": "Need more cards?",
+      "buy20Cards": "Buy 10 Cards",
+      "buy50Cards": "Buy 50 Cards"
+    },
+    "confirmCancelModal": {
+      "title": "Confirm Cancellation",
+      "description": "Are you sure you want to cancel your subscription? You'll still have access until the end of the current billing period.",
+      "buttonYes": "Yes",
+      "buttonNo": "No"
+    },
+    "noActiveSubscriptionToCancelToast": "No active subscription to cancel.",
+    "cancelSubscriptionErrorToast": "Error canceling subscription.",
+    "networkErrorCancelSubscriptionToast": "Network error while canceling subscription."
+  },
+  "currencyConversionNote": "You can pay in any currency. Your bank will automatically convert the amount at its current exchange rate.",
+  "chooseOption": "Choose your option:",
+  "InstallPWA": {
+    "installAppTitle": "Install Our App",
+    "installAppDescription": "Get fast access and offline functionality — right from your home screen!",
+    "installButton": "Install App",
+    "stickyInstallPrompt": "Install App Now!",
+    "safariInstallTitle": "How to Add to Home Screen (iPhone/iPad)",
+    "safariInstallStep1": "1. Tap the Share icon (a square with an arrow pointing up) at the bottom of Safari.",
+    "safariInstallStep2": "2. In the menu that appears, select 'Add to Home Screen'.",
+    "safariInstallStep3": "3. Tap \"Add to Home Screen.\" in the upper right corner.",
+    "gotIt": "Got It",
+    "safariInstallStep1Hint": "Tap the Share button (the square icon with an arrow pointing upwards) at the bottom of your screen."
+  },
+  "orAskCustomQuestion": "Or ask your own question",
+  "forgotPassword": "Forgot password",
+  "ResetPassword": {
+    "title": "Reset your password",
+    "email": "Email address",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Enter a valid email address",
+    "submitButton": "Send reset link",
+    "requestSuccess": "Email sent",
+    "requestError": "Failed to send reset link",
+    "backToLogin": "Back to login"
+  },
+  "CheckEmail": {
+    "title": "Check your email",
+    "description": "We’ve sent you a link to reset your password. If it doesn't arrive shortly, check your spam folder."
+  },
+  "UpdatePassword": {
+    "title": "Set a new password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "updateButton": "Update password",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordRequired": "Password is required",
+    "passwordsMustMatch": "Passwords must match",
+    "confirmPasswordRequired": "Confirm password is required",
+    "invalidOrExpiredLink": "Invalid or expired reset link. Please try again.",
+    "updateError": "Error updating password",
+    "updateSuccess": "Password updated successfully!",
+    "loading": "Loading..."
+  },
+  "noInterpretationYet": "No interpretation yet",
+  "generatingPdf": "generating Pdf",
+  "bot": {
+    "payment_error": "An error occurred while processing the payment. Please try again later.",
+    "loading_payment": " 🛒 Preparing the payment page…",
+    "checkout_url": "Follow the link to complete your payment:",
+    "pay_button": "Pay",
+    "follow_ups_title": "Steps Toward Deeper Knowing",
+    "purchase": {
+      "prompt": "Choose how you’d like to top up:",
+      "options": {
+        "one_time_10": "10 cards (one-time) - €0.99",
+        "one_time_100": "100 cards (one-time) - €10",
+        "subscription_medium": "Medium Subscription - €5/70 cards",
+        "subscription_premium": "Premium Subscription - €10/150 cards"
+      }
+    },
+    "subscription_needed": "Your credits have run out. Please top up your balance for new readings, or wait 7 days to receive 5 more free cards.",
+    "enter_question": "Open your heart and ask your question to the Universe",
+    "choose_deck": "Choose the deck that will reveal your truth",
+    "deck_version2": " Wisdom of the Ancients",
+    "deck_version1": "Wisdom of the Present",
+    "deck_chosen": "The deck is ready to speak",
+    "draw_card": "Choose the card that will guide your path",
+    "custom_follow_up": "Ask your own follow-up question",
+    "restart": "Begin a new reading",
+    "start": {
+      "welcome": "Welcome to the realm of mysteries, dear soul...",
+      "ask_tarot": "Speak the question that stirs your spirit"
+    },
+    "language": { "changed_confirmation": "Language attuned to your energy." },
+    "loading": {
+      "reading": "🔮 Conducting the reading..."
+    },
+
+    "general": {
+      "error_message": "Magical streams are disrupted... Please try again."
+    },
+    "tarot": {
+      "tips_title": "Guidance for the Path",
+      "follow_ups_title": "Questions that may unveil the way forward",
+      "no_free_readings": "The energy of free readings has run its course."
+    },
+    "payment": {
+      "success": "✅ Payment successful!\n\nYour new balance is: {balance} cards.\n\nWhat would you like to do next?",
+      "cancelled": "You have cancelled the purchase. If you have any problems or questions, please contact support.",
+      "button_ask_new": "🔮 Ask a new question",
+      "button_check_balance": "💳 Check balance"
+    },
+    "buttons": {
+      "check_balance": "💳 Check Balance",
+      "manage_subscription": "Manage Subscription"
+    },
+    "balance": "Your balance",
+    "subscription": {
+      "menu": {
+        "title": "Manage Subscription"
+    },
+    "buttons": {
+        "subscribe": "Buy Subscription",
+        "change": "Change Subscription",
+        "cancel": "Cancel Subscription"
+      },
+   
+      "cancel": {
+        "confirm": "Cancel the subscription at the end of the current period?",
+        "scheduled": "The cancellation is scheduled for the end of the current period."
+      }
+    },
+      "yes": "Yes",
+    "no": "No",
+    "cancelled": "Action canceled",
+    "weekly_free_credits_awarded": "Hi! You’ve received 5 free cards."
+  },
+
+  "tarot_ai_seo_title": "AI Tarot Reading — Ask the Cards with Artificial Intelligence",
+  "tarot_ai_title": "Tarot AI",
+  "tarot_ai_description": "Get instant card meanings, spread analysis, and follow-up Q&A powered by AI.",
+  "tarot_ai_content": "Blend traditional Tarot with modern AI for clear, actionable guidance on love, career, and decisions. Optimized for mobile.",
+  "start_tarot_ai_button": "Start AI Reading",
+
+  "free_tarot_seo_title": "Free Tarot Reading Online — 5 Weekly Cards",
+  "free_tarot_title": "Free Tarot Reading",
+  "free_tarot_description": "Draw 5 free Tarot cards weekly with AI-powered interpretations. Love, career and yes/no spreads.",
+  "free_tarot_content": "Ask any question and receive clear, practical guidance. Mobile-first PWA with instant results and no signup required.",
+  "start_free_reading_button": "Start Free Reading",
+
+  "daily_tarot_seo_title": "Daily Tarot — Your Card of the Day",
+  "daily_tarot_title": "Your Daily Tarot Card",
+  "daily_tarot_description": "Pull a daily Tarot card and get AI guidance and reflection prompts in seconds.",
+  "daily_tarot_content": "Build a mindful habit: one card, one insight, one action. Optimized for fast, distraction-free reading on mobile.",
+  "start_daily_reading_button": "Get Today’s Card",
+
+  "career_tarot_seo_title": "Career Tarot Reading — Work, Money & Purpose",
+  "career_tarot_title": "Career Tarot Reading",
+  "career_tarot_description": "Ask about jobs, promotions, finances or purpose and get AI-powered Tarot insights.",
+  "career_tarot_content": "Clarify your next step at work with focused spreads and actionable advice tailored to your situation.",
+  "start_career_reading_button": "Start Career Reading",
+
+   "love_tarot_seo_title": "Love Tarot Reading — Relationships & Feelings",
+  "love_tarot_title": "Love Tarot Reading",
+  "love_tarot_description": "Ask about love, compatibility, reconciliation, or future relationships and get AI-guided Tarot insights.",
+  "love_tarot_content": "Use focused spreads for singles and couples, uncover feelings and intentions, and get practical next-step advice.",
+  "ask_love_question_button": "Ask a Love Question",
+  
+"TarotAIPage": {
+    "seo_title": "AI Tarot: Insightful, Personalized Guidance for Self-Reflection.",
+    "title": "Stop Guessing. Start a Conversation with Your Inner Wisdom.",
+    "button_text": "START RIGHT NOW FOR FREE!",
+    "block1_intro": {
+      "title": "Beyond Generic Meanings: Tarot That Understands You.",
+      "text": "You've seen it before: you pull 'The Lovers' card on a generic website and get a vague, one-size-fits-all definition. But what does that static text mean for *your* specific relationship dilemma? SoulDestiny's Tarot AI was created to solve this exact problem. We combine the timeless wisdom of the Tarot with advanced AI to provide something radically new: not just a card's definition, but a personalized interpretation to offer you perspective. Your reading includes 3 actionable tips and 2 intelligent follow-up questions, turning a simple reading into a profound conversation that empowers *your own* decision-making."
+    },
+    "block2_art_of_asking": {
+      "title": "The Art of Asking: How to Receive the Clearest Guidance",
+      "text_intro": "The quality of your insight depends on the quality of your question. Our AI is a powerful tool for reflection, but it needs your focus. Vague questions lead to general reflections. Specific, open-ended questions lead to insightful, actionable guidance. Before you draw your card, take a moment to reflect on what you truly seek clarity on.",
+      "deeper_dive_title": "Mindset Matters: From 'What Will Happen?' to 'What Should I Consider?'",
+      "deeper_dive_text": "The most empowering Tarot readings come from questions that focus on your own agency. Instead of asking for a passive prediction, ask for active guidance. This shifts your perspective from being a spectator of your life to its creator. The cards, and our AI, respond powerfully to this shift, offering advice that empowers you to build the future you desire, rather than simply waiting for it. Ask about your path, your potential, your next step.",
+      "bad_examples_title": "Instead of asking:",
+      "bad_examples": [
+        "\"Tell me my future.\"",
+        "\"Will I get the job?\"",
+        "\"My love life.\""
+      ],
+      "good_examples_title": "Try asking:",
+      "good_examples": [
+        "\"What should I focus on to achieve my career goals in the next six months?\"",
+        "\"What hidden obstacle might be affecting my relationship, and how can I best approach it?\"",
+        "\"What do I need to understand about myself to attract a healthy partnership?\""
+      ],
+      "text_conclusion": "A well-formulated question is the key that unlocks truly meaningful insight. Think of yourself as an active participant in a dialogue with your own intuition."
+    },
+    "block_behind_the_veil": {
+      "title": "Behind the Veil: How Our AI Provides Perspective",
+      "text": "This isn't a random text generator. Our Tarot AI is built on a sophisticated model trained on centuries of esoteric knowledge, from classic Rider-Waite-Smith interpretations to Jungian archetypes. When you ask a question, the AI performs several tasks: 1. **It analyzes your question** to understand your core intent. 2. **It accesses the card's symbolic meanings**—upright, reversed, its numerology, and elemental correspondence. 3. **It synthesizes these two streams of information**, creating a new, original interpretation that is relevant only to you. It's a tool for perspective, applying ancient wisdom to your modern problem."
+    },
+    "block3_journey": {
+      "title": "Your 4-Step Journey from Question to Clarity",
+      "step1_title": "1. State Your Intention (The Question)",
+      "step1_text": "Begin by typing your carefully crafted question. This sets the stage for the wisdom you are about to receive. Be honest and open. Clarity and sincerity are key to a powerful reading.",
+      "step2_title": "2. Draw Your Card (The Messenger)",
+      "step2_text": "When you feel ready, click to draw your card. The card you pull is the energetic focal point—a powerful symbol that holds the core insight for your query. Trust the card that comes to you.",
+      "step3_title": "3. Receive Your AI Insight (The Interpretation)",
+      "step3_text": "This is where SoulDestiny shines. Our AI analyzes the card's traditional meaning *through the specific lens of your question*. You'll receive a detailed paragraph explaining what this card's energy means for *your situation*, helping you see it from a new angle.",
+      "step4_title": "4. Take Action & Go Deeper (The Conversation)",
+      "step4_text": "A reading should empower you. That's why your journey doesn't end with the interpretation. You'll instantly receive: **Three Actionable Tips:** Practical steps to consider as you move forward. **Two intelligent Follow-Up Questions:** Prompts to help you explore the topic further. This transforms a static reading into a dynamic, ongoing dialogue."
+    },
+    "block_case_study": {
+        "title": "Case Study: How Sarah Found Clarity on a Career Crossroads",
+        "story": "Sarah felt trapped. Her stable job paid the bills but left her feeling drained. She was offered an exciting but risky position at a startup. Unsure, she asked the Tarot AI: \"What is the most important factor I should consider when deciding between my current job and the new startup offer?\" She drew the **Eight of Cups**. The AI's interpretation didn't tell her what to do. Instead, it explained that the card pointed to a deep emotional need for fulfillment that her current job might no longer provide. It highlighted that the theme of her situation was about moving away from the 'known' to seek deeper meaning.",
+        "outcome_title": "The Empowering Guidance:",
+        "outcome_text": "The AI provided three tips to help her think: 1. Make a list of her top three non-negotiable values for a fulfilling career. 2. Schedule a coffee chat with someone from the startup to gauge the culture. 3. Set a personal deadline for the decision. The AI's follow-up questions helped her explore her fear of instability. Using this guidance as a framework for her own thoughts, Sarah realized the startup aligned with her values. She made an informed and confident decision to take the new job."
+    },
+    "block4_faq": {
+      "title": "Your Questions About AI Tarot, Answered",
+      "q1": "Is an AI Tarot reading accurate?",
+      "a1": "Our AI provides insightful interpretations, not factual predictions. Accuracy in Tarot comes from its ability to mirror your own inner state and offer a new perspective. Our AI is trained on centuries of Tarot wisdom to provide objective, unbiased reflections based on the card's connection to your question.",
+      "q2": "Can AI replace a human Tarot reader?",
+      "a2": "AI Tarot is a powerful, different tool. It offers instant availability 24/7 and complete privacy for your most sensitive questions. It's the perfect tool for personal reflection and immediate guidance when you need it most.",
+      "q3": "Is my reading private?",
+      "a3": "Absolutely. Your privacy is paramount. All readings are 100% confidential and anonymous. SoulDestiny is your safe space to explore any question without judgment.",
+      "q4": "What if I get a 'scary' card like The Tower?",
+      "a4": "There are no 'bad' cards, only transformative ones. Our AI is programmed to interpret challenging cards not as predictions of doom, but as symbols of necessary change and opportunities for growth. It will provide constructive advice on how to navigate these powerful energies.",
+      "q5": "Is this a substitute for therapy or professional advice?",
+      "a5": "Absolutely not. SoulDestiny is a tool for self-reflection and personal insight. It is not a substitute for professional medical, legal, financial, or psychological advice, diagnosis, or treatment. Always seek the advice of a qualified professional with any questions you may have regarding these matters. Never disregard professional advice or delay in seeking it because of something you have read on this platform."
+    },
+    "block5_cta": {
+      "title": "Ready to Unlock a New Perspective?"
+    },
+    "map": {
+      "title": "Interactive Meaning Map",
+      "labels": {
+        "past": "Past",
+        "present": "Present",
+        "decision": "Decision",
+        "future": "Future",
+        "advice": "Advice",
+        "hidden": "Hidden"
+      }
+    }
+  },
+
+  "CareerTarot": {
+    "seo_h1": "Career Tarot: Deep Reflection on Your Work Without Predictions or Advice",
+    "main_title": "Career Tarot",
+    "intro_p1": "Are you at a career crossroads? Feeling burnt out, considering a new offer, or searching for your true path? This page is for you.",
+    "intro_subtitle": "Your Mirror, Not a Roadmap",
+    "intro_p2": "Let's be honest: we do not practice fortune-telling. <b>Career Tarot</b>, as we see it, is not a tool for receiving predictions or direct instructions. It is a structured dialogue with yourself, where the Tarot cards act as a symbolic mirror. Our task is to help you ask the right, deep <b>questions about work</b> that will take you beyond your usual way of thinking. We believe that all the answers are already within you.",
+    "cta_start_reflection": "Begin Reflection",
+    "constructor_title": "Precise Question Builder",
+    "constructor_intro": "The question you ask determines the depth of the answer you receive. This small interactive widget will help you formulate your unique, neutral, and open-ended question for self-analysis.",
+    "constructor_placeholder": "The interactive 'Question Builder' widget will be placed here",
+    "map_title": "Interactive Career Map",
+    "map_intro": "Your career is not a linear path but a constellation of interconnected elements. This interactive map will help you explore the key nodes of your professional life.",
+    "map_placeholder": "The interactive 'constellation map' will be placed here",
+    "glossary_title": "Glossary of Career Archetypes",
+    "glossary_tab_major": "Major Arcana",
+    "glossary_tab_wands": "Wands",
+    "glossary_tab_cups": "Cups",
+    "glossary_tab_swords": "Swords",
+    "glossary_tab_pentacles": "Pentacles",
+    "glossary_fool_desc": "Symbolizes the beginning of a new path, a leap into the unknown, and immense potential. In a work context, this can be starting a project from scratch, changing professions, or a risky but promising endeavor.",
+    "glossary_magician_desc": "The archetype of will, mastery, and possessing all the necessary resources to achieve a goal. It indicates a moment when you have all the skills and tools; it's time to act and manifest your will.",
+    "glossary_high_priestess_desc": "A symbol of intuition, hidden knowledge, and the subconscious. In a career, it calls for listening to your inner voice, not just logic and facts. Perhaps some important information is not yet on the surface.",
+    "glossary_empress_desc": "The archetype of creativity, abundance, nurturing, and growth. In a work context, this represents a fruitful period, launching and developing a project, or creating a comfortable and supportive work environment.",
+    "glossary_emperor_desc": "Symbolizes structure, authority, order, and leadership. In a career, it points to the need to take control of a situation, build a clear strategy, or demonstrate leadership qualities.",
+    "glossary_hierophant_desc": "The archetype of traditions, learning, mentorship, and belonging to a system. It may indicate working in a large corporation, the need to follow rules, or the search for a mentor.",
+    "glossary_lovers_desc": "A symbol of choice, partnership, and alignment of values. In work, this could be a significant choice between two offers, forming a key partnership, or checking if your work aligns with your core values.",
+    "glossary_chariot_desc": "The archetype of ambition, control, willpower, and moving forward. It speaks to the need to focus on a goal and, by overcoming contradictions, confidently advance toward success.",
+    "glossary_strength_desc": "Symbolizes inner strength, courage, patience, and compassion. In a career, it's the ability to handle pressure and conflicts through gentle power rather than aggression.",
+    "glossary_hermit_desc": "The archetype of pausing, self-reflection, and seeking inner wisdom. In work, this can be a period of re-evaluating goals, taking a sabbatical, or needing to deeply analyze a situation in solitude.",
+    "glossary_wheel_of_fortune_desc": "A symbol of cycles, change, luck, and fateful turns. In a career, it indicates that the situation is changing. It's important to be flexible and ready for new opportunities or challenges.",
+    "glossary_justice_desc": "The archetype of fairness, balance, responsibility, and consequences. In work, this can relate to signing contracts, objectively assessing a situation, and making balanced, honest decisions.",
+    "glossary_hanged_man_desc": "A symbol of pausing, shifting perspective, and voluntary sacrifice. In a career, it calls for a halt to look at a problem from a different angle. Sometimes, you need to let go of something to gain something greater.",
+    "glossary_death_desc": "The archetype of transformation, the end of the old, and the beginning of the new. Don't fear this card; in work, it symbolizes the completion of a project, a layoff, or leaving an old position to make way for something new.",
+    "glossary_temperance_desc": "A symbol of balance, harmony, moderation, and integration. In a career, it calls for finding a middle ground, establishing a work-life balance, or successfully combining different projects and responsibilities.",
+    "glossary_devil_desc": "The archetype of addictions, limitations, materialism, and shadow aspects. In work, it can point to a toxic environment, dependency on a salary, burnout, or unhealthy ambitions.",
+    "glossary_tower_desc": "A symbol of sudden and radical destruction of old structures. In a career, this could be a firing, a project failure, or a company's collapse. Though painful, this experience liberates from illusions.",
+    "glossary_star_desc": "The archetype of hope, inspiration, faith in the future, and healing after a crisis. It speaks of clarity of purpose and optimism. You are on the right path; trust yourself.",
+    "glossary_moon_desc": "A symbol of illusions, fears, uncertainty, and the subconscious. In work, it points to hidden factors, an unclear situation, or the need to trust your intuition to navigate through the fog.",
+    "glossary_sun_desc": "The archetype of success, clarity, joy, and vitality. In a career, it's a symbol of triumph, the successful completion of a project, recognition for your merits, and complete satisfaction with your work.",
+    "glossary_judgement_desc": "A symbol of rebirth, final assessment, and a calling. In work, it's a moment of truth, an evaluation of past achievements, and a transition to a new level that aligns with your true vocation.",
+    "glossary_world_desc": "The archetype of completion, integration, success, and achieving a goal. In a career, it symbolizes the successful conclusion of a major cycle, such as finishing a large project or reaching the pinnacle of your field.",
+    "glossary_ace_cups_desc": "A new emotional beginning. In work: starting a project that brings joy, harmonious relationships within the team, or a job that feels like a calling.",
+    "glossary_two_cups_desc": "Partnership and union. In work: a successful deal, effective teamwork in a pair, or mutual understanding with a colleague or client.",
+    "glossary_three_cups_desc": "Teamwork and celebration. In work: the successful completion of a team project, a corporate event, or the joy of shared achievements.",
+    "glossary_four_cups_desc": "Apathy and re-evaluation. In work: loss of interest in current tasks, emotional burnout, or the need to reconsider your career goals.",
+    "glossary_five_cups_desc": "Disappointment and loss. In work: a failed project, a missed opportunity, or regret over the past. The card invites you to see the opportunities that still remain.",
+    "glossary_six_cups_desc": "The past and nostalgia. In work: returning to an old project, working with former colleagues, or using past experience to solve current problems.",
+    "glossary_seven_cups_desc": "Choices and illusions. In work: many options for development but a lack of clarity. It's important to separate real opportunities from empty fantasies.",
+    "glossary_eight_cups_desc": "Walking away and seeking more. In work: leaving a dead-end job or changing careers in search of deeper meaning and fulfillment.",
+    "glossary_nine_cups_desc": "Satisfaction and wish fulfillment. In work: achieving a set goal, getting the desired position, or feeling complete satisfaction from your work.",
+    "glossary_ten_cups_desc": "Emotional fulfillment and harmony. In work: perfect work-life balance, a friendly and supportive team atmosphere, or long-term career satisfaction.",
+    "glossary_page_cups_desc": "A creative beginning. In work: the emergence of a new creative idea, the need to listen to intuition, or an offer with an emotional component.",
+    "glossary_knight_cups_desc": "Romance and following a dream. In work: an offer for a new position or project that you are very passionate about; making decisions based on feelings.",
+    "glossary_queen_cups_desc": "Emotional intelligence and empathy. In work: the need to show compassion, intuitive leadership, or creating a supportive atmosphere. The role of a wise mentor.",
+    "glossary_king_cups_desc": "Emotional maturity and control. In work: calm and wise leadership, the ability to manage your own and others' emotions, or diplomatic conflict resolution.",
+    "glossary_ace_pentacles_desc": "A new material beginning. In work: a new position with a good salary, the launch of a profitable project, or a chance to build something stable.",
+    "glossary_two_pentacles_desc": "Balancing and adaptation. In work: the need to juggle multiple projects, multitasking, or demonstrating flexibility in a changing environment.",
+    "glossary_three_pentacles_desc": "Teamwork and mastery. In work: successful collaboration where everyone contributes their unique skills; recognition of your craftsmanship.",
+    "glossary_four_pentacles_desc": "Stability and control. In work: holding onto your position, a fear of change, or striving for financial security, sometimes at the expense of growth.",
+    "glossary_five_pentacles_desc": "Crisis and need. In work: financial difficulties, job loss, or a sense of isolation. The card advises not to be afraid to ask for help.",
+    "glossary_six_pentacles_desc": "Generosity and resources. In work: receiving a bonus or grant, mentorship, or the fair distribution of resources within a team.",
+    "glossary_seven_pentacles_desc": "Patience and assessment. In work: waiting for the results of a long-term project. It's time to pause and evaluate whether to continue investing effort.",
+    "glossary_eight_pentacles_desc": "Mastery and diligent work. In work: focusing on the details, honing your skills, or working diligently on a project that will yield results.",
+    "glossary_nine_pentacles_desc": "Independence and abundance. In work: financial independence, successfully running your own business, or enjoying the fruits of your labor in solitude.",
+    "glossary_ten_pentacles_desc": "Legacy and stability. In work: working in a family business, long-term stability in a large company, or creating a project that will endure.",
+    "glossary_page_pentacles_desc": "Learning and new opportunities. In work: beginning to study a new practical skill, an internship, or an offer with good prospects for learning.",
+    "glossary_knight_pentacles_desc": "Reliability and routine. In work: methodical and responsible execution of tasks, steady but slow progress. The need to stick to the plan.",
+    "glossary_queen_pentacles_desc": "Practicality and care. In work: skillful management of resources, creating a comfortable work environment, or a practical and down-to-earth approach to tasks.",
+    "glossary_king_pentacles_desc": "Material success and reliability. In work: the peak of a career, managing a large business, financial prosperity, or the status of an expert in your field.",
+    "glossary_ace_swords_desc": "Breakthrough and clarity. In work: the emergence of a brilliant new idea, clarification of a complex situation, or making a clear and objective decision.",
+    "glossary_two_swords_desc": "Indecision and stalemate. In work: a difficult choice you are postponing; the need to make a decision that is blocked by fear or lack of information.",
+    "glossary_three_swords_desc": "Pain and disappointment. In work: painful criticism, a project failure, or a conflict that left a bitter aftertaste. The need to accept a harsh truth.",
+    "glossary_four_swords_desc": "Rest and recovery. In work: the need to take a vacation or sick leave to recover after a stressful period; a mental respite.",
+    "glossary_five_swords_desc": "Conflict and defeat. In work: losing a competitive battle, a toxic conflict in the team, or a victory that brought no satisfaction.",
+    "glossary_six_swords_desc": "Transition and moving on. In work: changing departments or companies to get away from problems; a slow transition from a difficult period to a calmer one.",
+    "glossary_seven_swords_desc": "Deception and strategy. In work: dishonest actions by colleagues, the need to act unconventionally, or plagiarism and theft of ideas.",
+    "glossary_eight_swords_desc": "Restriction and helplessness. In work: feeling trapped in your position, a fear of acting due to self-imposed limitations.",
+    "glossary_nine_swords_desc": "Anxiety and stress. In work: sleepless nights over work problems, severe stress, or a paralyzing fear of failure.",
+    "glossary_ten_swords_desc": "Ending and ruin. In work: a layoff, project closure, or a painful but final end to a difficult phase. Rock bottom, from which you can push off.",
+    "glossary_page_swords_desc": "Curiosity and new ideas. In work: gathering information, analyzing a situation, or the emergence of new ideas that need to be tested. Sometimes symbolizes gossip.",
+    "glossary_knight_swords_desc": "Ambition and speed. In work: a swift and decisive move toward a goal, rapid developments, sometimes with excessive haste and sharp communication.",
+    "glossary_queen_swords_desc": "Independence and clarity of mind. In work: an objective and impartial view of things, the need to set boundaries, or intellectual leadership.",
+    "glossary_king_swords_desc": "Authority and intellect. In work: the role of an expert, strategic planning, making sound and logical decisions, or being an authoritative voice.",
+    "glossary_ace_wands_desc": "New impulse and passion. In work: the start of a new, inspiring project, a surge of creative energy and enthusiasm.",
+    "glossary_two_wands_desc": "Planning and foresight. In work: the first phase of a project is complete, now it's time for strategic planning of the next steps and assessing prospects.",
+    "glossary_three_wands_desc": "Awaiting initial results. In work: the main effort has been made, now comes the phase of waiting for the fruits of your labor and expanding horizons.",
+    "glossary_four_wands_desc": "Stability and celebration. In work: the successful completion of an important project phase, a team celebration, or creating a stable and harmonious work environment.",
+    "glossary_five_wands_desc": "Competition and conflict. In work: healthy competition, a brainstorm where different opinions clash, or minor disagreements that lead to a better outcome.",
+    "glossary_six_wands_desc": "Success and recognition. In work: public acknowledgment of your achievements, winning a project, or receiving praise from management and colleagues.",
+    "glossary_seven_wands_desc": "Defending your position. In work: the need to stand up for your ideas or projects in the face of criticism or competition; confidence in your stance.",
+    "glossary_eight_wands_desc": "Speed and news. In work: rapid developments, swift progress on a project, or receiving important news or messages.",
+    "glossary_nine_wands_desc": "Resilience and perseverance. In work: you are almost at the goal, but exhausted. It is necessary to show resilience and make one last effort despite fatigue.",
+    "glossary_ten_wands_desc": "Burden and responsibility. In work: you have taken on too many tasks, an overload of responsibility, or burnout due to an excessive workload.",
+    "glossary_page_wands_desc": "Enthusiasm and exploration. In work: exploring new opportunities, showing initiative, or starting a new creative path with great enthusiasm.",
+    "glossary_knight_wands_desc": "Action and energy. In work: changing jobs, a business trip, or energetically and passionately advancing a project, sometimes with some haste.",
+    "glossary_queen_wands_desc": "Charisma and confidence. In work: confident and inspiring leadership, managing people through your charisma and passion for the work.",
+    "glossary_king_wands_desc": "Vision and leadership. In work: the role of a visionary, strategic guidance, or creating and inspiring a team to achieve a great goal.",
+    "faq_title": "FAQ: Frequently Asked Questions",
+    "faq_q1": "Is this fortune-telling?",
+    "faq_a1": "No. Absolutely not. We do not predict events. The cards are used as a symbolic language to explore your current situation and inner world. The future is created by the decisions you make today.",
+    "faq_q2": "Will you tell me which job to choose or whether to accept an offer?",
+    "faq_a2": "No. We never give direct advice. The decision is always yours. Our goal is to help you look at the situation from all angles so you can make the most informed choice for yourself.",
+    "faq_q3": "How is this different from regular career counseling?",
+    "faq_a3": "A career counselor works with your resume, the job market, and strategy. We work with your inner world—your values, subconscious beliefs, and emotional state. Our approach is a perfect complement to traditional counseling, not a replacement.",
+    "faq_q4": "Can the AI give advice?",
+    "faq_a4": "Our AI is trained to operate strictly within an ethical framework. Its job is to analyze the symbolic meanings of the cards and compose them into neutral, reflective texts. It does not generate directives.",
+    "samples_title": "Examples of Neutral Questions for Different Scenarios",
+    "samples_role_change_title": "When changing roles or getting a promotion:",
+    "samples_role_change_q1": "What aspect of my new role do I fear the most, and why?",
+    "samples_role_change_q2": "What hidden opportunities for growth does this position hold?",
+    "samples_role_change_q3": "What do I need to 'let go' of from my old role to be successful in the new one?",
+    "samples_burnout_title": "When dealing with overload and burnout:",
+    "samples_burnout_q1": "What personal need am I systematically ignoring in my work?",
+    "samples_burnout_q2": "What is the true source of my fatigue—the volume of tasks, their content, or the atmosphere?",
+    "samples_burnout_q3": "What is one small step I can take this week to restore balance?",
+    "samples_job_search_title": "When searching for a job or going freelance:",
+    "samples_job_search_q1": "What unique quality of mine am I hesitant to show potential employers/clients?",
+    "samples_job_search_q2": "What am I not considering when idealizing freelance life / corporate work?",
+    "samples_job_search_q3": "What inner resource will help me cope with uncertainty during my search?",
+    "template_title": "Your Notes Template: A Self-Reflection Checklist",
+    "template_p1": "First reaction: What was the first word, feeling, or image that came to mind?",
+    "template_p2": "Key insight: What phrase or idea from the reading felt most important?",
+    "template_p3": "Point of resistance: What did I disagree with or find uncomfortable? (This is often where a key insight is hidden).",
+    "template_p4": "Blind spot: What aspect of the situation did I see for the first time?",
+    "template_p5": "Hidden resource: What strength of mine have I been underestimating?",
+    "template_p6": "Next small step: What is one simple action or thought I can take within 48 hours?",
+    "method_title": "Our Method: How We Work with Symbols and AI",
+    "method_p1_bold": "Symbols as Language:",
+    "method_p1_text": "Tarot cards are not magic, but 78 universal archetypes. They are a visual language for describing complex life situations.",
+    "method_p2_bold": "AI as Translator:",
+    "method_p2_text": "Our system uses AI for linguistic composition. It analyzes symbolic meanings and composes a coherent, neutral text for reflection.",
+    "method_p3_bold": "You as the Author of Meaning:",
+    "method_p3_text": "The most important element of the system is you. Only you can give personal meaning to the symbols and integrate the insights into your life.",
+    "nav_title": "Learn More About Our Approach",
+    "nav_link1": "How to Ask Questions for Deeper Answers",
+    "nav_link2": "Our Ethical Principles",
+    "nav_link3": "How Our AI Works: Transparency and Safety",
+    "final_cta_title": "Ready to see your career from a new angle?",
+    "cta_ask_question": "Ask Your Question",
+    "constructor_step_theme": "Theme",
+    "constructor_step_timeframe": "Timeframe",
+    "constructor_step_aspect": "Aspect",
+    "constructor_theme_label": "Theme",
+    "constructor_theme_option_search": "Job Search",
+    "constructor_theme_option_change": "Role Change",
+    "constructor_theme_option_burnout": "Burnout",
+    "constructor_theme_option_relations": "Team Relations",
+    "constructor_theme_option_growth": "Growth",
+    "constructor_timeframe_label": "Time Focus",
+    "constructor_timeframe_option_current": "Current Situation",
+    "constructor_timeframe_option_3months": "Next 3 Months",
+    "constructor_timeframe_option_longterm": "Long-Term Perspective",
+    "constructor_aspect_label": "Aspect to Explore",
+    "constructor_aspect_option_resources": "My Resources",
+    "constructor_aspect_option_obstacles": "Hidden Obstacles",
+    "constructor_aspect_option_potential": "Potential",
+    "constructor_aspect_option_lessons": "Lessons",
+    "constructor_generate_button": "Formulate Question",
+    "constructor_result_title": "Your Question for Reflection:",
+    "constructor_question_template": "What {aspect} is it important for me to understand regarding {theme} in the {timeframe}?",
+    "map_node_skills": "Skills",
+    "map_node_skills_desc": "Your talents, areas for growth, and in-demand competencies. Questions for reflection: 'Which of my skills do I underestimate? What new thing is it important for me to learn to achieve my goal?'",
+    "map_node_market": "Market",
+    "map_node_market_desc": "External conditions, trends, opportunities, and the demand for your role. Questions for reflection: 'What market trend am I not noticing? Where can my skills provide the most value?'",
+    "map_node_role": "Role",
+    "map_node_role_desc": "Your functions, responsibilities, level of authority, and satisfaction. Questions for reflection: 'What in my current role gives me energy, and what drains it? What role do I really want to play?'",
+    "map_node_growth": "Growth",
+    "map_node_growth_desc": "Prospects, learning, the next step, ambitions. Questions for reflection: 'What does 'career growth' really mean to me right now? Money, status, mastery, or balance?'",
+    "map_node_risks": "Risks",
+    "map_node_risks_desc": "Obstacles, fears, uncertainty, the cost of a choice. Questions for reflection: 'What risk am I afraid to admit even to myself? What is the worst that can happen, and how can I prepare for it?'",
+    "map_node_values": "Values",
+    "map_node_values_desc": "Meaning, mission, work-life balance, corporate culture. Questions for reflection: 'Does my work align with my main life values? What am I not willing to sacrifice?'"
+  },
+  
+  "LoveTarot": {
+    "seo_h1": "LOVE TAROT — Personal Questions on Feelings and Relationships",
+    "main_title": "LOVE TAROT: A Space for Honest Questions about Love",
+    "intro_p1": "There's no “right way” here. There are card symbols, your feelings, and a safe place for reflection.",
+    "intro_subtitle": "Without directives or predictions — with respect for your boundaries.",
+    "intro_p2": "Formulate <b>your</b> question, view it through the Tarot cards, and note what resonates with you.",
+    "final_cta_title": "Ready to formulate your question?",
+    "cta_ask_question": "Ask Your Question",
+    "ethics_badge": "No Advice • No Predictions • Private",
+
+    "spreads_title": "Popular Spreads for the Topic of Love",
+    "spreads_intro": "Choose a spread and copy the neutral questions — they help you approach the topic gently and honestly.",
+    "spreads": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "labels": {
+        "pos": "Position"
+      },
+
+      "threeLove": {
+        "title": "Three Cards on Feelings",
+        "subtitle": "A simple and gentle look: yesterday — today — where you're drawn",
+        "desc": "A classic three-card format for soft reflection: the past context, your current state, and the direction of movement—without rushing.",
+        "layout": [1, 2, 3],
+        "prompts": [
+          "What from a past story am I not noticing when I think about our feelings?",
+          "What am I truly feeling right now, if I were to name it honestly?",
+          "What direction of movement do I sense — without rush or promises?"
+        ]
+      },
+
+      "relationshipPath": {
+        "title": "The Path of a Relationship (7 Positions)",
+        "subtitle": "Context, resource, pinch point, support, honesty, boundaries, time",
+        "desc": "A positional view of the threads of a relationship: what provides support, what needs attention, where my boundaries are, and how I experience time.",
+        "layout": [1, 2, 3, 4, 5, 6, 7],
+        "prompts": [
+          "What unseen theme is influencing our relationship right now?",
+          "What supports our connection and where do I feel grounded?",
+          "Where is the 'pinch point' — what needs attention without dramatization or belittling?",
+          "What about the honesty between us — what is important to voice or name more precisely?",
+          "Where do my personal boundaries lie and how do I know they are being respected?",
+          "What movement in time do I notice (a pause/a risk of rushing/a readiness to wait)?",
+          "What is changing in my sense of the relationship, if I look at all of this calmly?"
+        ]
+      },
+
+      "compatibility": {
+        "title": "Dialogue and Compatibility",
+        "subtitle": "Not about 'advice', but about language: what I hear, what I want to say, what's important to consider",
+        "desc": "A focus on communication and expectations: where we hear each other, where we lose meaning, what's worth clarifying without blame.",
+        "layout": [1, 2, 3, 4, 5],
+        "prompts": [
+          "What do I want to say but am putting off?",
+          "What am I truly hearing from the other person?",
+          "What unspoken expectations are present and what do they feel like?",
+          "Where do my personal boundaries lie in this matter?",
+          "What am I seeing in a new way, if I look without rushing and comparisons?"
+        ]
+      }
+    },
+
+    "map_title": "Map of the Heart",
+    "map_intro": "Click on the nodes to see self-reflection questions.",
+    "map": {
+      "title": "Map of the Heart",
+      "map_intro": "Click on the nodes to see self-reflection questions.",
+      "labels": {
+        "feelings": "Feelings",
+        "boundaries": "Boundaries",
+        "trust": "Trust",
+        "communication": "Communication",
+        "expectations": "Expectations",
+        "timing": "Timing"
+      },
+      "prompts": {
+        "feelings": [
+          "What feelings are most alive in me right now?",
+          "What in my body responds when I think about this connection?",
+          "How do I know that I feel good with this person?"
+        ],
+        "communication": [
+          "What do I want to say but am putting off?",
+          "What am I truly hearing from the other person — words, tone, meaning?",
+          "Where do we lose understanding and what does that look like without blame?"
+        ],
+        "trust": [
+          "What helps me to trust — gestures, time, consistency?",
+          "What undermines trust and how do I notice it?",
+          "Where is it important for me to clarify agreements to feel calmer?"
+        ],
+        "expectations": [
+          "What unspoken expectations are present?",
+          "What do I expect from a relationship and what am I willing to contribute myself?",
+          "What do I accept as 'normal,' even though it's just my experience?"
+        ],
+        "boundaries": [
+          "What is definitely okay/not okay for me in this story?",
+          "How do I communicate my boundaries — and do I hear the other person's boundaries?",
+          "When do I agree out of fear, rather than out of genuine consent?"
+        ],
+        "timing": [
+          "Do I want to speed up, slow down, or take a pause?",
+          "What would show me that the time for the next step has truly come?",
+          "How do I feel about the uncertainty at this stage?"
+        ]
+      }
+    },
+
+    "glossary_title": "Archetypes and Suits in the Context of Love",
+    "glossary_tab_major": "Major Arcana",
+    "glossary_tab_wands": "Wands",
+    "glossary_tab_cups": "Cups",
+    "glossary_tab_swords": "Swords",
+    "glossary_tab_pentacles": "Pentacles",
+
+    "glossary_major_00_the_fool_desc": "The beginning of a relationship's journey and vulnerable openness: a lively curiosity towards the other, a readiness to try without guarantees or rigid labels of “how it should be.” In a partnership, this is about the courage to be yourself from the very first step, admitting “I don't know, but I want to get to know you,” leaving room for playfulness, ease, and the natural growth of intimacy.",
+    "glossary_major_00_the_magician_desc": "The expression of intent and the power of words: a connection to your will and the language of desires, the ability to give feelings a clear form with a gesture or a word. In a relationship, this card calls for speaking directly and beautifully: proposing, inviting, and setting boundaries and pace in a way that makes it clear to your partner where and how you want to move forward together.",
+    "glossary_major_00_the_high_priestess_desc": "Silence and inner knowledge: the hidden dynamics of feelings, trusting intuition, and the right not to explain everything rationally. In a partnership, this is the ability to hear non-verbal signals and respect personal space, allowing meanings to ripen; an unwillingness to rush a conversation when the heart asks for depth and delicacy.",
+    "glossary_major_00_the_empress_desc": "Care, warmth, and the body: an atmosphere where feelings take root; sensuality is safe, and the space supports growth. In a relationship, this is about constant small acts of love—comfort, food, affection, coziness—through which the connection becomes fertile, and intimacy naturally expands.",
+    "glossary_major_00_the_emperor_desc": "Structure and boundaries: the pillars of a relationship, agreements, and a container in which intimacy remains gentle. The card reminds us that stability is born from clear rules and responsibility: who is responsible for what, how we resolve disputes, what rhythm works for us—this is how security and trust are built.",
+    "glossary_major_00_the_hierophant_desc": "Values and rituals: shared agreements, the couple's “our language,” and the meanings that uphold trust. In a relationship, this is about shared traditions and a common ethic—what is sacred to us, how we celebrate important moments, and what we consider respect—through which the connection gains depth and stability.",
+    "glossary_major_00_the_lovers_desc": "Intimacy as a choice: mutuality, honesty about desires, and a crossroads where both 'yes' and 'no' can be heard. In a partnership, this is about mature consent and intimate decisions, where two people choose each other not out of need, but from a clear 'I want,' preserving each person's right to freedom and truth.",
+    "glossary_major_00_the_chariot_desc": "Vector and alignment of impulses: moving forward as a joint decision; the direction is more important than the speed. In a relationship, the card is about teamwork: we get in the same chariot, discuss the goal, divide roles, and stay the course, respecting differences in pace and temperament.",
+    "glossary_major_00_strength_desc": "Gentle strength: patience, the ability to tame impulses with affection, and a respect for vulnerability—your own and others'. In a partnership, this is soft persistence and warm resilience: not to push, but to support; not to break, but to embrace—this is how trust grows and the ability to weather storms together.",
+    "glossary_major_00_the_hermit_desc": "Solitude for clarity: personal space, a pause for an honest look, a return to yourself to be able to hear the other. In a relationship, this is respect for internal cycles and the need for quiet: stepping back is not about distancing, but about fine-tuning the connection and returning gently.",
+    "glossary_major_00_wheel_of_fortune_desc": "Cycles and shifts in context: synchronicities and turns, accepting fluidity, and a readiness for the story to be renewed. In a partnership, this is realizing that relationships breathe in seasons—ups and downs are natural; it's important not to cling to one state but to find meaning together in the changing winds.",
+    "glossary_major_00_justice_desc": "Balance and honesty: fair exchange, the consequences of agreements, clarity of communication without accusatory tones. In a relationship, this is about fairness to both: acknowledging contributions and needs, discussing boundaries and responsibilities, and correcting imbalances so that 'we' remains stable and respectful.",
+    "glossary_major_00_the_hanged_man_desc": "A voluntary pause and a shift in perspective: letting go of control to see the depth of feelings in a new way. In a partnership, this is a moment to 'hang' over a situation, change your point of view, and try listening differently—and to discover an exit that isn't visible from the usual logic.",
+    "glossary_major_00_death_desc": "The end of a phase and transformation: saying goodbye to the old form of a connection for the space of what's alive. In a relationship, this is not necessarily the end, but the end of a former way of being—it's painful yet liberating; allowing something to die so that something more honest and warm can be born.",
+    "glossary_major_00_temperance_desc": "Temperance and blending: a subtle fine-tuning of rhythm, the right dose of intimacy, and the integration of different temperaments. In a partnership, this is the art of 'blending to taste'—finding our unique rhythm of touch, conversation, and pauses, where neither person dissolves and neither grows cold.",
+    "glossary_major_00_the_devil_desc": "Attachments and the shadow of desires: shame-fueled power, codependent contracts, and an honest look at what holds you back and constricts you. In a relationship, this is about talking about dependency, jealousy, compulsive patterns, and hidden benefits—seeing them without moralizing to regain the freedom of choice and intimacy.",
+    "glossary_major_00_the_tower_desc": "Sudden clarification: illusions and false supports crumble; the pain of truth frees the relationship's breath. In a partnership, this is a crisis of honesty—unpleasant, but healing: what cannot be built upon falls, so that we can create a foundation that corresponds to reality.",
+    "glossary_major_00_the_star_desc": "Hope and gentle healing: vulnerability as a light; a distant guidepost you want to walk towards without force. In a relationship, this is a quiet, warm belief in each other, where after storms, we water the connection with kindness and tenderness, allowing it to recover naturally.",
+    "glossary_major_00_the_moon_desc": "Uncertainty and projections: fears and dreams that distort the picture; bodily sensitivity is more important than hasty conclusions. In a partnership, this is a time for fewer interpretations and more reality checks: talk about fears, lean on facts and your body, not on the mind's nightmares.",
+    "glossary_major_00_the_sun_desc": "Simplicity and joy: a clear connection, playfulness, a warm 'togetherness' with lots of light and less protection. In a relationship, this is about visibility and sincerity—being yourself boldly, sharing happiness, and creating shared joyful rituals that nourish the connection every day.",
+    "glossary_major_00_judgement_desc": "The call and awakening: reconnecting with yourself/truth, re-evaluating the past, and giving an honest response to the present. In a partnership, this is 'waking up' and choosing again: acknowledging mistakes, letting go of old roles, and hearing what truly calls the two of you forward.",
+    "glossary_major_00_the_world_desc": "Wholeness and completion: a feeling of 'I am where I belong,' an openness to the world, and the maturity to be with another without losing yourself. In a relationship, this is a circle that has closed: we understand who we are as a couple and can move forward, preserving both our individuality and shared wholeness.",
+    
+    "glossary_wands_ace_desc": "The spark of desire: a new impulse of attraction and magnetism, the energy of a beginning without obligation. In a relationship, this is an invitation to give the fire a form—flirting, an initiative, a shared adventure—and to honestly discuss what you're willing to sustain.",
+    "glossary_wands_2_desc": "Choosing the direction of the impulse: where to direct the fire of interest and how to align it with reality. In a partnership, this is a discussion of prospects and boundaries: how we see the future of the connection and what pace will be gentle for both.",
+    "glossary_wands_3_desc": "Horizons and anticipation: the excitement of a meeting/phase, looking beyond the usual circle. In a relationship, this is about planning that fuels hope: shared goals, trips, and steps where anticipation becomes a warm preparation, not a freeze.",
+    "glossary_wands_4_desc": "Support and celebration: a shared space where you want to be; a small shared ritual of joy. In a partnership, this is 'our home'—not just a place, but a feeling that it's safe and fun to be together; celebrate milestones and establish warm traditions.",
+    "glossary_wands_5_desc": "Sparks of friction: a rivalry of impulses, a play of forces where it's important to remember respect. In a relationship, conflict can be a game of growth if the rules are honest: talk about needs without resorting to insults, and look for a win-win.",
+    "glossary_wands_6_desc": "Visibility and recognition: a noticeable feeling, the sparkling spark of 'I am seen/I see you.' In a partnership, this is about public and private support: being proud of each other, giving feedback, and celebrating successes—this keeps the fire from going out.",
+    "glossary_wands_7_desc": "Standing your ground: 'my yes/no' with dignity; a stance without war. In a relationship, this is a healthy defense of your boundaries without punishing your partner—clarity instead of attack, respect instead of giving in out of fear.",
+    "glossary_wands_8_desc": "Swift flows: messages, sudden meetings, the movement of energy between you. In a partnership, this is about timely communication and initiative: responding with your heart, not delaying, and catching the moment when the connection comes alive on its own.",
+    "glossary_wands_9_desc": "Tiredness and guarding the boundary: protecting your energy so you don't confuse defense with care. In a relationship, it's important to honestly admit where you've burned out and to recover, so you don't turn intimacy into a battlefield.",
+    "glossary_wands_10_desc": "Overload with passion/tasks: too much fire—it's important to distinguish between desire and obligation. In a partnership, this is about redistributing burdens and expectations; otherwise, attraction becomes a weight; remove the excess and give play its place.",
+    "glossary_wands_page_desc": "Curiosity and flirting: trial sparks, a game, learning the language of attraction. In a relationship, this is a time for light gestures and bold but gentle confessions, so the fire grows without pressure.",
+    "glossary_wands_knight_desc": "Swiftness: a powerful impulse that asks for a channel and consent. In a partnership, this is about initiative and adventure—moving, but aligning on turns so that speed doesn't cause hurt.",
+    "glossary_wands_queen_desc": "Warm magnetism: a mature attractiveness that leads the atmosphere without force. In a relationship, this is confidence and caring for your own fire, which warms both of you and requires no proof.",
+    "glossary_wands_king_desc": "Responsible direction of desire: a fire that knows its goal and respects boundaries. In a partnership, this is leadership without control: inspiring, setting the course, and creating conditions where both want to burn brightly.",
+    
+    "glossary_cups_ace_desc": "Pure feeling: an open heart, a readiness to meet tenderness and be touched. In a relationship, this is the moment to say 'this is important to me' and allow intimacy to begin, without hiding vulnerability.",
+    "glossary_cups_2_desc": "Mutuality: an exchange of glances/gestures, the recognition of 'we are truly meeting.' In a partnership, this is a clear confirmation of feelings and the creation of a space where it's safe for both to be honest about their 'yes.'",
+    "glossary_cups_3_desc": "Joy and community: a supportive environment, friendly warmth around the couple. In a relationship, it's helpful to build a circle where your connection is respected and to celebrate small victories with those who support you.",
+    "glossary_cups_4_desc": "Satiety and inner stagnation: the search for the genuine taste of a feeling that has gone quiet. In a partnership, this is an invitation to have an honest conversation about boredom and needs, and to find new forms of attention and shared vitality.",
+    "glossary_cups_5_desc": "The sadness of loss: acknowledging the pain you want to avoid; honoring what was important. In a relationship, this is about processing disappointment and forgiving—yourself and the other—to give a chance for new intimacy.",
+    "glossary_cups_6_desc": "Nostalgia and the tenderness of memory: the past colors the present view—cherish the reality of the now. In a partnership, this is about remembering the good but not destructively comparing; creating new warm memories now.",
+    "glossary_cups_7_desc": "Fantasies and a choice of images: seeing where a dream replaces real contact. In a relationship, it's important to distinguish between idealization and a living person, to adjust expectations, and to talk about what is realistically possible.",
+    "glossary_cups_8_desc": "A move towards depth: distance for the sake of meaning; to hear what's truly missing. In a partnership, this is a mature step from automatism to authenticity—a pause to return with an honest 'I feel so good with you.'",
+    "glossary_cups_9_desc": "Fulfillment and personal joy: 'I feel good on my own' as a foundation for intimacy. In a relationship, this is the ability to bring your own fullness into the partnership, without demanding that your partner be the only source of happiness.",
+    "glossary_cups_10_desc": "Harmony and the warmth of home: a sense of fullness when the connection is supported by shared values. In a partnership, this is about the stable joy of 'we': shared daily life, emotional security, and quiet gratitude for one another.",
+    "glossary_cups_page_desc": "Shy sensitivity: a small message from the heart that you want to cherish. In a relationship, these are the first confessions and vulnerable steps—speaking gently, without mocking the trepidation and shyness.",
+    "glossary_cups_knight_desc": "Romantic impulse: ideals of beauty/tenderness that nourish the encounter. In a partnership, this is about courtship and gestures of attention that make everyday life poetic, if they are supported by genuine care.",
+    "glossary_cups_queen_desc": "Empathy and a container for feelings: a space where it's safe to be alive. In a relationship, this is deep listening, tact, and the ability to hold emotions without dissolving into them.",
+    "glossary_cups_king_desc": "Emotional maturity: stability that doesn't extinguish the depth of feeling. In a partnership, this is a wise tone—to feel, to acknowledge, to regulate, and to direct feelings to support intimacy.",
+
+    "glossary_swords_ace_desc": "Clear thought: an honest sentence that liberates; the word as a light. In a relationship, this is a direct clarification of unspoken things and the courage to name the core issue while maintaining a respectful tone.",
+    "glossary_swords_2_desc": "A dilemma and a pause of the mind: allowing time to bring clarity without the violence of decisions. In a partnership, this is about taking a timeout to gather facts and feelings in order to make a decision without rushing and destroying trust.",
+    "glossary_swords_3_desc": "Pain from words: a crack of truth that is important to acknowledge and protect. In a relationship, this is about a wound caused by words or silence; it requires empathy, responsibility, and careful restoration.",
+    "glossary_swords_4_desc": "Rest for the mind: silence as medicine, recovery after tension. In a partnership, this is a mutually agreed-upon quiet time and care for the nervous system, to return to the conversation more calmly and gently.",
+    "glossary_swords_5_desc": "A game of wits and power: winning at all costs hurts the connection—it's important to notice this. In a relationship, it's better to maintain the connection than to prove you're right; change the mode from combat to dialogue.",
+    "glossary_swords_6_desc": "Transition: a gentle move from tension to calmer waters. In a partnership, this is a shared journey towards peace—changing the style of communication, the environment, or the routine to make it easier for both.",
+    "glossary_swords_7_desc": "A detour and secrecy: where I'm avoiding directness—and why. In a relationship, this is an invitation to honesty and to discussing fears, so that cunning doesn't destroy trust.",
+    "glossary_swords_8_desc": "Constriction by beliefs: fears in the mind are stronger than reality. In a partnership, this is about seeing where patterns and anxious thoughts are constricting you, and asking for support to untangle the knots together.",
+    "glossary_swords_9_desc": "Night anxiety: thoughts that spiral; the body needs light and support. In a relationship, this is a moment to admit vulnerability and agree on calming rituals, so the mind isn't left alone with its nightmares.",
+    "glossary_swords_10_desc": "Harsh clarity: a point of no return, after which a different, honest field begins. In a partnership, this is the end of a destructive way of communicating/expecting; it's painful, but it frees the way for a new format or an honest parting.",
+    "glossary_swords_page_desc": "An honest question: learning to speak directly and gently at the same time. In a relationship, this is curiosity without attack—clarifying and re-asking, striving for understanding, not victory.",
+    "glossary_swords_knight_desc": "Sharpness and a storm of arguments: the energy of clarification that needs to be dosed. In a partnership, it's important to slow down and check your tone, so that the pursuit of truth doesn't become a wound.",
+    "glossary_swords_queen_desc": "Boundaries and precision: clear speech where feelings are not devalued. In a relationship, this is the ability to formulate honestly and warmly, setting the rules for dialogue and protecting mutual respect.",
+    "glossary_swords_king_desc": "Principle and structure of conversation: rules that protect mutuality. In a partnership, this is about agreeing on how we argue, how we make decisions, and how we recover after conflicts.",
+
+    "glossary_pentacles_ace_desc": "The seed of reality: a small, tangible gesture of care from which trust grows. In a relationship, this is about concrete actions—time, help, attention—through which feelings become palpable and reliable.",
+    "glossary_pentacles_2_desc": "Balance of daily life and pace: juggling responsibilities without losing playfulness and warmth. In a partnership, this is about flexibility and a sense of humor in daily life: agreeing on who does what so that neither person burns out.",
+    "glossary_pentacles_3_desc": "Collaboration: doing things together, learning to rely on each other's contributions. In a relationship, this is about shared projects and honest feedback—we are a team that builds something together, respecting each person's competence.",
+    "glossary_pentacles_4_desc": "Holding on and contraction: the fear of loss prevents movement—see this gently. In a partnership, this is a conversation about control and hoarding: where we close ourselves off, we should add trust and exchange.",
+    "glossary_pentacles_5_desc": "Deficit and coldness: acknowledging need and the risk of isolation, asking for support. In a relationship, it's important not to take pride in being alone in difficulty, but to reach out to the other—it's warmer and safer together.",
+    "glossary_pentacles_6_desc": "Exchange and a gift: giving and receiving without humiliation, seeking a balance of resources. In a partnership, this is about learning to ask and to give thanks, not measuring 'who gives more,' but supporting a circulation of care.",
+    "glossary_pentacles_7_desc": "Patience and growth: slow changes, checking the course and expectations. In a relationship, this is a period of mindful care for the garden—fewer sudden movements, more regularity and gentle check-ins on 'where are we going.'",
+    "glossary_pentacles_8_desc": "Practice and attention to detail: small rituals that build reliability. In a partnership, this is about mindful daily life—neatness, timely promises, clarity with finances—this is how trust is strengthened every day.",
+    "glossary_pentacles_9_desc": "Self-sufficiency and value: enjoying your own garden without dissolving. In a relationship, this is about healthy autonomy: bringing your own fullness into the partnership and respecting the other's personal space.",
+    "glossary_pentacles_10_desc": "Home and stability: family roots, a structure that keeps the warmth for a long time. In a partnership, this is a shared 'nest,' supported by families/communities and strategies through which love endures for years.",
+    "glossary_pentacles_page_desc": "A student of the body/daily life: I'm trying to speak with care and actions. In a relationship, this is the first step into responsibility: learning reliability, asking questions, and growing through the practice of small, kind deeds.",
+    "glossary_pentacles_knight_desc": "Reliable pace: consistency and predictability—as a language of love. In a partnership, this is faithfulness to the rhythm: arriving on time, fulfilling promises, and building a sense of security that calms the heart.",
+    "glossary_pentacles_queen_desc": "Caring for the space: creating warmth where feelings can take root. In a relationship, this is generosity and physical nurture—feeding, warming, arranging a home so that love can rest and flourish.",
+    "glossary_pentacles_king_desc": "Responsibility for the foundation: being a pillar without turning into a controller. In a partnership, this is mature leadership—providing stability and resources while also leaving the partner with freedom and respect for their choices."
+  },
+  
+  "Daily": {
+    "seo_h1": "Daily Card — Focus Mode",
+    "title": "Card of the Day: Clarity and One Step Forward",
+    "intro": "Focus on your selected card: symbols, 1% action, a ritual of attention, and progress tracking.",
+    "cta_go_to_reading": "Go to Reading",
+    "cta_focus_ritual": "30-Sec Focus Ritual",
+    "cta_back_home": "Go Home for a Card",
+    "empty_text": "No card has been selected today. Please choose one on the main page.",
+    "empty_cta": "Go to Main Page",
+
+    "spotlight": {
+      "reversed": "reversed",
+      "mode": {
+        "light": "Light",
+        "shadow": "Shadow"
+      },
+      "light_copy": "The best side the card suggests for today. Strengthen this aspect with a practical step below.",
+      "shadow_copy": "Where you're losing energy. Transform the shadow into a resource with a small, concrete action.",
+      "tip": "Hover over the dots on the card for symbol insights.",
+      
+      "symbols": {
+        "the_fool": {
+          "symbol1": "Backpack — lightness and lack of attachments",
+          "symbol2": "Dog — instinct and warning",
+          "symbol3": "Cliff — risk and a step into the unknown"
+        },
+        "the_magician": {
+          "symbol1": "Wand — willpower and focus",
+          "symbol2": "Table with tools — resources at hand",
+          "symbol3": "Infinity sign — potential and mastery"
+        },
+        "the_high_priestess": {
+          "symbol1": "Scroll — secret knowledge",
+          "symbol2": "Veil — what is hidden and inaccessible",
+          "symbol3": "Moon at feet — intuition and cycles"
+        },
+        "the_empress": {
+          "symbol1": "Field — fertility and abundance",
+          "symbol2": "Throne — confidence and stability",
+          "symbol3": "Crown of stars — connection to nature"
+        },
+        "the_emperor": {
+          "symbol1": "Stone throne — order and authority",
+          "symbol2": "Scepter — control and guidance",
+          "symbol3": "Mountains — steadfastness and discipline"
+        },
+        "the_hierophant": {
+          "symbol1": "Priest — spiritual guidance",
+          "symbol2": "Keys at feet — access to secrets",
+          "symbol3": "Disciples — passing on tradition"
+        },
+        "the_lovers": {
+          "symbol1": "Man and woman — union and choice",
+          "symbol2": "Angel — higher blessing",
+          "symbol3": "Trees behind — trial and knowledge"
+        },
+        "the_chariot": {
+          "symbol1": "Chariot — moving forward",
+          "symbol2": "Sphinxes — balance of opposites",
+          "symbol3": "Starry canopy — victory of the spirit"
+        },
+        "strength": {
+          "symbol1": "Woman — gentle strength",
+          "symbol2": "Lion — instincts and passion",
+          "symbol3": "White robe — purity of intention"
+        },
+        "the_hermit": {
+          "symbol1": "Lantern — a search for truth",
+          "symbol2": "Staff — support and experience",
+          "symbol3": "Mountain — detachment and the inner path"
+        },
+        "wheel_of_fortune": {
+          "symbol1": "Wheel — cycles of fate",
+          "symbol2": "Sphinx on top — knowledge and mystery",
+          "symbol3": "Creatures at corners — laws of the world"
+        },
+        "justice": {
+          "symbol1": "Scales — balance and fairness",
+          "symbol2": "Sword — truth and decision",
+          "symbol3": "Red robe — the power of law"
+        },
+        "the_hanged_man": {
+          "symbol1": "Inverted figure — a new perspective",
+          "symbol2": "Tied feet — sacrifice and a pause",
+          "symbol3": "Aura of light — spiritual awakening"
+        },
+        "death": {
+          "symbol1": "Skeleton — inevitability of change",
+          "symbol2": "River — the flow of life",
+          "symbol3": "Sun on the horizon — a new beginning"
+        },
+        "temperance": {
+          "symbol1": "Angel — harmony and balance",
+          "symbol2": "Cups with water — merging opposites",
+          "symbol3": "Path to the sun — moderation and purpose"
+        },
+        "the_devil": {
+          "symbol1": "Horns — temptation and dependency",
+          "symbol2": "Chains — limitation and attachment",
+          "symbol3": "Fire — passion and destruction"
+        },
+        "the_tower": {
+          "symbol1": "Tower — destruction of the old",
+          "symbol2": "Lightning — sudden change",
+          "symbol3": "Falling figures — liberation from illusions"
+        },
+        "the_star": {
+          "symbol1": "Woman with pitchers — renewal",
+          "symbol2": "Star — hope and inspiration",
+          "symbol3": "Water and earth — balance of elements"
+        },
+        "the_moon": {
+          "symbol1": "Moon — mystery and illusion",
+          "symbol2": "Dogs — inner instincts",
+          "symbol3": "Crab — movement from the depths"
+        },
+        "the_sun": {
+          "symbol1": "Sun — joy and energy",
+          "symbol2": "Children — innocence and purity",
+          "symbol3": "Sunflowers — growth and abundance"
+        },
+        "judgement": {
+          "symbol1": "Angel with trumpet — a call to awakening",
+          "symbol2": "Rising figures — a new phase",
+          "symbol3": "Light — truth and resolution"
+        },
+        "the_world": {
+          "symbol1": "Figure in a wreath — completion of a cycle",
+          "symbol2": "Four creatures — harmony of elements",
+          "symbol3": "Wreath — wholeness and success"
+        },
+
+        "ace_of_cups": {
+          "symbol1": "Chalice — source of emotions",
+          "symbol2": "Water — flow of feelings",
+          "symbol3": "Dove — spiritual inspiration"
+        },
+        "two_of_cups": {
+          "symbol1": "Two cups — union and partnership",
+          "symbol2": "Figures — love and mutuality",
+          "symbol3": "Caduceus — balance in relationships"
+        },
+        "three_of_cups": {
+          "symbol1": "Three women — joy and communion",
+          "symbol2": "Cups raised — celebration",
+          "symbol3": "Fruit — abundance"
+        },
+        "four_of_cups": {
+          "symbol1": "Figure under a tree — dissatisfaction",
+          "symbol2": "Hand with a cup — a new opportunity",
+          "symbol3": "Three cups nearby — weariness of routine"
+        },
+        "five_of_cups": {
+          "symbol1": "Spilled cups — regret",
+          "symbol2": "Two standing cups — chance and hope",
+          "symbol3": "Black cloak — sadness"
+        },
+        "six_of_cups": {
+          "symbol1": "Children with cups — memories",
+          "symbol2": "Flowers — joy of the past",
+          "symbol3": "House — roots and family"
+        },
+        "seven_of_cups": {
+          "symbol1": "Seven cups — a multitude of choices",
+          "symbol2": "Images in cups — illusions and desires",
+          "symbol3": "Figure — confusion"
+        },
+        "eight_of_cups": {
+          "symbol1": "Figure walking away — a search for something new",
+          "symbol2": "Cups left behind — letting go of the past",
+          "symbol3": "Moon — an unclear path"
+        },
+        "nine_of_cups": {
+          "symbol1": "Figure with cups — satisfaction",
+          "symbol2": "Cups in a row — abundance",
+          "symbol3": "Smile — joy and confidence"
+        },
+        "ten_of_cups": {
+          "symbol1": "Joyful family — happiness",
+          "symbol2": "Rainbow — fulfillment of wishes",
+          "symbol3": "House — stability"
+        },
+        "page_of_cups": {
+          "symbol1": "Youth with a cup — imagination",
+          "symbol2": "Fish in a cup — unexpected ideas",
+          "symbol3": "Water — feelings"
+        },
+        "knight_of_cups": {
+          "symbol1": "Knight on a horse — romance",
+          "symbol2": "Cup in hand — an offer",
+          "symbol3": "River — emotions in motion"
+        },
+        "queen_of_cups": {
+          "symbol1": "Queen with a cup — sensitivity",
+          "symbol2": "Sea — depth of emotions",
+          "symbol3": "Throne — stability of feelings"
+        },
+        "king_of_cups": {
+          "symbol1": "King with a cup — emotional maturity",
+          "symbol2": "Sea behind him — wisdom",
+          "symbol3": "Throne — control over feelings"
+        },
+
+        "ace_of_pentacles": {
+          "symbol1": "Hand with a coin — opportunity",
+          "symbol2": "Garden — growth and a beginning",
+          "symbol3": "Archway — a path to prosperity"
+        },
+        "two_of_pentacles": {
+          "symbol1": "Figure with two pentacles — balance",
+          "symbol2": "Infinity sign — continuity",
+          "symbol3": "Ships — change"
+        },
+        "three_of_pentacles": {
+          "symbol1": "Three figures — collaboration",
+          "symbol2": "Architecture — the result of labor",
+          "symbol3": "Plan — mastery"
+        },
+        "four_of_pentacles": {
+          "symbol1": "Figure with coins — greed",
+          "symbol2": "Coin on head — control",
+          "symbol3": "Closed posture — fear of loss"
+        },
+        "five_of_pentacles": {
+          "symbol1": "Figures in the snow — hardship",
+          "symbol2": "Church window — help is near",
+          "symbol3": "Crutches — weakness"
+        },
+        "six_of_pentacles": {
+          "symbol1": "Merchant — generosity",
+          "symbol2": "Scales — fairness",
+          "symbol3": "Poor people — helping those in need"
+        },
+        "seven_of_pentacles": {
+          "symbol1": "Farmer — waiting for the harvest",
+          "symbol2": "Pentacles on a vine — the result of labor",
+          "symbol3": "Waiting — patience"
+        },
+        "eight_of_pentacles": {
+          "symbol1": "Artisan — work on details",
+          "symbol2": "Pentacles on the wall — results",
+          "symbol3": "Tools — learning"
+        },
+        "nine_of_pentacles": {
+          "symbol1": "Woman in a garden — independence",
+          "symbol2": "Grapes — abundance",
+          "symbol3": "Bird — spirituality"
+        },
+        "ten_of_pentacles": {
+          "symbol1": "Family — legacy",
+          "symbol2": "Archway — traditions",
+          "symbol3": "Dogs — loyalty"
+        },
+        "page_of_pentacles": {
+          "symbol1": "Youth with a coin — aspiration",
+          "symbol2": "Earth — practicality",
+          "symbol3": "Sky — dreams"
+        },
+        "knight_of_pentacles": {
+          "symbol1": "Knight on a horse — persistence",
+          "symbol2": "Field — labor",
+          "symbol3": "Coin — a tangible result"
+        },
+        "queen_of_pentacles": {
+          "symbol1": "Queen with a coin — care",
+          "symbol2": "Nature — fertility",
+          "symbol3": "Throne — security"
+        },
+        "king_of_pentacles": {
+          "symbol1": "King with a coin — prosperity",
+          "symbol2": "Castle — wealth",
+          "symbol3": "Grapes — flourishing"
+        },
+
+        "ace_of_swords": {
+          "symbol1": "Sword — truth",
+          "symbol2": "Crown — victory",
+          "symbol3": "Mountains — clarity"
+        },
+        "two_of_swords": {
+          "symbol1": "Woman with swords — a choice",
+          "symbol2": "Blindfold — uncertainty",
+          "symbol3": "Sea — emotions"
+        },
+        "three_of_swords": {
+          "symbol1": "Three swords — pain",
+          "symbol2": "Heart — loss",
+          "symbol3": "Clouds — sorrow"
+        },
+        "four_of_swords": {
+          "symbol1": "Figure on a tomb — rest",
+          "symbol2": "Swords on the wall — past trials",
+          "symbol3": "Church — prayer"
+        },
+        "five_of_swords": {
+          "symbol1": "Figure with swords — a victory at a cost",
+          "symbol2": "Others walking away — conflict",
+          "symbol3": "Sea — detachment"
+        },
+        "six_of_swords": {
+          "symbol1": "Boat — transition",
+          "symbol2": "Figures in the boat — support",
+          "symbol3": "Swords in the boat — experience"
+        },
+        "seven_of_swords": {
+          "symbol1": "Figure with swords — cunning",
+          "symbol2": "Left-behind swords — unspoken things",
+          "symbol3": "Camp — deception"
+        },
+        "eight_of_swords": {
+          "symbol1": "Blindfolded woman — limitation",
+          "symbol2": "Swords around her — fear",
+          "symbol3": "Water at feet — emotions"
+        },
+        "nine_of_swords": {
+          "symbol1": "Woman in bed — anxiety",
+          "symbol2": "Hands on face — suffering",
+          "symbol3": "Swords on the wall — pressure"
+        },
+        "ten_of_swords": {
+          "symbol1": "Figure with swords in back — an end",
+          "symbol2": "Dark sky — despair",
+          "symbol3": "Sun on the horizon — hope"
+        },
+        "page_of_swords": {
+          "symbol1": "Youth with a sword — curiosity",
+          "symbol2": "Wind — change",
+          "symbol3": "Grass — growth"
+        },
+        "knight_of_swords": {
+          "symbol1": "Knight on a horse — determination",
+          "symbol2": "Sword pointed forward — forcefulness",
+          "symbol3": "Clouds — a storm"
+        },
+        "queen_of_swords": {
+          "symbol1": "Queen with a sword — honesty",
+          "symbol2": "Hand forward — openness",
+          "symbol3": "Clouds — objectivity"
+        },
+        "king_of_swords": {
+          "symbol1": "King with a sword — reason",
+          "symbol2": "Throne — the power of the mind",
+          "symbol3": "Blue sky — justice"
+        },
+
+        "ace_of_wands": {
+          "symbol1": "Hand with a wand — a beginning",
+          "symbol2": "Leaves — growth",
+          "symbol3": "Landscape — perspective"
+        },
+        "two_of_wands": {
+          "symbol1": "Figure with a globe — plans",
+          "symbol2": "Wands — opportunities",
+          "symbol3": "Castle — stability"
+        },
+        "three_of_wands": {
+          "symbol1": "Figure looking into the distance — anticipation",
+          "symbol2": "Wands — support",
+          "symbol3": "Ships — prospects"
+        },
+        "four_of_wands": {
+          "symbol1": "Archway with flowers — celebration",
+          "symbol2": "Figures — joy",
+          "symbol3": "House — stability"
+        },
+        "five_of_wands": {
+          "symbol1": "Figures with wands — struggle",
+          "symbol2": "Wands up — competition",
+          "symbol3": "Chaos — conflict"
+        },
+        "six_of_wands": {
+          "symbol1": "Knight with a wreath — victory",
+          "symbol2": "Crowd — recognition",
+          "symbol3": "Wand with a wreath — success"
+        },
+        "seven_of_wands": {
+          "symbol1": "Figure on a hill — defense",
+          "symbol2": "Enemy wands — pressure",
+          "symbol3": "Stance — resilience"
+        },
+        "eight_of_wands": {
+          "symbol1": "Flying wands — speed",
+          "symbol2": "Blue sky — clarity",
+          "symbol3": "Distant goal — movement"
+        },
+        "nine_of_wands": {
+          "symbol1": "Figure with a wand — caution",
+          "symbol2": "Head bandage — experience",
+          "symbol3": "Wands behind — defense"
+        },
+        "ten_of_wands": {
+          "symbol1": "Figure with wands — a burden",
+          "symbol2": "Road — effort",
+          "symbol3": "House ahead — a result"
+        },
+        "page_of_wands": {
+          "symbol1": "Youth with a wand — inspiration",
+          "symbol2": "Desert — new horizons",
+          "symbol3": "Clothes with patterns — energy"
+        },
+        "knight_of_wands": {
+          "symbol1": "Knight on a horse — swiftness",
+          "symbol2": "Wand — action",
+          "symbol3": "Fire — passion"
+        },
+        "queen_of_wands": {
+          "symbol1": "Queen with a wand — confidence",
+          "symbol2": "Sunflower — joy",
+          "symbol3": "Cat — intuition"
+        },
+        "king_of_wands": {
+          "symbol1": "King with a wand — leadership",
+          "symbol2": "Salamander — transformation",
+          "symbol3": "Throne — authority"
+        }
+      },
+      "close_symbol": "Close"
+    },
+
+    "compass": {
+      "title": "Daily Compass",
+      "caption": "Complete these four vectors and your day is put together.",
+      "tabs": {
+        "mind": "Mind",
+        "heart": "Heart",
+        "hands": "Hands",
+        "body": "Body"
+      },
+      "mind": {
+        "1": "Formulate the main question of the day in one sentence",
+        "2": "Choose one criterion for making a decision"
+      },
+      "heart": {
+        "1": "Say a kind phrase to one person",
+        "2": "State a gentle boundary"
+      },
+      "hands": {
+        "1": "Take a 1% step toward your goal",
+        "2": "Remove one micro-blocker"
+      },
+      "body": {
+        "1": "A glass of water + posture for 60 seconds",
+        "2": "3 breathing cycles"
+      }
+    },
+
+    "actions": {
+      "title": "1% Action",
+      "caption": "One minimal step related to the card's theme—do it today.",
+      "generate": "Generate",
+      "regenerate": "Another option",
+      "mark_done": "Mark as done",
+      "done": "Done",
+      "ideas": {
+        "major": [
+          "Formulate one bold 'why' for today",
+          "Dedicate 20 minutes to the main topic of the day",
+          "Say 'no' to one extra task"
+        ],
+        "wands": [
+          "Create a first draft without edits",
+          "Formulate a result in 1 sentence",
+          "Give a task a hard 15-minute timer"
+        ],
+        "cups": [
+          "Write one kind message",
+          "Ask 'how are you?' to an important person",
+          "Name one emotion in words"
+        ],
+        "swords": [
+          "Break down a task into 3 steps",
+          "Mitigate one risk—clarify a fact",
+          "Make a small decision in writing"
+        ],
+        "pentacles": [
+          "Tidy up one area in your environment",
+          "Record a budget/deadline in a note",
+          "Create a repeatable checklist with 5 items"
+        ],
+        "unknown": [
+          "Choose one 'most important' thing for 20 minutes",
+          "Turn off one distracting noise source",
+          "Set a reminder for the evening: 'What went well?'"
+        ]
+      }
+    },
+
+    "ritual": {
+      "hintSwipe": "Swipe",
+      "title": "Focus Ritual (30–60 sec)",
+      "caption": "3 breathing cycles: inhale 4 — pause 2 — exhale 6. Hold the intention in your mind.",
+      "intent": {
+        "label": "Intention:",
+        "calm": "Calmness",
+        "focus": "Focus",
+        "warmth": "Warmth",
+        "bravery": "Bravery",
+        "flow": "Flow",
+        "calm_short": "Calm.",
+        "focus_short": "Focus",
+        "warmth_short": "Warmth",
+        "bravery_short": "Brave.",
+        "flow_short": "Flow"
+      },
+      "start": "Start (30 sec)",
+      "start60": "Start (60 sec)",
+      "stop": "Stop"
+    },
+
+    "constellation": {
+      "title": "Weekly Constellation",
+      "caption": "Recurring themes are connected by lines—this is your overarching insight."
+    },
+
+    "journal": {
+      "title": "Journal",
+      "caption": "End the day with one phrase—that's enough.",
+      "placeholder": "Today I am…",
+      "save": "Save",
+      "clear": "Clear",
+      "saved": "Saved",
+      "complete": "Complete",
+      "tags": {
+        "calm": "Calm",
+        "focused": "Focused",
+        "warm": "Warm",
+        "brave": "Brave",
+        "flow": "In flow"
+      },
+      "congrats": {
+        "title": "You did great!",
+        "message": "Your achievements are {mood}. {text}",
+        "mood_fallback": "in a good state",
+        "text_fallback": "Today is a small step, tomorrow is a result.",
+        "tags_separator": ", "
+      }
+    },
+
+    "poster": {
+      "title": "Affirmation Poster",
+      "caption": "Save the phrase of the day—edit the text and choose a poster style.",
+      "placeholder": "Your phrase for the day…",
+      "helper": "Up to 160 characters. Text can be changed.",
+      "random": "Random phrase",
+      "download": "Save Poster",
+      "footer": "souldestiny.app — focus mode",
+      "reversed": "reversed",
+      "theme_label": "Poster Style",
+      "ornament_label": "Ornament",
+      "intensity_label": "Intensity",
+      "themes": {
+        "auto": "Auto (by suit)",
+        "aurora": "Aurora",
+        "sunrise": "Sunrise",
+        "midnight": "Midnight",
+        "terra": "Terra"
+      },
+      "ornaments": {
+        "none": "No Ornament",
+        "frame": "Frame (foil)",
+        "stars": "Stardust",
+        "filigree": "Filigree Corners",
+        "kintsugi": "Kintsugi"
+      },
+      "phrases": {
+        "major": { "0": "Today I choose the main meaning and one step towards it.", "1": "I stay focused on what's important, letting go of the secondary.", "2": "I trust the path and act calmly." },
+        "wands": { "0": "I am taking the first step—small, but decisive.", "1": "Energy follows attention—I choose one goal.", "2": "I act boldly and take gentle care of myself." },
+        "cups": { "0": "I speak kind words and listen to feelings.", "1": "My heart is calm—I breathe and notice life.", "2": "I choose care and clear kindness." },
+        "swords": { "0": "I find clarity and make a small decision.", "1": "Words are precise, thoughts are calm—I cut out the unnecessary.", "2": "I ask for a fact and clarify a step." },
+        "pentacles": { "0": "I create one area of order—and become freer.", "1": "My progress is in small, repeatable steps.", "2": "I set a deadline and take one concrete step." },
+        "unknown": { "0": "I choose the most important thing for today.", "1": "I turn off one distracting noise.", "2": "I acknowledge what went well—even if it's small." }
+      }
+    },
+
+    "faq": {
+      "title": "FAQ",
+      "q1": "How is the card of the day chosen?",
+      "a1": "On the main page, it's a random draw. We don't draw anything here: we work with the card you've already chosen.",
+      "q2": "Is a reversed card a bad thing?",
+      "a2": "No. It's a 'work vector.' We illuminate the shadow and turn it into a 1% action.",
+      "q3": "Where is the history saved?",
+      "a3": "In your browser (LocalStorage). You can clear it in your browser settings.",
+      "q4": "How do I ask clarifying questions?",
+      "a4": "On the main page—through AI-powered questions. On this page—through the focus mode, journal, ritual, and micro-actions."
+    }
+  },
+
+  "Nav": {
+    "menu": "Menu",
+    "openPalette": "Open Command Palette",
+    "searchCommands": "Search…",
+    "typeToSearch": "Type a command or section",
+    "noResults": "No results found",
+    "items": {
+      "home": "Home",
+      "daily": "Daily Card",
+      "love": "Love",
+      "career": "Career",
+      "ai": "Artificial Intelligence",
+      "faq": "FAQ"
+    }
+  }
+}
+
+
+
+
