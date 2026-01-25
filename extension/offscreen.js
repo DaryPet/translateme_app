@@ -2,6 +2,13 @@
 // DEEPGRAM WEBSOCKET LIVE STREAMING VERSION
 // ============================================================
 console.log('=== OFFSCREEN.JS STARTED - WEBSOCKET LIVE MODE ===');
+console.log('🔍 Opik check:', {
+  secretsLoaded: !!window.SECRETS,
+  opikConfigExists: !!window.SECRETS?.OPIK,
+  hasKey: window.SECRETS?.OPIK?.apiKey ? 'YES' : 'NO',
+  enabled: window.SECRETS?.OPIK?.enabled ?? 'no prop',
+  trackerLoaded: !!window.opikTracker
+});
 
 // API ключи загружаются из secrets.js (добавлен в .gitignore)
 const DEEPGRAM_KEY = window.SECRETS?.DEEPGRAM_API_KEY || '';
@@ -16,6 +23,10 @@ if (!DEEPGRAM_KEY || !OPENAI_KEY) {
 // Проверяем конфиги
 console.log('📋 LANGUAGE_CONFIG loaded:', !!window.LANGUAGE_CONFIG);
 console.log('🎤 VOICE_CONFIG loaded:', !!window.VOICE_CONFIG);
+console.log('📊 OPIK tracker loaded:', !!window.opikTracker);
+if (!window.opikTracker) {
+  console.warn('⚠️ Opik tracker not loaded. Check offscreen.html script order.');
+}
 
 let audioStream = null,
   audioContext = null;
@@ -146,6 +157,15 @@ function connectDeepgramWebSocket(lang) {
         // Обрабатываем только финальные результаты с текстом
         if (transcript && transcript.trim().length > 2 && isFinal) {
           console.log('🎯 Final transcript, sending to translate:', transcript);
+          
+          // 📊 Opik: логируем STT
+          window.opikTracker?.logSTT(transcript, {
+            provider: 'deepgram',
+            language: lang,
+            confidence,
+            duration: data.duration
+          });
+          
           translateAndVoice(transcript);
         }
       } catch (e) {
@@ -337,6 +357,13 @@ async function processWhisperSTT(blob) {
     if (text && text.length > 2 && text !== lastWhisperText) {
       lastWhisperText = text;
       console.log('🎙️ Whisper transcript:', text);
+      
+      // 📊 Opik: логируем Whisper STT
+      window.opikTracker?.logSTT(text, {
+        provider: 'whisper',
+        language: lang
+      });
+      
       translateAndVoice(text);
     }
   } catch (e) {
@@ -350,16 +377,16 @@ async function processWhisperSTT(blob) {
 async function translateAndVoice(text) {
   if (!isRecording || !text?.trim()) return;
 
+  const startTime = new Date().toISOString();
+  
   try {
     const targetLang = activeSettings?.targetLanguage || 'ru';
+    const sourceLang = activeSettings?.sourceLanguage || 'auto';
     const style = (activeSettings?.translationStyle || 'DEFAULT').toUpperCase();
 
     console.log(`🌐 Translating to ${targetLang}:`, text);
 
     const prompts = {
-      // DEFAULT: `Professional interpreter. Translate to ${targetLang}. Natural spoken style. ONLY translation.`,
-      // KABBALAH: `Translate to ${targetLang}. Use Kabbalah terms (Light, Vessel, Screen). ONLY translation.`,
-      // KIDS: `Translate to ${targetLang} as a fairy tale. Simple words. ONLY translation.`
       DEFAULT: `Translate to ${targetLang} accurately and naturally. Keep original meaning.`,
       KIDS: `Translate to ${targetLang} for a 5-year-old child. Use simple words, fairy tale style. Make it magical and fun!`,
       KABBALAH: `Translate to ${targetLang} using Kabbalah concepts.  Use Kabbalah terms (Light, Vessel, Screen). ONLY translation.`,
@@ -395,6 +422,15 @@ async function translateAndVoice(text) {
 
     console.log('✅ Translation:', translatedText);
 
+    // 📊 Opik: логируем перевод
+    window.opikTracker?.logTranslation(text, translatedText, {
+      sourceLang,
+      targetLang,
+      style,
+      mode: captureMode,
+      startTime
+    });
+
     // Отправка субтитров
     chrome.runtime
       .sendMessage({
@@ -422,6 +458,8 @@ async function translateAndVoice(text) {
 async function playTTS(text) {
   if (!isRecording || !text?.trim()) return;
 
+  const startTime = new Date().toISOString();
+  
   try {
     const voiceKey = activeSettings?.voiceGender || 'neutral';
     const voice =
@@ -443,6 +481,10 @@ async function playTTS(text) {
     const audioBuffer = await playbackContext.decodeAudioData(buffer);
     speechQueue.push(audioBuffer);
     if (!isPlaying) handleQueue();
+    
+    // 📊 Opik: логируем TTS
+    window.opikTracker?.logTTS(text, { voice, speed: 1.05, startTime });
+    
   } catch (e) {
     console.error('TTS Error:', e);
   }

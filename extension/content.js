@@ -287,11 +287,66 @@
 
 // console.log('🚀 Content script ready - NO-GAPS-MODE');
 
-console.log('🎯 Subtitles script - WITH TOGGLE SUPPORT');
+console.log('🎯 Subtitles script - IFRAME AWARE');
 
 let isTranslating = false;
 let subtitlesContainer = null;
 let currentSettings = null;
+
+// Проверяем находимся ли мы в iframe
+const isInIframe = window !== window.top;
+
+// ==================== FULLSCREEN SUPPORT ====================
+function getFullscreenElement() {
+  return document.fullscreenElement || 
+         document.webkitFullscreenElement || 
+         document.mozFullScreenElement ||
+         document.msFullscreenElement;
+}
+
+function isThisFrameFullscreen() {
+  // Проверяем есть ли fullscreen в ЭТОМ фрейме
+  return !!getFullscreenElement();
+}
+
+// Перемещаем субтитры при изменении fullscreen
+function handleFullscreenChange() {
+  const fsEl = getFullscreenElement();
+  
+  if (isInIframe) {
+    // В iframe: показываем субтитры ТОЛЬКО в fullscreen
+    if (fsEl) {
+      // Входим в fullscreen в iframe - создаём/показываем субтитры
+      if (subtitlesContainer) {
+        fsEl.appendChild(subtitlesContainer);
+        subtitlesContainer.style.position = 'absolute';
+      }
+    } else {
+      // Выходим из fullscreen в iframe - скрываем субтитры
+      hideSubtitles();
+    }
+  } else {
+    // В основном документе: обычная логика
+    if (!subtitlesContainer) return;
+    
+    const currentText = subtitlesContainer.textContent;
+    const wasVisible = subtitlesContainer.style.display === 'block';
+    
+    if (fsEl) {
+      fsEl.appendChild(subtitlesContainer);
+      subtitlesContainer.style.position = 'absolute';
+    } else {
+      document.body.appendChild(subtitlesContainer);
+      subtitlesContainer.style.position = 'fixed';
+    }
+    
+    if (currentText) subtitlesContainer.textContent = currentText;
+    if (wasVisible) subtitlesContainer.style.display = 'block';
+  }
+}
+
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
 // ==================== ОБРАБОТЧИК СООБЩЕНИЙ ====================
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -336,83 +391,103 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
-// ==================== ЛОГИКА "БЕЗ МИГАНИЯ" ====================
+// ==================== ЛОГИКА СУБТИТРОВ ====================
+function shouldShowSubtitles() {
+  if (isInIframe) {
+    // В iframe показываем ТОЛЬКО когда этот iframe в fullscreen
+    return isThisFrameFullscreen();
+  } else {
+    // В основном документе показываем ТОЛЬКО когда НЕТ fullscreen
+    // (если есть fullscreen в iframe - там свои субтитры)
+    return !getFullscreenElement();
+  }
+}
+
 function updateSubtitlesPermanent(text) {
   if (!text || text.trim() === '') return;
   
-  // Проверяем, что субтитры включены
   if (currentSettings?.showSubtitles === false) {
-    console.log('🎯 Subtitles disabled, not showing');
     hideSubtitles();
     return;
   }
 
-  if (!subtitlesContainer) {
+  // Проверяем нужно ли показывать в этом фрейме
+  if (!shouldShowSubtitles()) {
+    hideSubtitles();
+    return;
+  }
+
+  // Проверяем что контейнер существует и в правильном месте
+  const fsEl = getFullscreenElement();
+  const correctParent = fsEl || document.body;
+  
+  if (!subtitlesContainer || !document.contains(subtitlesContainer) || 
+      subtitlesContainer.parentElement !== correctParent) {
     createSubtitlesContainer();
   }
 
-  // Показываем субтитры
-  subtitlesContainer.style.display = 'block';
-  subtitlesContainer.textContent = text.trim();
-  console.log('🎯 Showing subtitles:', text.substring(0, 50) + '...');
+  if (subtitlesContainer) {
+    subtitlesContainer.style.display = 'block';
+    subtitlesContainer.textContent = text.trim();
+  }
 }
 
 function createSubtitlesContainer() {
-  subtitlesContainer = document.getElementById('audio-translator-subtitles-stable');
+  // Не создаём если не должны показывать
+  if (!shouldShowSubtitles()) return;
   
-  if (!subtitlesContainer) {
-    subtitlesContainer = document.createElement('div');
-    subtitlesContainer.id = 'audio-translator-subtitles-stable';
-    subtitlesContainer.style.cssText = `
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.85);
-      color: white;
-      padding: 16px 28px;
-      border-radius: 12px;
-      max-width: 85%;
-      z-index: 2147483647;
-      text-align: center;
-      pointer-events: none;
-      font-family: Arial, sans-serif;
-      font-size: 22px;
-      font-weight: 500;
-      line-height: 1.4;
-      transition: none !important;
-      animation: none !important;
-      display: none; /* По умолчанию скрыт */
-    `;
+  // Удаляем старый если есть
+  const existing = document.getElementById('audio-translator-subtitles-stable');
+  if (existing) existing.remove();
+  
+  subtitlesContainer = document.createElement('div');
+  subtitlesContainer.id = 'audio-translator-subtitles-stable';
+  
+  const fsEl = getFullscreenElement();
+  const isFs = !!fsEl;
+  
+  subtitlesContainer.style.cssText = `
+    position: ${isFs ? 'absolute' : 'fixed'};
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    max-width: 85%;
+    z-index: 2147483647;
+    text-align: center;
+    pointer-events: none;
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.4;
+    display: none;
+  `;
+  
+  // Добавляем в правильное место
+  if (fsEl) {
+    fsEl.appendChild(subtitlesContainer);
+  } else {
     document.body.appendChild(subtitlesContainer);
   }
 }
 
-// Функция скрытия субтитров
 function hideSubtitles() {
-  console.log('🎯 Hiding subtitles');
   if (subtitlesContainer) {
     subtitlesContainer.style.display = 'none';
-    // Очищаем текст чтобы не висели старые слова
     subtitlesContainer.textContent = '';
   }
 }
 
-// Только эта функция может убрать субтитры с экрана
 function hardRemoveSubtitles() {
-  console.log('🎯 Removing subtitles');
   if (subtitlesContainer) {
-    subtitlesContainer.style.display = 'none';
     subtitlesContainer.remove();
     subtitlesContainer = null;
   }
 }
 
-// Очистка при закрытии вкладки
 window.addEventListener('beforeunload', () => {
-  if (isTranslating) {
-    hardRemoveSubtitles();
-  }
+  if (isTranslating) hardRemoveSubtitles();
 });
-
-console.log('🚀 Content script ready - WITH TOGGLE SUPPORT');
