@@ -40,6 +40,10 @@ let speechQueue = [],
   isPlaying = false,
   history = [];
 
+// Накопление транскрипта для Summary
+let transcriptHistory = [];
+let sessionStartTime = null;
+
 // WebSocket для Deepgram
 let deepgramSocket = null;
 let mediaRecorder = null;
@@ -107,6 +111,44 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     activeSettings = { ...activeSettings, ...request.settings };
     updateVolume();
     sendResponse({ success: true });
+  }
+
+  // === TRANSCRIPT HISTORY ===
+  if (request.type === 'GET_TRANSCRIPT') {
+    const fullText = transcriptHistory.map(t => t.translated).join('\n\n');
+    const duration = sessionStartTime ? Math.round((Date.now() - sessionStartTime) / 60000) : 0;
+    sendResponse({ 
+      success: true, 
+      transcript: fullText,
+      entries: transcriptHistory.length,
+      durationMinutes: duration,
+      targetLanguage: activeSettings?.targetLanguage || 'ru'
+    });
+    return true;
+  }
+
+  if (request.type === 'CLEAR_TRANSCRIPT') {
+    transcriptHistory = [];
+    sessionStartTime = null;
+    console.log('🗑️ Transcript history cleared');
+    sendResponse({ success: true });
+    return true;
+  }
+
+  if (request.type === 'GENERATE_SUMMARY') {
+    console.log('📝 Generating summary...');
+    generateSummary(request.text, request.targetLang)
+      .then(summary => sendResponse({ success: true, summary }))
+      .catch(err => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
+
+  if (request.type === 'CREATE_PDF') {
+    console.log('📄 Creating summary file...');
+    createPDF(request.summary, request.title, request.duration)
+      .then(dataUrl => sendResponse({ success: true, pdfDataUrl: dataUrl }))
+      .catch(err => sendResponse({ success: false, error: err.message }));
+    return true;
   }
 
   return true;
@@ -431,6 +473,14 @@ async function translateAndVoice(text) {
       startTime
     });
 
+    // 📜 Сохраняем в историю для Summary
+    if (!sessionStartTime) sessionStartTime = Date.now();
+    transcriptHistory.push({
+      original: text,
+      translated: translatedText,
+      timestamp: Date.now()
+    });
+
     // Отправка субтитров
     chrome.runtime
       .sendMessage({
@@ -524,6 +574,205 @@ function updateVolume() {
     activeSettings?.muteOriginal,
   );
   gainNode.gain.setTargetAtTime(vol, audioContext.currentTime, 0.1);
+}
+
+// ============================================================
+// PDF GENERATION (через Canvas для поддержки Unicode)
+// ============================================================
+function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
+  return new Promise((resolve) => {
+    const { jsPDF } = window.jspdf;
+    
+    // Создаём canvas для рендеринга текста
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Размеры страницы A4 в пикселях (72 DPI)
+    const pageWidth = 595;
+    const pageHeight = 842;
+    const margin = 50;
+    const contentWidth = pageWidth - margin * 2;
+    const lineHeight = 18;
+    const fontSize = 12;
+    const titleFontSize = 20;
+    
+    canvas.width = pageWidth;
+    canvas.height = pageHeight;
+    
+    // Функция для разбиения текста на строки
+    function wrapText(text, maxWidth) {
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = '';
+      
+      ctx.font = `${fontSize}px Arial, sans-serif`;
+      
+      for (const word of words) {
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        const metrics = ctx.measureText(testLine);
+        
+        if (metrics.width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines;
+    }
+    
+    // Разбиваем весь текст на параграфы и строки
+    const paragraphs = summaryText.split('\n');
+    const allLines = [];
+    
+    for (const para of paragraphs) {
+      if (para.trim() === '') {
+        allLines.push({ text: '', isBold: false, isTitle: false });
+      } else {
+        const isBold = para.includes('**');
+        const cleanPara = para.replace(/\*\*/g, '');
+        const wrapped = wrapText(cleanPara, contentWidth);
+        for (const line of wrapped) {
+          allLines.push({ text: line, isBold, isTitle: false });
+        }
+      }
+    }
+    
+    // Создаём PDF
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pages = [];
+    let currentPage = [];
+    let y = margin + titleFontSize + 40; // После заголовка
+    
+    // Добавляем заголовок на первую страницу
+    currentPage.push({ text: title, y: margin + titleFontSize, isTitle: true });
+    
+    // Дата
+    const dateStr = new Date().toLocaleDateString('ru-RU', { 
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+    currentPage.push({ text: dateStr + (durationMinutes > 0 ? ` • ${durationMinutes} мин` : ''), y: margin + titleFontSize + 20, isMeta: true });
+    
+    y = margin + titleFontSize + 50;
+    
+    for (const line of allLines) {
+      if (y + lineHeight > pageHeight - margin) {
+        pages.push(currentPage);
+        currentPage = [];
+        y = margin;
+      }
+      currentPage.push({ ...line, y });
+      y += lineHeight;
+    }
+    if (currentPage.length > 0) pages.push(currentPage);
+    
+    // Рендерим каждую страницу
+    for (let p = 0; p < pages.length; p++) {
+      if (p > 0) doc.addPage();
+      
+      // Белый фон
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, pageWidth, pageHeight);
+      
+      for (const item of pages[p]) {
+        if (item.isTitle) {
+          ctx.font = `bold ${titleFontSize}px Arial, sans-serif`;
+          ctx.fillStyle = '#1e40af';
+          ctx.textAlign = 'center';
+          ctx.fillText(item.text, pageWidth / 2, item.y);
+        } else if (item.isMeta) {
+          ctx.font = `${fontSize - 2}px Arial, sans-serif`;
+          ctx.fillStyle = '#666666';
+          ctx.textAlign = 'center';
+          ctx.fillText(item.text, pageWidth / 2, item.y);
+        } else {
+          ctx.font = item.isBold ? `bold ${fontSize}px Arial, sans-serif` : `${fontSize}px Arial, sans-serif`;
+          ctx.fillStyle = item.isBold ? '#1e40af' : '#333333';
+          ctx.textAlign = 'left';
+          ctx.fillText(item.text, margin, item.y);
+        }
+      }
+      
+      // Добавляем canvas как изображение в PDF
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      doc.addImage(imgData, 'JPEG', 0, 0, pageWidth * 0.75, pageHeight * 0.75);
+    }
+    
+    resolve(doc.output('dataurlstring'));
+  });
+}
+
+// ============================================================
+// SUMMARY GENERATION
+// ============================================================
+async function generateSummary(text, targetLang = 'ru') {
+  if (!text || text.trim().length < 100) {
+    throw new Error('Not enough text for summary');
+  }
+
+  console.log(`📝 Generating summary in ${targetLang}, text length: ${text.length}`);
+
+  const langNames = {
+    ru: 'Russian',
+    en: 'English',
+    he: 'Hebrew',
+    es: 'Spanish',
+    fr: 'French',
+    de: 'German',
+    it: 'Italian',
+    pt: 'Portuguese',
+    zh: 'Chinese',
+    ja: 'Japanese',
+    ko: 'Korean',
+    ar: 'Arabic'
+  };
+
+  const langName = langNames[targetLang] || targetLang;
+
+  const systemPrompt = `You are an expert summarizer. Create a comprehensive summary in ${langName}.
+
+Structure your summary as follows:
+1. **Overview** (2-3 sentences about the main topic)
+2. **Key Points** (bullet points of the most important information)
+3. **Main Topics Discussed** (detailed breakdown of topics)
+4. **Notable Quotes or Statements** (if any memorable phrases)
+5. **Conclusions** (main takeaways)
+
+The summary should be 1-2 pages when printed. Be thorough but concise.
+Write ONLY in ${langName}.`;
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Summarize this transcript:\n\n${text}` }
+        ],
+        temperature: 0.3,
+        max_tokens: 2000
+      })
+    });
+
+    const data = await res.json();
+    const summary = data?.choices?.[0]?.message?.content;
+
+    if (!summary) {
+      throw new Error('No summary generated');
+    }
+
+    console.log('✅ Summary generated, length:', summary.length);
+    return summary;
+  } catch (e) {
+    console.error('❌ Summary generation error:', e);
+    throw e;
+  }
 }
 
 // ============================================================

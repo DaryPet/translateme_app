@@ -274,6 +274,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
     });
     
+    // ==================== КНОПКА SUMMARY PDF ====================
+    const summaryBtn = document.getElementById('summaryBtn');
+    if (summaryBtn) {
+        summaryBtn.addEventListener('click', generateSummaryPDF);
+        // Обновляем статус транскрипта периодически
+        setInterval(updateTranscriptStatus, 3000);
+    }
+    
     // ==================== ПРОВЕРКА СТАТУСА ====================
     await updateStatus();
     
@@ -1084,4 +1092,103 @@ async function checkAPIAvailability() {
 
 checkAPIAvailability();
 
-console.log('✅ Popup ready with voice selection and translation styles');
+// ==================== SUMMARY PDF FUNCTIONS ====================
+async function updateTranscriptStatus() {
+    const summaryBtn = document.getElementById('summaryBtn');
+    const summaryStatus = document.getElementById('summaryStatus');
+    const transcriptInfo = document.getElementById('transcriptInfo');
+    
+    if (!summaryBtn || !summaryStatus) return;
+    
+    try {
+        const response = await chrome.runtime.sendMessage({ type: 'GET_TRANSCRIPT' });
+        
+        if (response?.success && response.entries > 0) {
+            summaryStatus.style.display = 'block';
+            transcriptInfo.textContent = `${response.durationMinutes} min of text collected (${response.entries} segments)`;
+            summaryBtn.disabled = false;
+            summaryBtn.style.opacity = '1';
+        } else {
+            summaryStatus.style.display = 'none';
+            summaryBtn.disabled = true;
+            summaryBtn.style.opacity = '0.5';
+        }
+    } catch (error) {
+        console.log('⚠️ Transcript status check error:', error.message);
+    }
+}
+
+async function generateSummaryPDF() {
+    const summaryBtn = document.getElementById('summaryBtn');
+    const transcriptInfo = document.getElementById('transcriptInfo');
+    
+    const originalText = summaryBtn.textContent;
+    summaryBtn.disabled = true;
+    summaryBtn.textContent = '⏳ Getting transcript...';
+    
+    try {
+        // 1. Получаем накопленный транскрипт
+        const transcriptResponse = await chrome.runtime.sendMessage({ type: 'GET_TRANSCRIPT' });
+        
+        if (!transcriptResponse?.success || !transcriptResponse.transcript) {
+            throw new Error('No transcript available');
+        }
+        
+        const transcript = transcriptResponse.transcript;
+        const targetLang = transcriptResponse.targetLanguage || 'ru';
+        const duration = transcriptResponse.durationMinutes || 0;
+        
+        console.log(`📝 Got transcript: ${transcript.length} chars, ${duration} min`);
+        
+        // 2. Генерируем summary через OpenAI
+        summaryBtn.textContent = '⏳ Generating summary...';
+        
+        const summaryResponse = await chrome.runtime.sendMessage({
+            type: 'GENERATE_SUMMARY',
+            text: transcript,
+            targetLang: targetLang
+        });
+        
+        if (!summaryResponse?.success || !summaryResponse.summary) {
+            throw new Error(summaryResponse?.error || 'Failed to generate summary');
+        }
+        
+        console.log(`✅ Summary generated: ${summaryResponse.summary.length} chars`);
+        
+        // 3. Создаём PDF
+        summaryBtn.textContent = '⏳ Creating PDF...';
+        
+        const pdfResponse = await chrome.runtime.sendMessage({
+            type: 'CREATE_PDF',
+            summary: summaryResponse.summary,
+            title: 'Video Summary',
+            duration: duration
+        });
+        
+        if (!pdfResponse?.success || !pdfResponse.pdfDataUrl) {
+            throw new Error(pdfResponse?.error || 'Failed to create PDF');
+        }
+        
+        // 4. Скачиваем PDF
+        const link = document.createElement('a');
+        link.href = pdfResponse.pdfDataUrl;
+        link.download = `video-summary-${new Date().toISOString().slice(0,10)}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        summaryBtn.textContent = '✅ PDF Скачан!';
+        setTimeout(() => {
+            summaryBtn.textContent = originalText;
+            summaryBtn.disabled = false;
+        }, 2000);
+        
+    } catch (error) {
+        console.error('❌ Summary PDF error:', error);
+        alert(`Failed to generate summary: ${error.message}`);
+        summaryBtn.textContent = originalText;
+        summaryBtn.disabled = false;
+    }
+}
+
+console.log('✅ Popup ready with voice selection, translation styles, and Summary PDF');

@@ -37,7 +37,7 @@
   ],
    "web_accessible_resources": [
     {
-      "resources": ["env.js", "offscreen.html", "langConfig.js", "pcm-processor.js", "secrets.js", "lib/opik-tracker.js"],
+      "resources": ["env.js", "offscreen.html", "langConfig.js", "pcm-processor.js", "secrets.js", "lib/opik-tracker.js", "lib/jspdf.umd.min.js"],
       "matches": ["<all_urls>"]
     }
   ],

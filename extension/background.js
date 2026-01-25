@@ -623,6 +623,60 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       offscreenReady = true;
       sendResponse({ success: true });
       return true;
+
+    // ==================== SUMMARY PDF ====================
+    case 'GET_TRANSCRIPT':
+      // Проксируем в offscreen
+      chrome.runtime.sendMessage({ type: 'GET_TRANSCRIPT' }, (response) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ success: false, error: chrome.runtime.lastError.message });
+        } else {
+          sendResponse(response);
+        }
+      });
+      return true;
+
+    case 'GENERATE_SUMMARY':
+      // Проксируем в offscreen
+      chrome.runtime.sendMessage({
+        type: 'GENERATE_SUMMARY',
+        text: request.text,
+        targetLang: request.targetLang
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ success: false, error: chrome.runtime.lastError.message });
+        } else {
+          sendResponse(response);
+        }
+      });
+      return true;
+
+    case 'CREATE_PDF':
+      // Проксируем в offscreen
+      chrome.runtime.sendMessage({
+        type: 'CREATE_PDF',
+        summary: request.summary,
+        title: request.title,
+        duration: request.duration
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ success: false, error: chrome.runtime.lastError.message });
+        } else {
+          sendResponse(response);
+        }
+      });
+      return true;
+
+    case 'CLEAR_TRANSCRIPT':
+      // Проксируем в offscreen
+      chrome.runtime.sendMessage({ type: 'CLEAR_TRANSCRIPT' }, (response) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ success: false, error: chrome.runtime.lastError.message });
+        } else {
+          sendResponse(response);
+        }
+      });
+      return true;
       
     default:
       console.warn('⚠️ Unknown message type in background:', request.type);
