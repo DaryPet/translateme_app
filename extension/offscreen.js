@@ -7,7 +7,7 @@ console.log('🔍 Opik check:', {
   opikConfigExists: !!window.SECRETS?.OPIK,
   hasKey: window.SECRETS?.OPIK?.apiKey ? 'YES' : 'NO',
   enabled: window.SECRETS?.OPIK?.enabled ?? 'no prop',
-  trackerLoaded: !!window.opikTracker
+  trackerLoaded: !!window.opikTracker,
 });
 
 // API ключи загружаются из secrets.js (добавлен в .gitignore)
@@ -25,7 +25,9 @@ console.log('📋 LANGUAGE_CONFIG loaded:', !!window.LANGUAGE_CONFIG);
 console.log('🎤 VOICE_CONFIG loaded:', !!window.VOICE_CONFIG);
 console.log('📊 OPIK tracker loaded:', !!window.opikTracker);
 if (!window.opikTracker) {
-  console.warn('⚠️ Opik tracker not loaded. Check offscreen.html script order.');
+  console.warn(
+    '⚠️ Opik tracker not loaded. Check offscreen.html script order.',
+  );
 }
 
 let audioStream = null,
@@ -115,14 +117,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   // === TRANSCRIPT HISTORY ===
   if (request.type === 'GET_TRANSCRIPT') {
-    const fullText = transcriptHistory.map(t => t.translated).join('\n\n');
-    const duration = sessionStartTime ? Math.round((Date.now() - sessionStartTime) / 60000) : 0;
-    sendResponse({ 
-      success: true, 
+    const fullText = transcriptHistory.map((t) => t.translated).join('\n\n');
+    const duration = sessionStartTime
+      ? Math.round((Date.now() - sessionStartTime) / 60000)
+      : 0;
+    sendResponse({
+      success: true,
       transcript: fullText,
       entries: transcriptHistory.length,
       durationMinutes: duration,
-      targetLanguage: activeSettings?.targetLanguage || 'ru'
+      targetLanguage: activeSettings?.targetLanguage || 'ru',
     });
     return true;
   }
@@ -138,16 +142,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'GENERATE_SUMMARY') {
     console.log('📝 Generating summary...');
     generateSummary(request.text, request.targetLang)
-      .then(summary => sendResponse({ success: true, summary }))
-      .catch(err => sendResponse({ success: false, error: err.message }));
+      .then((summary) => sendResponse({ success: true, summary }))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
     return true;
   }
 
   if (request.type === 'CREATE_PDF') {
     console.log('📄 Creating summary file...');
     createPDF(request.summary, request.title, request.duration)
-      .then(dataUrl => sendResponse({ success: true, pdfDataUrl: dataUrl }))
-      .catch(err => sendResponse({ success: false, error: err.message }));
+      .then((dataUrl) => sendResponse({ success: true, pdfDataUrl: dataUrl }))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
     return true;
   }
 
@@ -199,15 +203,15 @@ function connectDeepgramWebSocket(lang) {
         // Обрабатываем только финальные результаты с текстом
         if (transcript && transcript.trim().length > 2 && isFinal) {
           console.log('🎯 Final transcript, sending to translate:', transcript);
-          
+
           // 📊 Opik: логируем STT
           window.opikTracker?.logSTT(transcript, {
             provider: 'deepgram',
             language: lang,
             confidence,
-            duration: data.duration
+            duration: data.duration,
           });
-          
+
           translateAndVoice(transcript);
         }
       } catch (e) {
@@ -399,13 +403,13 @@ async function processWhisperSTT(blob) {
     if (text && text.length > 2 && text !== lastWhisperText) {
       lastWhisperText = text;
       console.log('🎙️ Whisper transcript:', text);
-      
+
       // 📊 Opik: логируем Whisper STT
       window.opikTracker?.logSTT(text, {
         provider: 'whisper',
-        language: lang
+        language: lang,
       });
-      
+
       translateAndVoice(text);
     }
   } catch (e) {
@@ -420,7 +424,7 @@ async function translateAndVoice(text) {
   if (!isRecording || !text?.trim()) return;
 
   const startTime = new Date().toISOString();
-  
+
   try {
     const targetLang = activeSettings?.targetLanguage || 'ru';
     const sourceLang = activeSettings?.sourceLanguage || 'auto';
@@ -429,9 +433,16 @@ async function translateAndVoice(text) {
     console.log(`🌐 Translating to ${targetLang}:`, text);
 
     const prompts = {
-      DEFAULT: `Translate to ${targetLang} accurately and naturally. Keep original meaning.`,
+      // DEFAULT: `Translate to ${targetLang} accurately and naturally. Keep original meaning.`,
+      DEFAULT: `You are a professional interpreter. Translate to ${targetLang} for real-time spoken interpretation.
+
+Produce translations that sound natural to native speakers. Avoid literal translations.
+When encountering idioms, use equivalent phrases in ${targetLang}.
+
+Translation should feel like original speech.`,
+
       KIDS: `Translate to ${targetLang} for a 5-year-old child. Use simple words, fairy tale style. Make it magical and fun!`,
-      KABBALAH: `Translate to ${targetLang} using Kabbalah concepts.  Use Kabbalah terms (Light, Vessel, Screen). ONLY translation.`,
+      KABBALAH: `Translate to ${targetLang} using Kabbalah concepts. Use kabalistic terminology. Hewbrew words transcription, keep consistancy. Translation ONLY!!!! Do not intrpritate! When encountering idioms, use equivalent phrases in ${targetLang}.`,
       TECHNICAL: `Technical translation to ${targetLang}. Keep all terms exact (do NOT simplify). Use formal style.`,
       SLANG: `Translate to ${targetLang} using modern youth slang, memes, casual speech. Sound like a TikTok teen.`,
       POETIC: `Translate to ${targetLang} poetically. Use metaphors, beautiful language, rhythm. Make it sound like a poem.`,
@@ -470,7 +481,7 @@ async function translateAndVoice(text) {
       targetLang,
       style,
       mode: captureMode,
-      startTime
+      startTime,
     });
 
     // 📜 Сохраняем в историю для Summary
@@ -478,7 +489,7 @@ async function translateAndVoice(text) {
     transcriptHistory.push({
       original: text,
       translated: translatedText,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     // Отправка субтитров
@@ -509,7 +520,7 @@ async function playTTS(text) {
   if (!isRecording || !text?.trim()) return;
 
   const startTime = new Date().toISOString();
-  
+
   try {
     const voiceKey = activeSettings?.voiceGender || 'neutral';
     const voice =
@@ -531,10 +542,9 @@ async function playTTS(text) {
     const audioBuffer = await playbackContext.decodeAudioData(buffer);
     speechQueue.push(audioBuffer);
     if (!isPlaying) handleQueue();
-    
+
     // 📊 Opik: логируем TTS
     window.opikTracker?.logTTS(text, { voice, speed: 1.05, startTime });
-    
   } catch (e) {
     console.error('TTS Error:', e);
   }
@@ -582,11 +592,11 @@ function updateVolume() {
 function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
   return new Promise((resolve) => {
     const { jsPDF } = window.jspdf;
-    
+
     // Создаём canvas для рендеринга текста
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
+
     // Размеры страницы A4 в пикселях (72 DPI)
     const pageWidth = 595;
     const pageHeight = 842;
@@ -595,22 +605,22 @@ function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
     const lineHeight = 18;
     const fontSize = 12;
     const titleFontSize = 20;
-    
+
     canvas.width = pageWidth;
     canvas.height = pageHeight;
-    
+
     // Функция для разбиения текста на строки
     function wrapText(text, maxWidth) {
       const words = text.split(' ');
       const lines = [];
       let currentLine = '';
-      
+
       ctx.font = `${fontSize}px Arial, sans-serif`;
-      
+
       for (const word of words) {
         const testLine = currentLine + (currentLine ? ' ' : '') + word;
         const metrics = ctx.measureText(testLine);
-        
+
         if (metrics.width > maxWidth && currentLine) {
           lines.push(currentLine);
           currentLine = word;
@@ -621,11 +631,11 @@ function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
       if (currentLine) lines.push(currentLine);
       return lines;
     }
-    
+
     // Разбиваем весь текст на параграфы и строки
     const paragraphs = summaryText.split('\n');
     const allLines = [];
-    
+
     for (const para of paragraphs) {
       if (para.trim() === '') {
         allLines.push({ text: '', isBold: false, isTitle: false });
@@ -638,24 +648,30 @@ function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
         }
       }
     }
-    
+
     // Создаём PDF
     const doc = new jsPDF({ unit: 'pt', format: 'a4' });
     const pages = [];
     let currentPage = [];
     let y = margin + titleFontSize + 40; // После заголовка
-    
+
     // Добавляем заголовок на первую страницу
     currentPage.push({ text: title, y: margin + titleFontSize, isTitle: true });
-    
+
     // Дата
-    const dateStr = new Date().toLocaleDateString('ru-RU', { 
-      year: 'numeric', month: 'long', day: 'numeric'
+    const dateStr = new Date().toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
-    currentPage.push({ text: dateStr + (durationMinutes > 0 ? ` • ${durationMinutes} мин` : ''), y: margin + titleFontSize + 20, isMeta: true });
-    
+    currentPage.push({
+      text: dateStr + (durationMinutes > 0 ? ` • ${durationMinutes} мин` : ''),
+      y: margin + titleFontSize + 20,
+      isMeta: true,
+    });
+
     y = margin + titleFontSize + 50;
-    
+
     for (const line of allLines) {
       if (y + lineHeight > pageHeight - margin) {
         pages.push(currentPage);
@@ -666,15 +682,15 @@ function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
       y += lineHeight;
     }
     if (currentPage.length > 0) pages.push(currentPage);
-    
+
     // Рендерим каждую страницу
     for (let p = 0; p < pages.length; p++) {
       if (p > 0) doc.addPage();
-      
+
       // Белый фон
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, pageWidth, pageHeight);
-      
+
       for (const item of pages[p]) {
         if (item.isTitle) {
           ctx.font = `bold ${titleFontSize}px Arial, sans-serif`;
@@ -687,18 +703,20 @@ function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
           ctx.textAlign = 'center';
           ctx.fillText(item.text, pageWidth / 2, item.y);
         } else {
-          ctx.font = item.isBold ? `bold ${fontSize}px Arial, sans-serif` : `${fontSize}px Arial, sans-serif`;
+          ctx.font = item.isBold
+            ? `bold ${fontSize}px Arial, sans-serif`
+            : `${fontSize}px Arial, sans-serif`;
           ctx.fillStyle = item.isBold ? '#1e40af' : '#333333';
           ctx.textAlign = 'left';
           ctx.fillText(item.text, margin, item.y);
         }
       }
-      
+
       // Добавляем canvas как изображение в PDF
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
       doc.addImage(imgData, 'JPEG', 0, 0, pageWidth * 0.75, pageHeight * 0.75);
     }
-    
+
     resolve(doc.output('dataurlstring'));
   });
 }
@@ -711,7 +729,9 @@ async function generateSummary(text, targetLang = 'ru') {
     throw new Error('Not enough text for summary');
   }
 
-  console.log(`📝 Generating summary in ${targetLang}, text length: ${text.length}`);
+  console.log(
+    `📝 Generating summary in ${targetLang}, text length: ${text.length}`,
+  );
 
   const langNames = {
     ru: 'Russian',
@@ -725,7 +745,7 @@ async function generateSummary(text, targetLang = 'ru') {
     zh: 'Chinese',
     ja: 'Japanese',
     ko: 'Korean',
-    ar: 'Arabic'
+    ar: 'Arabic',
   };
 
   const langName = langNames[targetLang] || targetLang;
@@ -746,18 +766,18 @@ Write ONLY in ${langName}.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_KEY}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${OPENAI_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Summarize this transcript:\n\n${text}` }
+          { role: 'user', content: `Summarize this transcript:\n\n${text}` },
         ],
         temperature: 0.3,
-        max_tokens: 2000
-      })
+        max_tokens: 2000,
+      }),
     });
 
     const data = await res.json();

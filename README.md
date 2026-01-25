@@ -1,49 +1,46 @@
-# Front-End Meduzzen Project
+# Translateme 🌐
 
-This project is aplication built with **Next.js**, styled with **Material UI**, and containerized using **Docker** for development and production. The app is designed to run seamlessly inside Docker containers for efficient local development and deployment.
+Translateme is a powerful Chrome extension and web platform designed for real-time video translation, voice dubbing, and AI-driven content analysis.
 
-## Requirements
+## 🚀 Key Features
 
-Before you begin, ensure you have the following installed on your machine:
+### 🧩 Chrome Extension
+- **Live Translation**: Real-time speech-to-text and translation for any video content (YouTube, Vimeo, Coursera, etc.).
+- **Voice Dubbing**: High-quality AI voiceovers using OpenAI TTS.
+- **Smart Subtitles**: Dynamic subtitle overlay that works perfectly in fullscreen mode and within iframes.
+- **AI Video Summary**: Generate a concise 1-2 page summary of any video and download it as a professional PDF.
+- **Dual AI Engines**: Support for both OpenAI (Whisper, GPT-4, TTS) and Google Gemini for flexibility and fallback.
+- **Low Latency**: Optimized audio processing using Audio Worklet API for minimal delay.
 
-- **Node.js** (JavaScript runtime)
-- **npm** (Node package manager)
-- **Material UI** (React UI framework)
-- **dotenv** (for managing environment variables)
+### 🌐 Web Platform (Next.js)
+- **Subscription Management**: Full-featured billing system integrated with Stripe.
+- **Landing Page**: Modern, responsive UI with internationalization (i18n) support.
+- **User Dashboard**: Manage translations, credits, and subscription status.
 
-## Install dependencies:
+## 🛠️ Tech Stack
 
-Run the following command to install all the necessary dependencies:
-`npm install`
+- **Frontend**: Next.js 14, React, Material UI (MUI), Tailwind CSS.
+- **Extension**: Vanilla JS, Chrome Extension Manifest V3, Audio Worklet API.
+- **AI/LLM**: OpenAI (GPT-4o-mini, TTS-1), Google Gemini (2.5 Flash), Deepgram (Live STT).
+- **Monitoring**: Opik (Comet) for LLM trace monitoring and analytics.
+- **Backend/Auth**: Supabase.
+- **Payments**: Stripe.
 
-Start the development server:
-`npm run dev`
+## 📦 Installation
 
-## To run with Docker Compose:
+### Chrome Extension (Manual Load)
+1. Clone the repository.
+2. Go to `chrome://extensions/` in your browser.
+3. Enable "Developer mode" in the top right.
+4. Click "Load unpacked" and select the `extension/` folder.
 
-To build docker compose:
-`docker compose build`
 
-To run docker container:
-`docker compose up`
+## 📊 Monitoring
+We use **Opik** for real-time tracking of AI performance. It monitors:
+- Speech-to-text accuracy and duration.
+- Translation latency and token usage.
+- TTS generation costs.
+- Trace IDs (UUID v7) for deep debugging.
 
-To stop docker compose:
-`docker compose down`
-
-To see if conatiner is runing:
-`docker ps`
-
-For logs:
-`docker compose logs`
-
-To check running containers
-`docker ps`
-To install inside container run
-`docker exec -it < container id> sh` `docker exec -it 21e340620192 sh`
-
-To run ESLint
-`npm run lint`
-
-## Internationalization (i18n) - Translation
-
-Project supports multiple languages via `next-intl`, translations are stored in `messages` as JSON files. Add new translations or modify existing ones directly in these files. Use `useTranslations` hook in components to access them.
+## 📄 License
+All rights reserved. 2026 Translateme Team.
