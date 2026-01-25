@@ -36,7 +36,7 @@
   ],
    "web_accessible_resources": [
     {
-      "resources": ["env.js", "offscreen.html"],
+      "resources": ["env.js", "offscreen.html", "langConfig.js", "pcm-processor.js", "secrets.js"],
       "matches": ["<all_urls>"]
     }
   ],

@@ -1,6 +1,4 @@
-// // console.log('✅ Background ready');
-
-// console.log('🤖 Background service worker loaded');
+// console.log('🤖 Background service worker loaded - WITH VOICE SUPPORT');
 
 // let isCapturing = false;
 // let currentTabId = null;
@@ -26,7 +24,13 @@
 //     }
     
 //     currentTabId = tabId;
-//     currentSettings = settings;
+//     currentSettings = { // Сохраняем полные настройки
+//       ...settings,
+//       voiceGender: settings.voiceGender || 'neutral',
+//       enableVoice: settings.enableVoice !== false // по умолчанию true
+//     };
+    
+//     console.log('⚙️ Current settings:', currentSettings);
     
 //     // 1. Убеждаемся что offscreen документ создан и готов
 //     offscreenReady = false;
@@ -42,11 +46,11 @@
     
 //     console.log('✅ Stream ID received:', streamId);
     
-//     // 3. Отправляем команду в Offscreen и ждем ответа
+//     // 3. Отправляем команду в Offscreen с ПОЛНЫМИ настройками
 //     chrome.runtime.sendMessage({
 //       type: 'START_CAPTURE',
 //       streamId: streamId,
-//       settings: settings,
+//       settings: currentSettings, // ← ПЕРЕДАЕМ ВСЕ НАСТРОЙКИ
 //       tabId: tabId
 //     }, (response) => {
 //       if (chrome.runtime.lastError) {
@@ -145,23 +149,20 @@
 //       });
 //     }
     
-//     // 3. НЕ закрываем offscreen документ - оставляем его для будущих запусков
-//     // Это предотвращает проблему с "Unknown message type"
-    
-//     // 4. Сбрасываем состояние
+//     // 3. Сбрасываем состояние
 //     isCapturing = false;
 //     currentTabId = null;
 //     currentSettings = null;
-//     // offscreenReady остается true - документ продолжает работать
+//     offscreenReady = false;
     
-//     console.log('✅ Capture stopped (offscreen document kept alive)');
+//     console.log('✅ Capture stopped');
 //     sendResponse({ success: true, message: 'Capture stopped' });
 //   });
 // }
 
-// // ==================== ОБНОВЛЕНИЕ ГРОМКОСТИ ====================
+// // ==================== ОБНОВЛЕНИЕ ГРОМКОСТИ И ГОЛОСА ====================
 // function updateVolumeFromPopup(settings, sendResponse) {
-//   console.log('🔊 Updating volume:', settings);
+//   console.log('🔊 Background updating volume/voice:', settings, 'isCapturing:', isCapturing);
   
 //   if (!isCapturing) {
 //     sendResponse({ success: false, error: 'Not capturing' });
@@ -173,22 +174,45 @@
 //     currentSettings = { ...currentSettings, ...settings };
 //   }
   
-//   // Отправляем в offscreen
-//   chrome.runtime.sendMessage({
-//     type: 'UPDATE_VOLUME',
-//     settings: settings
-//   }, (response) => {
-//     if (chrome.runtime.lastError) {
-//       sendResponse({ success: false, error: chrome.runtime.lastError.message });
-//     } else {
-//       sendResponse({ success: true });
-//     }
-//   });
+//   // Определяем какой тип обновления отправлять
+//   if (settings.muteOriginal !== undefined || settings.originalVolume !== undefined) {
+//     // Обновление громкости
+//     chrome.runtime.sendMessage({
+//       type: 'UPDATE_VOLUME',
+//       settings: {
+//         muteOriginal: settings.muteOriginal,
+//         originalVolume: settings.originalVolume
+//       }
+//     }, (response) => {
+//       if (chrome.runtime.lastError) {
+//         sendResponse({ success: false, error: chrome.runtime.lastError.message });
+//       } else {
+//         sendResponse({ success: true });
+//       }
+//     });
+//   } else if (settings.voiceGender !== undefined || settings.enableVoice !== undefined) {
+//     // Обновление голоса
+//     chrome.runtime.sendMessage({
+//       type: 'UPDATE_VOICE',
+//       settings: {
+//         voiceGender: settings.voiceGender,
+//         enableVoice: settings.enableVoice
+//       }
+//     }, (response) => {
+//       if (chrome.runtime.lastError) {
+//         sendResponse({ success: false, error: chrome.runtime.lastError.message });
+//       } else {
+//         sendResponse({ success: true });
+//       }
+//     });
+//   } else {
+//     sendResponse({ success: true });
+//   }
 // }
 
 // // ==================== ОБРАБОТЧИК СООБЩЕНИЙ ====================
 // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   console.log('🤖 Background received:', request.type, 'from:', sender);
+//   console.log('🤖 Background received:', request.type);
   
 //   switch (request.type) {
 //     case 'START_TAB_CAPTURE':
@@ -214,9 +238,27 @@
 //       return true;
       
 //     case 'UPDATE_VOLUME_FROM_POPUP':
+//     case 'UPDATE_VOICE_FROM_POPUP':
+//     case 'UPDATE_SETTINGS_FROM_POPUP':
+//     case 'UPDATE_LANGUAGE_FROM_POPUP':
+//       // Все эти сообщения обрабатываем как обновление настроек
 //       updateVolumeFromPopup(request.settings, sendResponse);
 //       return true;
-      
+
+//     case 'UPDATE_SETTINGS':
+//       console.log('📨 Background forwarding UPDATE_SETTINGS:', request.settings);
+//       // Пересылаем настройки в Offscreen документ, чтобы он знал, что пора включать голос
+//       chrome.runtime.sendMessage({
+//         type: 'UPDATE_SETTINGS',
+//         settings: request.settings
+//       }, (response) => {
+//         if (chrome.runtime.lastError) {
+//           console.warn('Offscreen not ready for settings yet');
+//         }
+//       });
+//       sendResponse({ success: true });
+//       return true;
+
 //     case 'SUBTITLES_FROM_OFFSCREEN':
 //       // Проксируем субтитры в content script
 //       if (currentTabId) {
@@ -230,14 +272,20 @@
 //       return true;
       
 //     case 'OFFSCREEN_READY':
-//       // Получили сообщение от offscreen что он готов
 //       offscreenReady = true;
 //       sendResponse({ success: true });
 //       return true;
       
 //     case 'PING':
-//       // Ответ на пинг - проверка что background жив
 //       sendResponse({ success: true, timestamp: Date.now() });
+//       return true;
+
+//     case 'OFFSCREEN_ERROR':
+//       console.error('📡 Offscreen reported error:', request.error);
+//       chrome.storage.local.set({ lastOffscreenError: request.error }).catch(err => {
+//         console.warn('⚠️ Failed to persist offscreen error:', err);
+//       });
+//       sendResponse({ success: true });
 //       return true;
       
 //     default:
@@ -249,9 +297,8 @@
 // // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 // async function initialize() {
 //   try {
-//     // При запуске создаем offscreen документ заранее
 //     await ensureOffscreenDocument();
-//     console.log('✅ Background service worker initialized');
+//     console.log('✅ Background service worker initialized with voice support');
 //   } catch (error) {
 //     console.error('Failed to initialize:', error);
 //   }
@@ -261,8 +308,6 @@
 // initialize();
 
 // console.log('✅ Background ready');
-
-
 
 console.log('🤖 Background service worker loaded - WITH VOICE SUPPORT');
 
@@ -312,11 +357,11 @@ async function startTabCapture(tabId, settings, sendResponse) {
     
     console.log('✅ Stream ID received:', streamId);
     
-    // 3. Отправляем команду в Offscreen с ПОЛНЫМИ настройками
+    // 3. Отправляем команду в Offscreen с ПОЛНЫМИ настройками + WebSocket флаг
     chrome.runtime.sendMessage({
       type: 'START_CAPTURE',
       streamId: streamId,
-      settings: currentSettings, // ← ПЕРЕДАЕМ ВСЕ НАСТРОЙКИ
+      settings: { ...currentSettings, realtimeMode: true }, // ← ИЗМЕНЕНИЕ ЗДЕСЬ: ДОБАВИЛИ realtimeMode
       tabId: tabId
     }, (response) => {
       if (chrome.runtime.lastError) {
@@ -341,24 +386,35 @@ async function startTabCapture(tabId, settings, sendResponse) {
   }
 }
 
-// ==================== УБЕДИТЬСЯ ЧТО OFFSCREEN ДОКУМЕНТ СОЗДАН ====================
+// ==================== УБЕДИТЬСЯ ЧТО OFFSCREEN ДОКУМЕНТ СОЗДАН (ИСПРАВЛЕННАЯ) ====================
 async function ensureOffscreenDocument() {
   try {
-    // Проверяем существует ли документ
+    // ВСЕГДА закрываем старый документ перед созданием нового
     const hasDocument = await chrome.offscreen.hasDocument?.();
     
-    if (!hasDocument) {
-      console.log('📄 Creating offscreen document...');
-      await chrome.offscreen.createDocument({
-        url: chrome.runtime.getURL('offscreen.html'),
-        reasons: ['USER_MEDIA'],
-        justification: 'Capture tab audio for translation service'
-      });
-      console.log('✅ Offscreen document created');
-      
-      // Ждем инициализации документа
-      await new Promise(resolve => setTimeout(resolve, 300));
+    if (hasDocument) {
+      console.log('📄 Closing existing offscreen document...');
+      try {
+        await chrome.offscreen.closeDocument();
+        await new Promise(resolve => setTimeout(resolve, 300));
+        console.log('✅ Old offscreen document closed');
+      } catch (closeError) {
+        console.log('⚠️ Could not close document (may be already closed):', closeError.message);
+      }
     }
+    
+    console.log('📄 Creating NEW offscreen document...');
+    await chrome.offscreen.createDocument({
+      url: chrome.runtime.getURL('offscreen.html'),
+      reasons: ['USER_MEDIA'],
+      justification: 'Capture tab audio for translation service'
+    });
+    
+    console.log('✅ New offscreen document created');
+    
+    // Ждем инициализации
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
   } catch (error) {
     console.error('Failed to create offscreen document:', error);
     throw error;
@@ -366,11 +422,12 @@ async function ensureOffscreenDocument() {
 }
 
 // ==================== ЖДАТЬ ПОКА OFFSCREEN ГОТОВ ====================
-async function waitForOffscreenReady(retries = 5, delay = 300) {
+async function waitForOffscreenReady(retries = 10, delay = 500) {
   for (let i = 0; i < retries; i++) {
     try {
-      // Пробуем отправить пинг сообщение
-      await new Promise((resolve, reject) => {
+      console.log(`⏳ Testing offscreen connection (attempt ${i + 1}/${retries})...`);
+      
+      const response = await new Promise((resolve, reject) => {
         chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
           if (chrome.runtime.lastError) {
             reject(chrome.runtime.lastError);
@@ -380,10 +437,10 @@ async function waitForOffscreenReady(retries = 5, delay = 300) {
         });
       });
       
-      console.log('✅ Offscreen document is ready');
+      console.log('✅ Offscreen document is responding:', response);
       return true;
     } catch (error) {
-      console.log(`⏳ Waiting for offscreen to be ready (attempt ${i + 1}/${retries})...`);
+      console.log(`❌ Offscreen not responding yet: ${error.message}`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
@@ -428,7 +485,7 @@ function stopTabCapture(sendResponse) {
 
 // ==================== ОБНОВЛЕНИЕ ГРОМКОСТИ И ГОЛОСА ====================
 function updateVolumeFromPopup(settings, sendResponse) {
-  console.log('🔊 Updating volume/voice:', settings);
+  console.log('🔊 Background updating volume/voice:', settings, 'isCapturing:', isCapturing);
   
   if (!isCapturing) {
     sendResponse({ success: false, error: 'Not capturing' });
@@ -476,7 +533,7 @@ function updateVolumeFromPopup(settings, sendResponse) {
   }
 }
 
-// ==================== ОБРАБОТЧИК СООБЩЕНИЙ ====================
+// ==================== ОБРАБОТЧИК СООБЩЕНИЙ (ИСПРАВЛЕННЫЙ) ====================
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('🤖 Background received:', request.type);
   
@@ -510,7 +567,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       // Все эти сообщения обрабатываем как обновление настроек
       updateVolumeFromPopup(request.settings, sendResponse);
       return true;
-      
+
+    case 'UPDATE_SETTINGS':
+      console.log('📨 Background forwarding UPDATE_SETTINGS:', request.settings);
+      // Пересылаем настройки в Offscreen документ, чтобы он знал, что пора включать голос
+      chrome.runtime.sendMessage({
+        type: 'UPDATE_SETTINGS',
+        settings: { ...request.settings, realtimeMode: true } // ← ИЗМЕНЕНИЕ ЗДЕСЬ: ДОБАВИЛИ realtimeMode
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn('Offscreen not ready for settings yet');
+        }
+      });
+      sendResponse({ success: true });
+      return true;
+
     case 'SUBTITLES_FROM_OFFSCREEN':
       // Проксируем субтитры в content script
       if (currentTabId) {
@@ -531,6 +602,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case 'PING':
       sendResponse({ success: true, timestamp: Date.now() });
       return true;
+
+    case 'OFFSCREEN_ERROR':
+      console.error('📡 Offscreen reported error:', request.error);
+      chrome.storage.local.set({ lastOffscreenError: request.error }).catch(err => {
+        console.warn('⚠️ Failed to persist offscreen error:', err);
+      });
+      sendResponse({ success: true });
+      return true;
+      
+    // ДОБАВЛЕНО: обработка keep-alive сообщений
+    case 'OFFSCREEN_KEEP_ALIVE':
+      console.log('❤️ Offscreen keep-alive received');
+      sendResponse({ success: true });
+      return true;
+      
+    // ДОБАВЛЕНО: тест что offscreen.js загружен
+    case 'OFFSCREEN_JS_LOADED':
+      console.log('✅ Offscreen.js script loaded successfully!', request.timestamp);
+      offscreenReady = true;
+      sendResponse({ success: true });
+      return true;
       
     default:
       console.warn('⚠️ Unknown message type in background:', request.type);
@@ -541,6 +633,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 async function initialize() {
   try {
+    // Создаем offscreen документ при запуске
     await ensureOffscreenDocument();
     console.log('✅ Background service worker initialized with voice support');
   } catch (error) {

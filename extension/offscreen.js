@@ -1,1547 +1,523 @@
-// // offscreen.js - ГОЛОС + СУБТИТРЫ
-// console.log('📄 Offscreen document loaded');
-
-// let mediaRecorder = null;
-// let audioStream = null;
-// let audioContext = null;
-// let playbackAudioContext = null;
-// let analyser = null;
-// let dataArray = null;
-// let gainNode = null;
-// let activeSettings = null;
-// let isRecording = false;
-// let currentTabId = null;
-// let silenceTimer = null;
-
-// let speechQueue = [];
-// let isPlaying = false;
-
-// let conversationContext = {
-//   history: [],
-//   lastOriginalText: '',
-//   maxHistory: 8,
-// };
-
-// const VOICE_CONFIG = {
-//   male: { openai_voice: 'onyx' },
-//   female: { openai_voice: 'shimmer' },
-//   neutral: { openai_voice: 'nova' },
-//   auto: { openai_voice: 'alloy' },
-// };
-
-// // ОРИГИНАЛЬНЫЙ РАБОЧИЙ КОД
-// const OPENAI_API_KEY = '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';
-
-// // НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ GEMINI
-// const GEMINI_API_KEY = 'AIzaSyAQjnhKlojhPPkFfaNDiXl7nLmGdrq3dPg';
-// const GEMINI_MODEL = 'gemini-2.0-flash-exp';
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   switch (request.type) {
-//     case 'START_CAPTURE':
-//       startCapture(request.streamId, request.settings, request.tabId).then(sendResponse);
-//       return true;
-//     case 'STOP_CAPTURE':
-//       stopCapture();
-//       sendResponse({ success: true });
-//       return true;
-//     case 'UPDATE_VOLUME':
-//       updateVolume(request.settings);
-//       sendResponse({ success: true });
-//       return true;
-//     case 'UPDATE_VOICE':
-//       if (request.settings) {
-//         activeSettings = { ...activeSettings, ...request.settings };
-//         console.log('Voice settings updated:', activeSettings.voiceGender);
-//       }
-//       sendResponse({ success: true });
-//       return true;
-//     case 'PING':
-//       sendResponse({ success: true, isRecording });
-//       return true;
-//     case 'UPDATE_SETTINGS':
-//       if (request.settings) {
-//         activeSettings = { ...activeSettings, ...request.settings };
-//       }
-//       sendResponse({ success: true });
-//       return true;
-//     default:
-//       return false;
-//   }
-// });
-
-// async function startCapture(streamId, settings, tabId) {
-//   try {
-//     stopInternal();
-//     isRecording = true;
-//     activeSettings = { ...settings };
-//     currentTabId = tabId;
-
-//     conversationContext.history = [];
-//     conversationContext.lastOriginalText = '';
-//     speechQueue = [];
-//     isPlaying = false;
-
-//     audioStream = await navigator.mediaDevices.getUserMedia({
-//       audio: {
-//         mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId },
-//       },
-//       video: false,
-//     });
-
-//     audioContext = new AudioContext();
-//     const source = audioContext.createMediaStreamSource(audioStream);
-
-//     analyser = audioContext.createAnalyser();
-//     analyser.fftSize = 256;
-//     source.connect(analyser);
-//     dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-//     gainNode = audioContext.createGain();
-//     source.connect(gainNode);
-//     gainNode.connect(audioContext.destination);
-
-//     applyVolumeSettings(activeSettings);
-//     startRecording();
-
-//     return { success: true };
-//   } catch (error) {
-//     isRecording = false;
-//     return { success: false, error: error.message };
-//   }
-// }
-
-// function startRecording() {
-//   if (!isRecording || !audioStream || !audioStream.active) return;
-
-//   try {
-//     mediaRecorder = new MediaRecorder(audioStream, {
-//       mimeType: 'audio/webm;codecs=opus',
-//     });
-//     let audioChunks = [];
-
-//     mediaRecorder.ondataavailable = (e) => {
-//       if (e.data.size > 0) audioChunks.push(e.data);
-//     };
-
-//     mediaRecorder.onstop = async () => {
-//       if (audioChunks.length > 0 && isRecording) {
-//         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-//         processAudioWithContext(audioBlob);
-//       }
-//       if (isRecording) startRecording();
-//     };
-
-//     mediaRecorder.start();
-
-//     const checkSilence = () => {
-//       if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
-//       analyser.getByteFrequencyData(dataArray);
-//       let average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-
-//       if (average < 10) {
-//         if (!silenceTimer) {
-//           silenceTimer = setTimeout(() => {
-//             if (mediaRecorder && mediaRecorder.state === 'recording') {
-//               mediaRecorder.stop();
-//             }
-//           }, 1500);
-//         }
-//       } else {
-//         clearTimeout(silenceTimer);
-//         silenceTimer = null;
-//       }
-//     };
-
-//     const vadInterval = setInterval(checkSilence, 100);
-//     setTimeout(() => {
-//       clearInterval(vadInterval);
-//       if (mediaRecorder && mediaRecorder.state === 'recording') {
-//         mediaRecorder.stop();
-//       }
-//     }, 4000);
-//   } catch (err) {
-//     console.error('MediaRecorder error:', err);
-//     isRecording = false;
-//   }
-// }
-
-// async function processAudioWithContext(audioBlob) {
-//   if (!isRecording) return;
-
-//   try {
-//     const originalText = await transcribeWithWhisper(audioBlob);
-
-//     if (!originalText || originalText.trim() === '') return;
-
-//     if (originalText === conversationContext.lastOriginalText) {
-//       return;
-//     }
-
-//     conversationContext.lastOriginalText = originalText;
-//     const cleanText = originalText.trim();
-//     let finalText = cleanText;
-
-//     if (activeSettings?.targetLanguage && activeSettings.targetLanguage !== 'original') {
-//       finalText = await translateWithContext(cleanText, activeSettings.targetLanguage);
-//     }
-
-//     if (isRecording && finalText) {
-//       if (activeSettings?.showSubtitles !== false) {
-//         chrome.runtime.sendMessage({
-//           type: 'SUBTITLES_FROM_OFFSCREEN',
-//           text: finalText,
-//           tabId: currentTabId,
-//           settings: activeSettings
-//         }).catch(() => { });
-//       }
-
-//       if (activeSettings?.enableVoice) {
-//         generateAndPlayVoice(finalText);
-//       }
-//     }
-//   } catch (e) {
-//     console.error('Process error:', e);
-//   }
-// }
-
-// async function transcribeWithWhisper(blob) {
-//   const formData = new FormData();
-//   formData.append('file', blob, 'audio.webm');
-//   formData.append('model', 'whisper-1');
-
-//   try {
-//     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-//       method: 'POST',
-//       headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-//       body: formData,
-//     });
-
-//     const data = await response.json();
-//     return data.text || '';
-//   } catch (error) {
-//     console.error('Whisper failed:', error);
-//     return '';
-//   }
-// }
-
-// async function translateWithContext(text, targetLang) {
-//   try {
-//     const requestBody = {
-//       model: 'gpt-4o-mini',
-//       messages: [
-//         {
-//           role: 'system',
-//           // content: `Translate to ${targetLang}. Output ONLY translation.`,
-//           // СТАЛО (вариант 1 - для озвучки):
-//           content: `Translate to ${targetLang} for voiceover. Output only the ${targetLang} text. Natural speech.`,
-
-//           // ИЛИ вариант 2 (короткий):
-//           // content: `Translate to ${targetLang}. Output only translation for audio.`,
-
-//           // ИЛИ вариант 3 (точный):
-//           // content: `Translate to ${targetLang}. Provide only the ${targetLang} translation for subtitles/voiceover.`,
-//         },
-//         ...conversationContext.history,
-//         { role: 'user', content: text },
-//       ],
-//       temperature: 0,
-//       max_tokens: 300,
-//     };
-
-//     const response = await fetch('https://api.openai.com/v1/chat/completions', {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${OPENAI_API_KEY}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(requestBody),
-//     });
-
-//     const data = await response.json();
-//     const translation = data.choices[0]?.message?.content?.trim() || text;
-
-//     conversationContext.history.push(
-//       { role: 'user', content: text },
-//       { role: 'assistant', content: translation },
-//     );
-
-//     if (conversationContext.history.length > 16) {
-//       conversationContext.history.splice(0, 2);
-//     }
-
-//     return translation;
-//   } catch (e) {
-//     console.error('Translation error:', e);
-//     return text;
-//   }
-// }
-
-// async function generateAndPlayVoice(text) {
-//   if (!text || !isRecording || !activeSettings?.enableVoice) return;
-
-//   try {
-//     const voiceGender = activeSettings.voiceGender || 'neutral';
-//     const voiceConfig = VOICE_CONFIG[voiceGender] || VOICE_CONFIG.neutral;
-
-//     const requestBody = {
-//       model: 'tts-1',
-//       voice: voiceConfig.openai_voice,
-//       input: text,
-//       speed: 1.05,
-//     };
-
-//     const response = await fetch('https://api.openai.com/v1/audio/speech', {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${OPENAI_API_KEY}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(requestBody),
-//     });
-
-//     if (!response.ok) {
-//       return;
-//     }
-
-//     const arrayBuffer = await response.arrayBuffer();
-
-//     if (!playbackAudioContext || playbackAudioContext.state === 'closed') {
-//       playbackAudioContext = new AudioContext();
-//     }
-
-//     const audioBuffer = await playbackAudioContext.decodeAudioData(arrayBuffer);
-
-//     speechQueue.push({
-//       buffer: audioBuffer,
-//       context: playbackAudioContext
-//     });
-
-//     if (!isPlaying) {
-//       playNextInQueue();
-//     }
-//   } catch (e) {
-//     console.error('TTS Error:', e);
-//   }
-// }
-
-// function playNextInQueue() {
-//   if (speechQueue.length === 0 || !isRecording) {
-//     isPlaying = false;
-//     return;
-//   }
-
-//   isPlaying = true;
-//   const { buffer, context } = speechQueue.shift();
-
-//   if (context.state === 'closed') {
-//     playNextInQueue();
-//     return;
-//   }
-
-//   const source = context.createBufferSource();
-//   source.buffer = buffer;
-
-//   if (speechQueue.length > 1) {
-//     source.playbackRate.value = 1.25;
-//   } else {
-//     source.playbackRate.value = 1.05;
-//   }
-
-//   source.connect(context.destination);
-
-//   source.onended = () => {
-//     playNextInQueue();
-//   };
-
-//   if (context.state === 'suspended') {
-//     context.resume();
-//   }
-//   source.start(0);
-// }
-
-// function applyVolumeSettings(s) {
-//   if (!gainNode || !audioContext) return;
-//   const vol = s.muteOriginal ? 0 : s.originalVolume || 1.0;
-//   gainNode.gain.setTargetAtTime(vol, audioContext.currentTime, 0.01);
-// }
-
-// function updateVolume(s) {
-//   activeSettings = { ...activeSettings, ...s };
-//   applyVolumeSettings(activeSettings);
-// }
-
-// function stopInternal() {
-//   isRecording = false;
-//   isPlaying = false;
-//   speechQueue = [];
-//   clearTimeout(silenceTimer);
-
-//   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-//     mediaRecorder.stop();
-//   }
-
-//   if (audioStream) {
-//     audioStream.getTracks().forEach(t => t.stop());
-//   }
-
-//   if (audioContext && audioContext.state !== 'closed') {
-//     audioContext.close();
-//   }
-
-//   if (playbackAudioContext && playbackAudioContext.state !== 'closed') {
-//     playbackAudioContext.close();
-//   }
-
-//   mediaRecorder = null;
-//   audioStream = null;
-//   audioContext = null;
-//   playbackAudioContext = null;
-//   gainNode = null;
-//   analyser = null;
-//   dataArray = null;
-// }
-
-// function stopCapture() {
-//   stopInternal();
-//   activeSettings = null;
-//   currentTabId = null;
-//   conversationContext.history = [];
-//   conversationContext.lastOriginalText = '';
-// }
-
-// console.log('✅ Offscreen ready');
-
-//TODO:
-
-// offscreen.js - ГОЛОС + СУБТИТРЫ
-// console.log('📄 Offscreen document loaded');
-
-// let mediaRecorder = null;
-// let audioStream = null;
-// let audioContext = null;
-// let playbackAudioContext = null;
-// let analyser = null;
-// let dataArray = null;
-// let gainNode = null;
-// let activeSettings = null;
-// let isRecording = false;
-// let currentTabId = null;
-// let silenceTimer = null;
-
-// let speechQueue = [];
-// let isPlaying = false;
-
-// let conversationContext = {
-//   history: [],
-//   lastOriginalText: '',
-//   maxHistory: 8,
-// };
-
-// const VOICE_CONFIG = {
-//   male: { openai_voice: 'onyx' },
-//   female: { openai_voice: 'shimmer' },
-//   neutral: { openai_voice: 'nova' },
-//   auto: { openai_voice: 'alloy' },
-// };
-
-// // ==================== СТИЛИ ПЕРЕВОДА ====================
-// const TRANSLATION_STYLES = {
-//   DEFAULT: {
-//     id: 'default',
-//     name: 'Обычный',
-//     prompt: (lang) => `Translate to ${lang} for voiceover. Output only the ${lang} text. Natural speech.`
-//   },
-//   CHILDREN: {
-//     id: 'children',
-//     name: 'Детский контент',
-//     prompt: (lang) => `Translate to ${lang} for children's cartoons/educational content.
-// RULES:
-// 1. Use simple, clear, friendly language
-// 2. Keep it engaging and positive
-// 3. Avoid complex words
-// 4. Maintain educational value
-// 5. Use natural speaking style for voiceover
-// OUTPUT ONLY THE TRANSLATION.`
-//   },
-//   SCIENCE: {
-//     id: 'science',
-//     name: 'Научный/Технический',
-//     prompt: (lang) => `Translate to ${lang} for scientific/technical content.
-// RULES:
-// 1. Preserve ALL technical terms in original language (English)
-// 2. Maintain precise terminology
-// 3. Keep formulas, abbreviations, units unchanged
-// 4. Use formal academic style but still suitable for voiceover
-// 5. Add brief explanations in brackets if needed
-// OUTPUT ONLY THE TRANSLATION.`
-//   },
-//   EDUCATIONAL: {
-//     id: 'educational',
-//     name: 'Обучающий/Коучинг',
-//     prompt: (lang) => `Translate to ${lang} for educational/coaching content.
-// RULES:
-// 1. Clear, motivational tone
-// 2. Keep instructional clarity
-// 3. Maintain teacher-student dynamic
-// 4. Use engaging but professional language
-// 5. Preserve examples and analogies
-// OUTPUT ONLY THE TRANSLATION.`
-//   },
-// //   KABBALAH: {
-// //     id: 'kabbalah',
-// //     name: 'Кабалистический',
-// //     prompt: (lang) => `Translate to ${lang} with esoteric/kabbalistic interpretation.
-// // RULES:
-// // 1. Look for hidden meanings and symbolism
-// // 2. Add mystical interpretations in brackets []
-// // 3. Keep original text but enhance with spiritual insight
-// // 4. Use elevated, philosophical language
-// // 5. Connect to universal concepts
-// // OUTPUT ONLY THE TRANSLATION WITH ADDED INTERPRETATIONS.`
-// //   }
-// KABBALAH: {
-//   id: 'kabbalah',
-//   name: 'Каббалистический',
-//   prompt: (lang) => `Translate to ${lang} with precise Jewish mystical terminology.
-// Use traditional translations for all biblical and kabbalistic concepts.
-// Maintain spiritual depth and accuracy.`
-// }
-// };
-
-// // Функция получения промпта по стилю
-// function getTranslationPrompt(targetLang, style = 'default') {
-//   const styleKey = style.toUpperCase();
-//   const styleConfig = TRANSLATION_STYLES[styleKey] || TRANSLATION_STYLES.DEFAULT;
-//   return styleConfig.prompt(targetLang);
-// }
-// // ==================== КОНЕЦ СТИЛЕЙ ПЕРЕВОДА ====================
-
-// // ОРИГИНАЛЬНЫЙ РАБОЧИЙ КОД
-// const OPENAI_API_KEY = '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';
-
-// // НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ GEMINI
-// const GEMINI_API_KEY = 'AIzaSyAQjnhKlojhPPkFfaNDiXl7nLmGdrq3dPg';
-// const GEMINI_MODEL = 'gemini-2.0-flash-exp';
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   switch (request.type) {
-//     case 'START_CAPTURE':
-//       startCapture(request.streamId, request.settings, request.tabId).then(sendResponse);
-//       return true;
-//     case 'STOP_CAPTURE':
-//       stopCapture();
-//       sendResponse({ success: true });
-//       return true;
-//     case 'UPDATE_VOLUME':
-//       updateVolume(request.settings);
-//       sendResponse({ success: true });
-//       return true;
-//     case 'UPDATE_VOICE':
-//       if (request.settings) {
-//         activeSettings = { ...activeSettings, ...request.settings };
-//         console.log('Voice settings updated:', activeSettings.voiceGender);
-//       }
-//       sendResponse({ success: true });
-//       return true;
-//     case 'PING':
-//       sendResponse({ success: true, isRecording });
-//       return true;
-//     case 'UPDATE_SETTINGS':
-//       if (request.settings) {
-//         activeSettings = { ...activeSettings, ...request.settings };
-//       }
-//       sendResponse({ success: true });
-//       return true;
-//     default:
-//       return false;
-//   }
-// });
-
-// async function startCapture(streamId, settings, tabId) {
-//   try {
-//     stopInternal();
-//     isRecording = true;
-//     activeSettings = { ...settings };
-//     currentTabId = tabId;
-
-//     conversationContext.history = [];
-//     conversationContext.lastOriginalText = '';
-//     speechQueue = [];
-//     isPlaying = false;
-
-//     audioStream = await navigator.mediaDevices.getUserMedia({
-//       audio: {
-//         mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId },
-//       },
-//       video: false,
-//     });
-
-//     audioContext = new AudioContext();
-//     const source = audioContext.createMediaStreamSource(audioStream);
-
-//     analyser = audioContext.createAnalyser();
-//     analyser.fftSize = 256;
-//     source.connect(analyser);
-//     dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-//     gainNode = audioContext.createGain();
-//     source.connect(gainNode);
-//     gainNode.connect(audioContext.destination);
-
-//     applyVolumeSettings(activeSettings);
-//     startRecording();
-
-//     return { success: true };
-//   } catch (error) {
-//     isRecording = false;
-//     return { success: false, error: error.message };
-//   }
-// }
-
-// function startRecording() {
-//   if (!isRecording || !audioStream || !audioStream.active) return;
-
-//   try {
-//     mediaRecorder = new MediaRecorder(audioStream, {
-//       mimeType: 'audio/webm;codecs=opus',
-//     });
-//     let audioChunks = [];
-
-//     mediaRecorder.ondataavailable = (e) => {
-//       if (e.data.size > 0) audioChunks.push(e.data);
-//     };
-
-//     mediaRecorder.onstop = async () => {
-//       if (audioChunks.length > 0 && isRecording) {
-//         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-//         processAudioWithContext(audioBlob);
-//       }
-//       if (isRecording) startRecording();
-//     };
-
-//     mediaRecorder.start();
-
-//     const checkSilence = () => {
-//       if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
-//       analyser.getByteFrequencyData(dataArray);
-//       let average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-
-//       if (average < 10) {
-//         if (!silenceTimer) {
-//           silenceTimer = setTimeout(() => {
-//             if (mediaRecorder && mediaRecorder.state === 'recording') {
-//               mediaRecorder.stop();
-//             }
-//           }, 1500);
-//         }
-//       } else {
-//         clearTimeout(silenceTimer);
-//         silenceTimer = null;
-//       }
-//     };
-
-//     const vadInterval = setInterval(checkSilence, 100);
-//     setTimeout(() => {
-//       clearInterval(vadInterval);
-//       if (mediaRecorder && mediaRecorder.state === 'recording') {
-//         mediaRecorder.stop();
-//       }
-//     }, 4000);
-//   } catch (err) {
-//     console.error('MediaRecorder error:', err);
-//     isRecording = false;
-//   }
-// }
-
-// async function processAudioWithContext(audioBlob) {
-//   if (!isRecording) return;
-
-//   try {
-//     const originalText = await transcribeWithWhisper(audioBlob);
-
-//     if (!originalText || originalText.trim() === '') return;
-
-//     if (originalText === conversationContext.lastOriginalText) {
-//       return;
-//     }
-
-//     conversationContext.lastOriginalText = originalText;
-//     const cleanText = originalText.trim();
-//     let finalText = cleanText;
-
-//     if (activeSettings?.targetLanguage && activeSettings.targetLanguage !== 'original') {
-//       finalText = await translateWithContext(cleanText, activeSettings.targetLanguage);
-//     }
-
-//     if (isRecording && finalText) {
-//       if (activeSettings?.showSubtitles !== false) {
-//         chrome.runtime.sendMessage({
-//           type: 'SUBTITLES_FROM_OFFSCREEN',
-//           text: finalText,
-//           tabId: currentTabId,
-//           settings: activeSettings
-//         }).catch(() => { });
-//       }
-
-//       if (activeSettings?.enableVoice) {
-//         generateAndPlayVoice(finalText);
-//       }
-//     }
-//   } catch (e) {
-//     console.error('Process error:', e);
-//   }
-// }
-
-// async function transcribeWithWhisper(blob) {
-//   const formData = new FormData();
-//   formData.append('file', blob, 'audio.webm');
-//   formData.append('model', 'whisper-1');
-
-//   try {
-//     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-//       method: 'POST',
-//       headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-//       body: formData,
-//     });
-
-//     const data = await response.json();
-//     return data.text || '';
-//   } catch (error) {
-//     console.error('Whisper failed:', error);
-//     return '';
-//   }
-// }
-
-// async function translateWithContext(text, targetLang) {
-//   try {
-//     // Получаем стиль перевода из настроек
-//     const translationStyle = activeSettings?.translationStyle || 'default';
-    
-//     const requestBody = {
-//       model: 'gpt-4o-mini',
-//       messages: [
-//         {
-//           role: 'system',
-//           // Используем выбранный стиль перевода
-//           content: getTranslationPrompt(targetLang, translationStyle),
-//         },
-//         ...conversationContext.history,
-//         { role: 'user', content: text },
-//       ],
-//       temperature: translationStyle === 'science' ? 0.1 : 0, // Для науки чуть выше
-//       max_tokens: translationStyle === 'kabbalah' ? 400 : 300, // Каббала требует больше токенов
-//     };
-
-//     const response = await fetch('https://api.openai.com/v1/chat/completions', {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${OPENAI_API_KEY}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(requestBody),
-//     });
-
-//     const data = await response.json();
-//     const translation = data.choices[0]?.message?.content?.trim() || text;
-
-//     conversationContext.history.push(
-//       { role: 'user', content: text },
-//       { role: 'assistant', content: translation },
-//     );
-
-//     if (conversationContext.history.length > 16) {
-//       conversationContext.history.splice(0, 2);
-//     }
-
-//     return translation;
-//   } catch (e) {
-//     console.error('Translation error:', e);
-//     return text;
-//   }
-// }
-
-// async function generateAndPlayVoice(text) {
-//   if (!text || !isRecording || !activeSettings?.enableVoice) return;
-
-//   try {
-//     const voiceGender = activeSettings.voiceGender || 'neutral';
-//     const voiceConfig = VOICE_CONFIG[voiceGender] || VOICE_CONFIG.neutral;
-
-//     const requestBody = {
-//       model: 'tts-1',
-//       voice: voiceConfig.openai_voice,
-//       input: text,
-//       speed: 1.05,
-//     };
-
-//     const response = await fetch('https://api.openai.com/v1/audio/speech', {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${OPENAI_API_KEY}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(requestBody),
-//     });
-
-//     if (!response.ok) {
-//       return;
-//     }
-
-//     const arrayBuffer = await response.arrayBuffer();
-
-//     if (!playbackAudioContext || playbackAudioContext.state === 'closed') {
-//       playbackAudioContext = new AudioContext();
-//     }
-
-//     const audioBuffer = await playbackAudioContext.decodeAudioData(arrayBuffer);
-
-//     speechQueue.push({
-//       buffer: audioBuffer,
-//       context: playbackAudioContext
-//     });
-
-//     if (!isPlaying) {
-//       playNextInQueue();
-//     }
-//   } catch (e) {
-//     console.error('TTS Error:', e);
-//   }
-// }
-
-// function playNextInQueue() {
-//   if (speechQueue.length === 0 || !isRecording) {
-//     isPlaying = false;
-//     return;
-//   }
-
-//   isPlaying = true;
-//   const { buffer, context } = speechQueue.shift();
-
-//   if (context.state === 'closed') {
-//     playNextInQueue();
-//     return;
-//   }
-
-//   const source = context.createBufferSource();
-//   source.buffer = buffer;
-
-//   if (speechQueue.length > 1) {
-//     source.playbackRate.value = 1.25;
-//   } else {
-//     source.playbackRate.value = 1.05;
-//   }
-
-//   source.connect(context.destination);
-
-//   source.onended = () => {
-//     playNextInQueue();
-//   };
-
-//   if (context.state === 'suspended') {
-//     context.resume();
-//   }
-//   source.start(0);
-// }
-
-// function applyVolumeSettings(s) {
-//   if (!gainNode || !audioContext) return;
-//   const vol = s.muteOriginal ? 0 : s.originalVolume || 1.0;
-//   gainNode.gain.setTargetAtTime(vol, audioContext.currentTime, 0.01);
-// }
-
-// function updateVolume(s) {
-//   activeSettings = { ...activeSettings, ...s };
-//   applyVolumeSettings(activeSettings);
-// }
-
-// function stopInternal() {
-//   isRecording = false;
-//   isPlaying = false;
-//   speechQueue = [];
-//   clearTimeout(silenceTimer);
-
-//   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-//     mediaRecorder.stop();
-//   }
-
-//   if (audioStream) {
-//     audioStream.getTracks().forEach(t => t.stop());
-//   }
-
-//   if (audioContext && audioContext.state !== 'closed') {
-//     audioContext.close();
-//   }
-
-//   if (playbackAudioContext && playbackAudioContext.state !== 'closed') {
-//     playbackAudioContext.close();
-//   }
-
-//   mediaRecorder = null;
-//   audioStream = null;
-//   audioContext = null;
-//   playbackAudioContext = null;
-//   gainNode = null;
-//   analyser = null;
-//   dataArray = null;
-// }
-
-// function stopCapture() {
-//   stopInternal();
-//   activeSettings = null;
-//   currentTabId = null;
-//   conversationContext.history = [];
-//   conversationContext.lastOriginalText = '';
-// }
-
-// console.log('✅ Offscreen ready');
-
-// //TODO:
-
-// // offscreen.js - ВЕРСИЯ СО СТИЛЯМИ И КОНТЕКСТОМ
-// console.log('📄 Offscreen document loaded');
-
-// const OPENAI_API_KEY = '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';
-
-// let mediaRecorder = null;
-// let audioStream = null;
-// let audioContext = null;
-// let playbackAudioContext = null;
-// let analyser = null;
-// let dataArray = null;
-// let gainNode = null;
-// let activeSettings = null;
-// let isRecording = false;
-// let currentTabId = null;
-
-// let speechQueue = [];
-// let isPlaying = false;
-// let conversationContext = { history: [], lastOriginalText: '', maxHistory: 10 };
-
-// // ==================== КОНФИГУРАЦИЯ СТИЛЕЙ ====================
-// const TRANSLATION_STYLES = {
-//   DEFAULT: "Translate to {lang}. Natural speech, clear and simple.",
-//   KABBALAH: "You are an expert in Kabbalah. Translate to {lang} using precise terms: Light (Ohr), Vessel (Kli), Screen (Masach). Do not confuse names from Torah and Zohar. Output ONLY translation without explanations.",
-//   KIDS: "Translate to {lang} as a fairy tale for children. Use very simple words, warm tone, and magical descriptions.",
-//   SCIENTIFIC: "Translate to {lang} in a formal scientific style. Focus on logic and technical accuracy."
-// };
-
-// const VOICE_CONFIG = {
-//   male: { openai_voice: 'onyx' },
-//   female: { openai_voice: 'shimmer' },
-//   neutral: { openai_voice: 'nova' },
-//   auto: { openai_voice: 'alloy' },
-// };
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   switch (request.type) {
-//     case 'START_CAPTURE':
-//       startCapture(request.streamId, request.settings, request.tabId).then(sendResponse);
-//       return true;
-//     case 'STOP_CAPTURE':
-//       stopCapture();
-//       sendResponse({ success: true });
-//       return true;
-//     case 'UPDATE_SETTINGS':
-//     case 'UPDATE_VOLUME':
-//       activeSettings = { ...activeSettings, ...request.settings };
-//       applyVolumeSettings(activeSettings);
-//       sendResponse({ success: true });
-//       return true;
-//     case 'PING':
-//       sendResponse({ success: true, isRecording });
-//       return true;
-//     default:
-//       return false;
-//   }
-// });
-
-// async function startCapture(streamId, settings, tabId) {
-//   try {
-//     stopInternal();
-//     isRecording = true;
-//     activeSettings = { ...settings };
-//     currentTabId = tabId;
-//     conversationContext.history = [];
-
-//     audioStream = await navigator.mediaDevices.getUserMedia({
-//       audio: { mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId } }
-//     });
-
-//     audioContext = new AudioContext();
-//     const source = audioContext.createMediaStreamSource(audioStream);
-//     analyser = audioContext.createAnalyser();
-//     gainNode = audioContext.createGain();
-//     source.connect(analyser);
-//     source.connect(gainNode);
-//     gainNode.connect(audioContext.destination);
-
-//     applyVolumeSettings(activeSettings);
-//     startRecordingCycle();
-//     return { success: true };
-//   } catch (error) {
-//     isRecording = false;
-//     return { success: false, error: error.message };
-//   }
-// }
-
-// function startRecordingCycle() {
-//   if (!isRecording || !audioStream) return;
-//   mediaRecorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm;codecs=opus' });
-//   let chunks = [];
-//   mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-//   mediaRecorder.onstop = async () => {
-//     if (chunks.length > 0 && isRecording) processAudio(new Blob(chunks, { type: 'audio/webm' }));
-//     if (isRecording) startRecordingCycle();
-//   };
-//   mediaRecorder.start();
-//   setTimeout(() => { if (mediaRecorder.state === 'recording') mediaRecorder.stop(); }, 4000);
-// }
-
-// async function processAudio(blob) {
-//   try {
-//     const text = await transcribe(blob);
-//     if (!text || text.trim().length < 3) return;
-//     if (text === conversationContext.lastOriginalText) return;
-//     conversationContext.lastOriginalText = text;
-
-//     const translated = await translate(text, activeSettings.targetLanguage);
-
-//     if (isRecording && translated) {
-//       chrome.runtime.sendMessage({
-//         type: 'SUBTITLES_FROM_OFFSCREEN',
-//         text: translated,
-//         tabId: currentTabId,
-//         settings: activeSettings
-//       }).catch(() => {});
-
-//       if (activeSettings.enableVoice) generateVoice(translated);
-//     }
-//   } catch (e) { console.error(e); }
-// }
-
-// async function transcribe(blob) {
-//   const fd = new FormData();
-//   fd.append('file', blob, 'audio.webm');
-//   fd.append('model', 'whisper-1');
-//   fd.append('language', 'en');
-//   fd.append('prompt', 'Kabbalah, Light, Vessel, spiritual context.');
-//   const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-//     method: 'POST',
-//     headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-//     body: fd
-//   });
-//   const data = await res.json();
-//   return data.text || '';
-// }
-
-// async function translate(text, lang) {
-//   // Выбираем стиль из настроек или ставим дефолт
-//   const styleKey = (activeSettings.translationStyle || 'kabbalah').toUpperCase();
-//   const systemPrompt = (TRANSLATION_STYLES[styleKey] || TRANSLATION_STYLES.DEFAULT).replace('{lang}', lang);
-
-//   const res = await fetch('https://api.openai.com/v1/chat/completions', {
-//     method: 'POST',
-//     headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-//     body: JSON.stringify({
-//       model: 'gpt-4o-mini',
-//       messages: [
-//         { role: 'system', content: systemPrompt },
-//         ...conversationContext.history,
-//         { role: 'user', content: text }
-//       ],
-//       temperature: 0.1
-//     })
-//   });
-//   const data = await res.json();
-//   const result = data.choices[0].message.content.trim();
-
-//   conversationContext.history.push({ role: 'user', content: text }, { role: 'assistant', content: result });
-//   if (conversationContext.history.length > 10) conversationContext.history.splice(0, 2);
-//   return result;
-// }
-
-// async function generateVoice(text) {
-//   try {
-//     const voice = VOICE_CONFIG[activeSettings.voiceGender || 'neutral'].openai_voice;
-//     const res = await fetch('https://api.openai.com/v1/audio/speech', {
-//       method: 'POST',
-//       headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ model: 'tts-1', voice: voice, input: text, speed: 1.1 })
-//     });
-//     const buffer = await (playbackAudioContext || (playbackAudioContext = new AudioContext())).decodeAudioData(await res.arrayBuffer());
-//     if (speechQueue.length > 3) speechQueue.shift();
-//     speechQueue.push(buffer);
-//     if (!isPlaying) playQueue();
-//   } catch (e) {}
-// }
-
-// function playQueue() {
-//   if (speechQueue.length === 0 || !isRecording) { isPlaying = false; return; }
-//   isPlaying = true;
-//   const source = playbackAudioContext.createBufferSource();
-//   source.buffer = speechQueue.shift();
-//   source.playbackRate.value = speechQueue.length > 1 ? 1.3 : 1.1;
-//   source.connect(playbackAudioContext.destination);
-//   source.onended = playQueue;
-//   if (playbackAudioContext.state === 'suspended') playbackAudioContext.resume();
-//   source.start(0);
-// }
-
-// function applyVolumeSettings(s) {
-//   if (gainNode) gainNode.gain.setTargetAtTime(s.muteOriginal ? 0 : (s.originalVolume || 1), audioContext.currentTime, 0.01);
-// }
-
-// function stopInternal() {
-//   isRecording = false; isPlaying = false; speechQueue = [];
-//   if (mediaRecorder) mediaRecorder.stop();
-//   if (audioStream) audioStream.getTracks().forEach(t => t.stop());
-//   if (audioContext) audioContext.close();
-//   if (playbackAudioContext) playbackAudioContext.close();
-//   mediaRecorder = null; audioStream = null; audioContext = null; playbackAudioContext = null;
-// }
-
-// function stopCapture() { stopInternal(); conversationContext.history = []; }
-
-// offscreen.js - ПОЛНАЯ РАБОЧАЯ ВЕРСИЯ (КОНТЕКСТ + СТИЛИ + ФИКС ОШИБОК)
-//TODO: best so far
-// console.log('📄 Offscreen document loaded');
-
-// const OPENAI_API_KEY = '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';
-
-// let mediaRecorder = null;
-// let audioStream = null;
-// let audioContext = null;
-// let playbackAudioContext = null;
-// let analyser = null;
-// let gainNode = null;
-// let activeSettings = null;
-// let isRecording = false;
-// let currentTabId = null;
-
-// let speechQueue = [];
-// let isPlaying = false;
-// let conversationContext = { history: [], lastOriginalText: '', maxHistory: 10 };
-
-// // ==================== КОНФИГУРАЦИЯ СТИЛЕЙ ====================
-// const TRANSLATION_STYLES = {
-//   DEFAULT: "Translate to {lang}. Natural speech, clear and simple. Output ONLY translation.",
-//   KABBALAH: "Translate to {lang}. Use Kabbalah terminology (Light, Vessel, Screen). Do not confuse names from Torah and Zohar. Output ONLY translation without explanations.",
-//   KIDS: "Translate to {lang} as a fairy tale for children. Use very simple words. Output ONLY translation.",
-//   SCIENTIFIC: "Translate to {lang} in a formal scientific style. Focus on logic and technical accuracy. Output ONLY translation."
-// };
-
-// const VOICE_CONFIG = {
-//   male: { openai_voice: 'onyx' },
-//   female: { openai_voice: 'shimmer' },
-//   neutral: { openai_voice: 'nova' },
-//   auto: { openai_voice: 'alloy' },
-// };
-
-// // ==================== ОБРАБОТЧИК СООБЩЕНИЙ ====================
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   switch (request.type) {
-//     case 'START_CAPTURE':
-//       startCapture(request.streamId, request.settings, request.tabId).then(sendResponse);
-//       return true;
-//     case 'STOP_CAPTURE':
-//       stopCapture();
-//       sendResponse({ success: true });
-//       return true;
-//     case 'UPDATE_SETTINGS':
-//     case 'UPDATE_VOLUME':
-//       activeSettings = { ...activeSettings, ...request.settings };
-//       applyVolumeSettings(activeSettings);
-//       sendResponse({ success: true });
-//       return true;
-//     case 'PING':
-//       sendResponse({ success: true, isRecording });
-//       return true;
-//     default:
-//       return false;
-//   }
-// });
-
-// async function startCapture(streamId, settings, tabId) {
-//   try {
-//     stopInternal();
-//     isRecording = true;
-//     activeSettings = { ...settings };
-//     currentTabId = tabId;
-//     conversationContext.history = [];
-
-//     audioStream = await navigator.mediaDevices.getUserMedia({
-//       audio: { mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId } }
-//     });
-
-//     audioContext = new AudioContext();
-//     const source = audioContext.createMediaStreamSource(audioStream);
-//     analyser = audioContext.createAnalyser();
-//     gainNode = audioContext.createGain();
-//     source.connect(analyser);
-//     source.connect(gainNode);
-//     gainNode.connect(audioContext.destination);
-
-//     applyVolumeSettings(activeSettings);
-//     startRecordingCycle();
-//     return { success: true };
-//   } catch (error) {
-//     isRecording = false;
-//     return { success: false, error: error.message };
-//   }
-// }
-
-// function startRecordingCycle() {
-//   if (!isRecording || !audioStream) return;
-
-//   try {
-//     mediaRecorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm;codecs=opus' });
-//     let chunks = [];
-
-//     mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-
-//     mediaRecorder.onstop = async () => {
-//       if (chunks.length > 0 && isRecording) {
-//         processAudio(new Blob(chunks, { type: 'audio/webm' }));
-//       }
-//       if (isRecording) startRecordingCycle();
-//     };
-
-//     mediaRecorder.start();
-
-//     // ФИКС ОШИБКИ: Проверка существования mediaRecorder перед остановкой
-//     setTimeout(() => { 
-//       if (mediaRecorder && mediaRecorder.state === 'recording') {
-//         mediaRecorder.stop(); 
-//       }
-//     }, 4000);
-
-//   } catch (err) {
-//     console.error('Recorder error:', err);
-//     isRecording = false;
-//   }
-// }
-
-// async function processAudio(blob) {
-//   try {
-//     const text = await transcribe(blob);
-//     if (!text || text.trim().length < 3) return;
-//     if (text === conversationContext.lastOriginalText) return;
-//     conversationContext.lastOriginalText = text;
-
-//     const translated = await translate(text, activeSettings.targetLanguage);
-
-//     if (isRecording && translated) {
-//       chrome.runtime.sendMessage({
-//         type: 'SUBTITLES_FROM_OFFSCREEN',
-//         text: translated,
-//         tabId: currentTabId,
-//         settings: activeSettings
-//       }).catch(() => {});
-
-//       if (activeSettings.enableVoice) generateVoice(translated);
-//     }
-//   } catch (e) { console.error('Process error:', e); }
-// }
-
-// async function transcribe(blob) {
-//   const fd = new FormData();
-//   fd.append('file', blob, 'audio.webm');
-//   fd.append('model', 'whisper-1');
-//   fd.append('language', 'en');
-//   fd.append('prompt', 'Kabbalah, Light, Vessel, spiritual context, Zohar.');
-  
-//   try {
-//     const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-//       method: 'POST',
-//       headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-//       body: fd
-//     });
-//     const data = await res.json();
-//     return data.text || '';
-//   } catch (e) { return ''; }
-// }
-
-// async function translate(text, lang) {
-//   const styleKey = (activeSettings.translationStyle || 'kabbalah').toUpperCase();
-//   const systemPrompt = (TRANSLATION_STYLES[styleKey] || TRANSLATION_STYLES.DEFAULT).replace('{lang}', lang);
-
-//   try {
-//     const res = await fetch('https://api.openai.com/v1/chat/completions', {
-//       method: 'POST',
-//       headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-//       body: JSON.stringify({
-//         model: 'gpt-4o-mini',
-//         messages: [
-//           { role: 'system', content: systemPrompt },
-//           ...conversationContext.history,
-//           { role: 'user', content: text }
-//         ],
-//         temperature: 0 // Максимальная точность для перевода
-//       })
-//     });
-//     const data = await res.json();
-//     const result = data.choices[0].message.content.trim();
-
-//     conversationContext.history.push({ role: 'user', content: text }, { role: 'assistant', content: result });
-//     if (conversationContext.history.length > 10) conversationContext.history.splice(0, 2);
-    
-//     return result;
-//   } catch (e) { return text; }
-// }
-
-// async function generateVoice(text) {
-//   try {
-//     const voice = VOICE_CONFIG[activeSettings.voiceGender || 'neutral'].openai_voice;
-//     const res = await fetch('https://api.openai.com/v1/audio/speech', {
-//       method: 'POST',
-//       headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ model: 'tts-1', voice: voice, input: text, speed: 1.1 })
-//     });
-    
-//     if (!res.ok) return;
-
-//     const arrayBuffer = await res.arrayBuffer();
-//     if (!playbackAudioContext || playbackAudioContext.state === 'closed') {
-//       playbackAudioContext = new AudioContext();
-//     }
-
-//     const buffer = await playbackAudioContext.decodeAudioData(arrayBuffer);
-    
-//     if (speechQueue.length > 3) speechQueue.shift();
-//     speechQueue.push(buffer);
-    
-//     if (!isPlaying) playQueue();
-//   } catch (e) { console.error('TTS error:', e); }
-// }
-
-// function playQueue() {
-//   if (speechQueue.length === 0 || !isRecording) { isPlaying = false; return; }
-  
-//   isPlaying = true;
-//   const source = playbackAudioContext.createBufferSource();
-//   source.buffer = speechQueue.shift();
-//   source.playbackRate.value = speechQueue.length > 1 ? 1.3 : 1.1;
-  
-//   source.connect(playbackAudioContext.destination);
-//   source.onended = playQueue;
-  
-//   if (playbackAudioContext.state === 'suspended') playbackAudioContext.resume();
-//   source.start(0);
-// }
-
-// function applyVolumeSettings(s) {
-//   if (gainNode && audioContext) {
-//     const vol = s.muteOriginal ? 0 : (s.originalVolume || 1);
-//     gainNode.gain.setTargetAtTime(vol, audioContext.currentTime, 0.01);
-//   }
-// }
-
-// function stopInternal() {
-//   isRecording = false;
-//   isPlaying = false;
-//   speechQueue = [];
-  
-//   // ФИКС ОШИБКИ: Сначала проверяем состояние, потом останавливаем и зануляем
-//   if (mediaRecorder) {
-//     if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-//     mediaRecorder = null;
-//   }
-  
-//   if (audioStream) {
-//     audioStream.getTracks().forEach(t => t.stop());
-//     audioStream = null;
-//   }
-  
-//   if (audioContext && audioContext.state !== 'closed') {
-//     audioContext.close();
-//     audioContext = null;
-//   }
-  
-//   if (playbackAudioContext && playbackAudioContext.state !== 'closed') {
-//     playbackAudioContext.close();
-//     playbackAudioContext = null;
-//   }
-  
-//   gainNode = null;
-//   analyser = null;
-// }
-
-// function stopCapture() {
-//   stopInternal();
-//   conversationContext.history = [];
-//   conversationContext.lastOriginalText = '';
-// }
-
-// console.log('✅ Offscreen ready - Final Stable Version');
-
-//TODO:
-// offscreen.js - УНИВЕРСАЛЬНАЯ МУЛЬТИЯЗЫЧНАЯ ВЕРСИЯ (150+ ЯЗЫКОВ)
-console.log('📄 Offscreen document loaded - Universal Mode');
-
-const OPENAI_API_KEY = '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';
-
-let mediaRecorder = null, audioStream = null, audioContext = null, playbackAudioContext = null;
-let analyser = null, gainNode = null, isRecording = false, isPlaying = false;
-let activeSettings = null, currentTabId = null, speechQueue = [];
-let conversationContext = { history: [], lastOriginalText: '', maxHistory: 20 }; // Глубокий контекст
-
-const TRANSLATION_STYLES = {
-  DEFAULT: "Translate to {lang}. Natural speech. Output ONLY translation.",
-  KABBALAH: "Translate to {lang}. Use Kabbalah terminology (Light, Vessel, Screen). Do not confuse names from Torah and Zohar. Output ONLY translation without explanations.",
-  KIDS: "Translate to {lang} as a fairy tale for children. Simple words. Output ONLY translation.",
-  SCIENTIFIC: "Translate to {lang} in a formal scientific style. Output ONLY translation."
-};
-
-const VOICE_CONFIG = {
-  male: { openai_voice: 'onyx' },
-  female: { openai_voice: 'shimmer' },
-  neutral: { openai_voice: 'nova' },
-  auto: { openai_voice: 'alloy' }
-};
+// ============================================================
+// DEEPGRAM WEBSOCKET LIVE STREAMING VERSION
+// ============================================================
+console.log('=== OFFSCREEN.JS STARTED - WEBSOCKET LIVE MODE ===');
+
+// API ключи загружаются из secrets.js (добавлен в .gitignore)
+const DEEPGRAM_KEY = window.SECRETS?.DEEPGRAM_API_KEY || '';
+const OPENAI_KEY = window.SECRETS?.OPENAI_API_KEY || '';
+
+if (!DEEPGRAM_KEY || !OPENAI_KEY) {
+  console.error(
+    '❌ API keys not found! Make sure secrets.js exists and contains SECRETS object',
+  );
+}
+
+// Проверяем конфиги
+console.log('📋 LANGUAGE_CONFIG loaded:', !!window.LANGUAGE_CONFIG);
+console.log('🎤 VOICE_CONFIG loaded:', !!window.VOICE_CONFIG);
+
+let audioStream = null,
+  audioContext = null;
+let analyser = null,
+  gainNode = null,
+  playbackContext = null;
+let activeSettings = null,
+  isRecording = false,
+  currentTabId = null;
+let speechQueue = [],
+  isPlaying = false,
+  history = [];
+
+// WebSocket для Deepgram
+let deepgramSocket = null;
+let mediaRecorder = null;
+let workletNode = null;
+
+// Режим работы: 'websocket' (Deepgram live) или 'whisper' (OpenAI batch)
+let captureMode = 'websocket';
+
+// --- МЕХАНИЗМ ВЫЖИВАНИЯ (KEEP-ALIVE) ---
+setInterval(() => {
+  if (isRecording) {
+    chrome.runtime
+      .sendMessage({ type: 'OFFSCREEN_KEEP_ALIVE' })
+      .catch(() => {});
+    // Также поддерживаем WebSocket живым
+    if (deepgramSocket && deepgramSocket.readyState === WebSocket.OPEN) {
+      deepgramSocket.send(JSON.stringify({ type: 'KeepAlive' }));
+    }
+  }
+}, 10000);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'START_CAPTURE') { startCapture(request.streamId, request.settings, request.tabId).then(sendResponse); return true; }
-  if (request.type === 'STOP_CAPTURE') { stopCapture(); sendResponse({ success: true }); return true; }
-  if (request.type === 'UPDATE_SETTINGS' || request.type === 'UPDATE_VOLUME') {
-    activeSettings = { ...activeSettings, ...request.settings };
-    if (gainNode && audioContext) gainNode.gain.setTargetAtTime(activeSettings.muteOriginal ? 0 : (activeSettings.originalVolume || 1), audioContext.currentTime, 0.01);
-    sendResponse({ success: true }); return true;
+  console.log('🎧 Offscreen received:', request.type);
+
+  if (request.type === 'PING') {
+    sendResponse({ success: true });
+    return true;
   }
-  if (request.type === 'PING') { sendResponse({ success: true, isRecording }); return true; }
-  return false;
+
+  if (request.type === 'START_CAPTURE') {
+    console.log('🚀 WebSocket LIVE capture starting...');
+    initCapture(request.streamId, request.settings, request.tabId)
+      .then((res) => sendResponse(res))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
+
+  if (request.type === 'STOP_CAPTURE') {
+    stopRecording();
+    sendResponse({ success: true });
+  }
+
+  if (request.type === 'UPDATE_SETTINGS') {
+    console.log('⚙️ Updating settings:', request.settings);
+    activeSettings = { ...activeSettings, ...request.settings };
+    updateVolume();
+    sendResponse({ success: true });
+  }
+
+  if (request.type === 'UPDATE_VOLUME') {
+    console.log('🔊 Updating volume:', request.settings);
+    activeSettings = { ...activeSettings, ...request.settings };
+    updateVolume();
+    sendResponse({ success: true });
+  }
+
+  if (request.type === 'UPDATE_VOICE') {
+    console.log('🎤 Updating voice:', request.settings);
+    activeSettings = { ...activeSettings, ...request.settings };
+    sendResponse({ success: true });
+  }
+
+  if (request.type === 'UPDATE_SETTINGS_FROM_POPUP') {
+    console.log('📨 Updating settings from popup:', request.settings);
+    activeSettings = { ...activeSettings, ...request.settings };
+    updateVolume();
+    sendResponse({ success: true });
+  }
+
+  return true;
 });
 
-async function startCapture(streamId, settings, tabId) {
+// ============================================================
+// WEBSOCKET CONNECTION TO DEEPGRAM
+// ============================================================
+function connectDeepgramWebSocket(lang) {
+  return new Promise((resolve, reject) => {
+    const model = 'nova-3';
+
+    // URL с параметрами для минимальной задержки
+    const wsUrl =
+      `wss://api.deepgram.com/v1/listen?` +
+      `model=${model}` +
+      `&language=${lang}` +
+      `&encoding=linear16` + // PCM 16-bit
+      `&sample_rate=16000` + // 16kHz
+      `&channels=1` + // Моно
+      `&interim_results=true` +
+      `&endpointing=300` + // Определение конца фразы через 300ms тишины
+      `&punctuate=true` +
+      `&smart_format=true`;
+
+    console.log('🔌 Connecting to Deepgram WebSocket:', wsUrl);
+
+    deepgramSocket = new WebSocket(wsUrl, ['token', DEEPGRAM_KEY]);
+
+    deepgramSocket.onopen = () => {
+      console.log('✅ Deepgram WebSocket CONNECTED!');
+      resolve();
+    };
+
+    deepgramSocket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        // Получаем транскрипцию
+        const transcript = data.channel?.alternatives?.[0]?.transcript;
+        const isFinal = data.is_final;
+        const confidence = data.channel?.alternatives?.[0]?.confidence || 0;
+
+        console.log(
+          `📝 Deepgram: "${transcript}" (final: ${isFinal}, conf: ${confidence})`,
+        );
+
+        // Обрабатываем только финальные результаты с текстом
+        if (transcript && transcript.trim().length > 2 && isFinal) {
+          console.log('🎯 Final transcript, sending to translate:', transcript);
+          translateAndVoice(transcript);
+        }
+      } catch (e) {
+        console.error('❌ Error parsing Deepgram response:', e);
+      }
+    };
+
+    deepgramSocket.onerror = (error) => {
+      console.error('❌ Deepgram WebSocket ERROR:', error);
+      reject(error);
+    };
+
+    deepgramSocket.onclose = (event) => {
+      console.log('📴 Deepgram WebSocket closed:', event.code, event.reason);
+      // Автоматическое переподключение если запись активна
+      if (isRecording && event.code !== 1000) {
+        console.log('🔄 Attempting to reconnect...');
+        setTimeout(() => {
+          if (isRecording) {
+            connectDeepgramWebSocket(
+              activeSettings?.sourceLanguage || 'en',
+            ).catch(console.error);
+          }
+        }, 2000);
+      }
+    };
+  });
+}
+
+// ============================================================
+// MAIN CAPTURE FUNCTION (HYBRID: WebSocket for nova-3, Whisper for he/ar/fa)
+// ============================================================
+async function initCapture(streamId, settings, tabId) {
   try {
-    stopInternal();
-    isRecording = true; activeSettings = settings; currentTabId = tabId;
-    conversationContext.history = [];
-    audioStream = await navigator.mediaDevices.getUserMedia({ audio: { mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId } } });
-    audioContext = new AudioContext();
+    if (isRecording) stopRecording();
+
+    activeSettings = settings;
+    currentTabId = tabId;
+    const lang = settings?.sourceLanguage || 'en';
+
+    // Определяем режим на основе конфига языка
+    const langConfig = (window.LANGUAGE_CONFIG &&
+      window.LANGUAGE_CONFIG[lang]) ||
+      window.LANGUAGE_CONFIG?.default || { model: 'nova-3' };
+
+    // Если модель whisper-* — используем batch mode (OpenAI Whisper)
+    captureMode = langConfig.model?.startsWith('whisper')
+      ? 'whisper'
+      : 'websocket';
+
+    console.log(
+      `🎤 Starting capture: lang=${lang}, mode=${captureMode}, model=${langConfig.model}`,
+    );
+
+    // 1. Захватываем аудио с вкладки
+    audioStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        mandatory: {
+          chromeMediaSource: 'tab',
+          chromeMediaSourceId: streamId,
+        },
+      },
+    });
+    console.log('✅ Audio stream obtained');
+
+    // 2. Настраиваем AudioContext для контроля громкости
+    // Для WebSocket нужен 16kHz, для Whisper можно 48kHz (но 16kHz тоже ок)
+    const sampleRate = captureMode === 'websocket' ? 16000 : 48000;
+    audioContext = new AudioContext({ sampleRate });
     const source = audioContext.createMediaStreamSource(audioStream);
     analyser = audioContext.createAnalyser();
     gainNode = audioContext.createGain();
-    source.connect(analyser); source.connect(gainNode); gainNode.connect(audioContext.destination);
-    applyVolumeSettings(activeSettings);
-    startRecordingCycle();
-    return { success: true };
-  } catch (e) { isRecording = false; return { success: false, error: e.message }; }
-}
 
-function startRecordingCycle() {
-  if (!isRecording || !audioStream) return;
-  try {
-    mediaRecorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm;codecs=opus' });
-    let chunks = [];
-    mediaRecorder.ondataavailable = (e) => e.data.size > 0 && chunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      if (chunks.length > 0 && isRecording) processAudio(new Blob(chunks, { type: 'audio/webm' }));
-      if (isRecording) startRecordingCycle();
-    };
-    mediaRecorder.start();
-    // 5 секунд — оптимально для смысла и задержки
-    setTimeout(() => { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); }, 5000);
-  } catch (e) { isRecording = false; }
-}
+    source.connect(analyser);
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
 
-async function processAudio(blob) {
-  try {
-    const text = await transcribe(blob);
-    if (!text || text.trim().length < 3 || text === conversationContext.lastOriginalText) return;
-    conversationContext.lastOriginalText = text;
+    isRecording = true;
+    updateVolume();
 
-    const translated = await translate(text, activeSettings.targetLanguage);
-    if (isRecording && translated) {
-      chrome.runtime.sendMessage({ type: 'SUBTITLES_FROM_OFFSCREEN', text: translated, tabId: currentTabId, settings: activeSettings }).catch(() => {});
-      if (activeSettings.enableVoice) generateVoice(translated);
+    if (captureMode === 'websocket') {
+      // ============ WEBSOCKET MODE (Deepgram Live) ============
+      await connectDeepgramWebSocket(lang);
+      console.log('✅ Deepgram WebSocket connected');
+
+      // Загружаем AudioWorklet для конвертации в PCM
+      await audioContext.audioWorklet.addModule('pcm-processor.js');
+      console.log('✅ PCM Processor loaded');
+
+      workletNode = new AudioWorkletNode(audioContext, 'pcm-processor');
+
+      // Получаем PCM данные от worklet и отправляем в WebSocket
+      workletNode.port.onmessage = (event) => {
+        if (
+          !isRecording ||
+          !deepgramSocket ||
+          deepgramSocket.readyState !== WebSocket.OPEN
+        ) {
+          return;
+        }
+        deepgramSocket.send(event.data);
+      };
+
+      source.connect(workletNode);
+      workletNode.connect(audioContext.destination);
+
+      console.log('✅ WebSocket pipeline ready');
+    } else {
+      // ============ WHISPER MODE (OpenAI Batch) ============
+      console.log('🎙️ Using Whisper mode for', lang);
+      startWhisperLoop(langConfig.interval || 5000);
     }
-  } catch (e) { console.error(e); }
-}
 
-async function transcribe(blob) {
-  const fd = new FormData();
-  fd.append('file', blob, 'audio.webm');
-  fd.append('model', 'whisper-1');
-  
-  // УНИВЕРСАЛЬНОСТЬ: Если в настройках есть язык оригинала (напр. 'ru', 'fr'), шлем его. 
-  // Если нет — Whisper определит сам (auto-detect).
-  if (activeSettings?.sourceLanguage && activeSettings.sourceLanguage !== 'auto') {
-    fd.append('language', activeSettings.sourceLanguage);
+    console.log('✅ Capture started for tab:', tabId);
+    return { success: true };
+  } catch (e) {
+    console.error('❌ Init Error:', e);
+    isRecording = false;
+    return { success: false, error: e.message };
   }
-
-  fd.append('prompt', 'Technical and spiritual lecture. Maintain names and terminology.');
-  const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-    body: fd
-  });
-  const data = await res.json();
-  return data.text || '';
 }
 
-async function translate(text, lang) {
-  const styleKey = (activeSettings.translationStyle || 'kabbalah').toUpperCase();
-  const basePrompt = TRANSLATION_STYLES[styleKey] || TRANSLATION_STYLES.DEFAULT;
-  
-  const systemPrompt = `${basePrompt.replace('{lang}', lang)} 
-  CRITICAL: Input may be cut mid-sentence. Use history to maintain flow. 
-  Merge current text with previous unfinished thoughts. Output ONLY translation.`;
+// ============================================================
+// WHISPER MODE (Batch processing for Hebrew, Arabic, Persian)
+// ============================================================
+let lastWhisperText = '';
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [{ role: 'system', content: systemPrompt }, ...conversationContext.history, { role: 'user', content: text }],
-      temperature: 0
-    })
+function startWhisperLoop(interval) {
+  if (!isRecording || !audioStream) return;
+
+  console.log(`🎙️ Starting Whisper loop with ${interval}ms interval`);
+
+  mediaRecorder = new MediaRecorder(audioStream, {
+    mimeType: 'audio/webm;codecs=opus',
   });
-  const data = await res.json();
-  const result = data.choices[0].message.content.trim();
+  let chunks = [];
 
-  conversationContext.history.push({ role: 'user', content: text }, { role: 'assistant', content: result });
-  if (conversationContext.history.length > 20) conversationContext.history.splice(0, 2);
-  return result;
+  mediaRecorder.ondataavailable = (e) => {
+    if (e.data.size > 0) chunks.push(e.data);
+  };
+
+  mediaRecorder.onstop = async () => {
+    if (chunks.length > 0 && isRecording) {
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+
+      // Проверка активности звука
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(data);
+      const avgVolume = data.reduce((a, b) => a + b) / data.length;
+
+      if (avgVolume > 2) {
+        await processWhisperSTT(blob);
+      }
+    }
+    // Продолжаем цикл
+    if (isRecording) {
+      setTimeout(() => startWhisperLoop(interval), 50);
+    }
+  };
+
+  mediaRecorder.start();
+  setTimeout(() => {
+    if (mediaRecorder?.state === 'recording') mediaRecorder.stop();
+  }, interval);
 }
 
-async function generateVoice(text) {
+async function processWhisperSTT(blob) {
+  if (!isRecording) return;
+
   try {
-    const voice = VOICE_CONFIG[activeSettings.voiceGender || 'neutral'].openai_voice;
+    const lang = activeSettings?.sourceLanguage || 'en';
+    console.log(`🎙️ Sending to Whisper (${lang})...`);
+
+    const fd = new FormData();
+    fd.append('file', blob, 'audio.webm');
+    fd.append('model', 'whisper-1');
+    fd.append('language', lang);
+    fd.append('response_format', 'json');
+
+    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${OPENAI_KEY}` },
+      body: fd,
+    });
+
+    const data = await res.json();
+    const text = data?.text?.trim();
+
+    if (text && text.length > 2 && text !== lastWhisperText) {
+      lastWhisperText = text;
+      console.log('🎙️ Whisper transcript:', text);
+      translateAndVoice(text);
+    }
+  } catch (e) {
+    console.error('❌ Whisper STT Error:', e);
+  }
+}
+
+// ============================================================
+// TRANSLATION
+// ============================================================
+async function translateAndVoice(text) {
+  if (!isRecording || !text?.trim()) return;
+
+  try {
+    const targetLang = activeSettings?.targetLanguage || 'ru';
+    const style = (activeSettings?.translationStyle || 'DEFAULT').toUpperCase();
+
+    console.log(`🌐 Translating to ${targetLang}:`, text);
+
+    const prompts = {
+      // DEFAULT: `Professional interpreter. Translate to ${targetLang}. Natural spoken style. ONLY translation.`,
+      // KABBALAH: `Translate to ${targetLang}. Use Kabbalah terms (Light, Vessel, Screen). ONLY translation.`,
+      // KIDS: `Translate to ${targetLang} as a fairy tale. Simple words. ONLY translation.`
+      DEFAULT: `Translate to ${targetLang} accurately and naturally. Keep original meaning.`,
+      KIDS: `Translate to ${targetLang} for a 5-year-old child. Use simple words, fairy tale style. Make it magical and fun!`,
+      KABBALAH: `Translate to ${targetLang} using Kabbalah concepts.  Use Kabbalah terms (Light, Vessel, Screen). ONLY translation.`,
+      TECHNICAL: `Technical translation to ${targetLang}. Keep all terms exact (do NOT simplify). Use formal style.`,
+      SLANG: `Translate to ${targetLang} using modern youth slang, memes, casual speech. Sound like a TikTok teen.`,
+      POETIC: `Translate to ${targetLang} poetically. Use metaphors, beautiful language, rhythm. Make it sound like a poem.`,
+    };
+
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${OPENAI_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: prompts[style] || prompts.DEFAULT },
+          ...history.slice(-6),
+          { role: 'user', content: text },
+        ],
+        temperature: 0.1,
+      }),
+    });
+
+    const data = await res.json();
+    const translatedText = data?.choices?.[0]?.message?.content;
+
+    if (!translatedText) {
+      console.error('❌ No translation received');
+      return;
+    }
+
+    console.log('✅ Translation:', translatedText);
+
+    // Отправка субтитров
+    chrome.runtime
+      .sendMessage({
+        type: 'SUBTITLES_FROM_OFFSCREEN',
+        text: translatedText,
+        tabId: currentTabId,
+      })
+      .catch(() => {});
+
+    history.push(
+      { role: 'user', content: text },
+      { role: 'assistant', content: translatedText },
+    );
+    if (history.length > 12) history.splice(0, 2);
+
+    if (activeSettings?.enableVoice) playTTS(translatedText);
+  } catch (e) {
+    console.error('❌ Translation Error:', e);
+  }
+}
+
+// ============================================================
+// TTS
+// ============================================================
+async function playTTS(text) {
+  if (!isRecording || !text?.trim()) return;
+
+  try {
+    const voiceKey = activeSettings?.voiceGender || 'neutral';
+    const voice =
+      (window.VOICE_CONFIG && window.VOICE_CONFIG[voiceKey]) || 'nova';
+    console.log(`🎭 TTS with voice: ${voiceKey} -> ${voice}`);
+
     const res = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'tts-1', voice: voice, input: text, speed: 1.1 })
+      headers: {
+        Authorization: `Bearer ${OPENAI_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ model: 'tts-1', voice, input: text, speed: 1.05 }),
     });
-    const buffer = await (playbackAudioContext || (playbackAudioContext = new AudioContext())).decodeAudioData(await res.arrayBuffer());
-    if (speechQueue.length > 3) speechQueue.shift();
-    speechQueue.push(buffer);
-    if (!isPlaying) playQueue();
-  } catch (e) {}
+
+    const buffer = await res.arrayBuffer();
+    if (!playbackContext) playbackContext = new AudioContext();
+
+    const audioBuffer = await playbackContext.decodeAudioData(buffer);
+    speechQueue.push(audioBuffer);
+    if (!isPlaying) handleQueue();
+  } catch (e) {
+    console.error('TTS Error:', e);
+  }
 }
 
-function playQueue() {
-  if (speechQueue.length === 0 || !isRecording) { isPlaying = false; return; }
+function handleQueue() {
+  if (!speechQueue.length || !isRecording) {
+    isPlaying = false;
+    return;
+  }
+
   isPlaying = true;
-  const source = playbackAudioContext.createBufferSource();
+  const source = playbackContext.createBufferSource();
   source.buffer = speechQueue.shift();
-  source.playbackRate.value = speechQueue.length > 1 ? 1.3 : 1.1;
-  source.connect(playbackAudioContext.destination);
-  source.onended = playQueue;
-  if (playbackAudioContext.state === 'suspended') playbackAudioContext.resume();
+  source.connect(playbackContext.destination);
+  source.onended = handleQueue;
   source.start(0);
+
+  if (playbackContext.state === 'suspended') playbackContext.resume();
 }
 
-function applyVolumeSettings(s) {
-  if (gainNode && audioContext) gainNode.gain.setTargetAtTime(s.muteOriginal ? 0 : (s.originalVolume || 1), audioContext.currentTime, 0.01);
+// ============================================================
+// VOLUME CONTROL
+// ============================================================
+function updateVolume() {
+  if (!gainNode || !audioContext) {
+    console.log('🔇 Volume update skipped - no audio context');
+    return;
+  }
+  const vol = activeSettings?.muteOriginal
+    ? 0
+    : activeSettings?.originalVolume || 1;
+  console.log(
+    '🔊 Setting volume to:',
+    vol,
+    'mute:',
+    activeSettings?.muteOriginal,
+  );
+  gainNode.gain.setTargetAtTime(vol, audioContext.currentTime, 0.1);
 }
 
-function stopInternal() {
-  isRecording = false; isPlaying = false; speechQueue = [];
-  if (mediaRecorder) { if (mediaRecorder.state !== 'inactive') mediaRecorder.stop(); mediaRecorder = null; }
-  if (audioStream) { audioStream.getTracks().forEach(t => t.stop()); audioStream = null; }
-  if (audioContext) { audioContext.close().catch(()=>{}); audioContext = null; }
-  if (playbackAudioContext) { playbackAudioContext.close().catch(()=>{}); playbackAudioContext = null; }
-}
+// ============================================================
+// STOP
+// ============================================================
+function stopRecording() {
+  console.log('🛑 Stopping recording...');
+  isRecording = false;
+  isPlaying = false;
+  speechQueue = [];
+  history = [];
+  lastWhisperText = '';
 
-function stopCapture() { stopInternal(); conversationContext.history = []; }
+  // Закрываем WebSocket (если был)
+  if (deepgramSocket) {
+    deepgramSocket.close(1000, 'User stopped');
+    deepgramSocket = null;
+  }
+
+  // Отключаем worklet (если был)
+  if (workletNode) {
+    workletNode.disconnect();
+    workletNode = null;
+  }
+
+  if (mediaRecorder?.state !== 'inactive') mediaRecorder?.stop();
+  mediaRecorder = null;
+
+  if (audioStream) audioStream.getTracks().forEach((t) => t.stop());
+  if (audioContext) audioContext.close().catch(() => {});
+  if (playbackContext) playbackContext.close().catch(() => {});
+
+  audioContext = null;
+  playbackContext = null;
+  audioStream = null;
+  captureMode = 'websocket';
+
+  console.log('✅ Recording stopped');
+}

@@ -1,7 +1,27 @@
-node_modules/
+# Secrets - NEVER commit!
+extension/secrets.js
+secrets.js
+
+# Environment files
 .env
-.next/
-.DS_Store
-.vscode/
-.env.js
 .env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+.next/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*

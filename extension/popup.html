@@ -78,6 +78,10 @@
       .status-indicator.active {
         background: #10b981;
       }
+      .status-indicator.error {
+        animation: none;
+        background: #ef4444;
+      }
       .minutes-display {
         font-size: 28px;
         font-weight: bold;
@@ -245,34 +249,30 @@
 
         <div class="settings" id="settingsPanel">
           <div class="setting-row">
-            <span class="setting-label">Translate to:</span>
-            <select id="languageSelect">
-              <option value="original">Original (Auto-detect)</option>
-              <option value="ru" selected>Russian</option>
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="de">German</option>
-              <option value="fr">French</option>
+            <span class="setting-label">Translate from:</span>
+            <select id="sourceLanguage">
+              <!-- Опции будут добавлены динамически из langConfig.js -->
             </select>
           </div>
-          
+
+          <div class="setting-row">
+            <span class="setting-label">Translate to:</span>
+            <select id="targetLanguage">
+              <!-- Опции будут добавлены динамически из langConfig.js -->
+            </select>
+          </div>
+
           <div class="setting-row">
             <span class="setting-label">Voice gender:</span>
             <select id="voiceGender">
-              <option value="auto">Auto-detect</option>
-              <option value="male">Male voice</option>
-              <option value="female">Female voice</option>
-              <option value="neutral" selected>Neutral voice</option>
+              <!-- Опции будут добавлены динамически из langConfig.js -->
             </select>
           </div>
+
           <div class="setting-row">
             <span class="setting-label">Translation style:</span>
             <select id="translationStyle">
-              <option value="default">Normal</option>
-              <option value="children">Children's content</option>
-              <option value="science">Scientific/Technical</option>
-              <option value="educational">Educational/Coaching</option>
-              <option value="kabbalah">Kabbalistic</option>
+              <!-- Опции будут добавлены динамически из langConfig.js -->
             </select>
           </div>
           
