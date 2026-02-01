@@ -174,7 +174,7 @@ function connectDeepgramWebSocket(lang) {
       `&sample_rate=16000` + // 16kHz
       `&channels=1` + // Моно
       `&interim_results=true` +
-      `&endpointing=300` + // Определение конца фразы через 300ms тишины
+      `&endpointing=1500` + // Определение конца фразы через 300ms тишины
       `&punctuate=true` +
       `&smart_format=true`;
 
@@ -420,6 +420,233 @@ async function processWhisperSTT(blob) {
 // ============================================================
 // TRANSLATION
 // ============================================================
+// async function translateAndVoice(text) {
+//   if (!isRecording || !text?.trim()) return;
+
+//   const startTime = new Date().toISOString();
+
+//   try {
+//     const targetLang = activeSettings?.targetLanguage || 'ru';
+//     const sourceLang = activeSettings?.sourceLanguage || 'auto';
+//     const style = (activeSettings?.translationStyle || 'DEFAULT').toUpperCase();
+
+//     console.log(`🌐 Translating to ${targetLang}:`, text);
+
+//     const prompts = {
+//       // DEFAULT: `Translate to ${targetLang} accurately and naturally. Keep original meaning.`,
+//       DEFAULT: `You are a professional interpreter. Translate to ${targetLang} for real-time spoken interpretation.Produce translations that sound natural to native speakers. Avoid literal translations.
+// When encountering idioms, use equivalent phrases in ${targetLang}.
+// Translation should feel like original speech. Please keep previous context in mind.`,
+
+//       KIDS: `Translate to ${targetLang} for a 5-year-old child. Use simple words, fairy tale style. Make it magical and fun!`,
+//       // KABBALAH: `Translate to ${targetLang} using Kabbalah concepts. Use kabalistic terminology. Hewbrew words transcription, keep consistancy. Translation ONLY!!!! Do not intrpritate! When encountering idioms, use equivalent phrases in ${targetLang}.`,
+//       KABBALAH: `You are a strictly technical translation engine for Kabbalah study. Your task has THREE RULES:
+// 1. All Hebrew and Aramaic terms transcription (e.g., "Sefirot", "Tzimtzum", "Ein Sof", "Atika Kadisha", "Zeir Anpin", "Malchut", "Keter", "Chochma", "Binah", "Da'at", "Yesod", "Malkhut") using standard academic Romanization. NEVER translate these terms.
+// 2. TRANSLATE all other text accurately to ${targetLang}, maintaining the original sentence structure and formality.
+// 3. DO NOT INTERPRET, EXPLAIN, or ADD any commentary, examples, or personal insights. Provide only the direct translation with transliterated terms. Keep all Hebrew and Aramaic words in their original form.`,
+//       TECHNICAL: `Technical translation to ${targetLang}. Keep all terms exact (do NOT simplify). Use formal style.`,
+//       SLANG: `Translate to ${targetLang} using modern youth slang, memes, casual speech. Sound like a TikTok teen.`,
+//       POETIC: `Translate to ${targetLang} poetically. Use metaphors, beautiful language, rhythm. Make it sound like a poem.`,
+//     };
+
+//     const res = await fetch('https://api.openai.com/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${OPENAI_KEY}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         model: 'gpt-4o-mini',
+//         messages: [
+//           { role: 'system', content: prompts[style] || prompts.DEFAULT },
+//           ...history.slice(-24),
+//           { role: 'user', content: text },
+//         ],
+//         temperature: 0.1,
+//       }),
+//     });
+
+//     const data = await res.json();
+//     const translatedText = data?.choices?.[0]?.message?.content;
+
+//     if (!translatedText) {
+//       console.error('❌ No translation received');
+//       return;
+//     }
+
+//     console.log('✅ Translation:', translatedText);
+
+//     // 📊 Opik: логируем перевод
+//     window.opikTracker?.logTranslation(text, translatedText, {
+//       sourceLang,
+//       targetLang,
+//       style,
+//       mode: captureMode,
+//       startTime,
+//     });
+
+//     // 📜 Сохраняем в историю для Summary
+//     if (!sessionStartTime) sessionStartTime = Date.now();
+//     transcriptHistory.push({
+//       original: text,
+//       translated: translatedText,
+//       timestamp: Date.now(),
+//     });
+
+//     // Отправка субтитров
+//     chrome.runtime
+//       .sendMessage({
+//         type: 'SUBTITLES_FROM_OFFSCREEN',
+//         text: translatedText,
+//         tabId: currentTabId,
+//       })
+//       .catch(() => {});
+
+//     history.push(
+//       { role: 'user', content: text },
+//       { role: 'assistant', content: translatedText },
+//     );
+//     if (history.length > 40) history.splice(0, 10);
+
+//     if (activeSettings?.enableVoice) playTTS(translatedText);
+//   } catch (e) {
+//     console.error('❌ Translation Error:', e);
+//   }
+// }
+// async function translateAndVoice(text) {
+//   if (!isRecording || !text?.trim()) return;
+
+//   const startTime = new Date().toISOString();
+
+//   try {
+//     const targetLang = activeSettings?.targetLanguage || 'ru';
+//     const sourceLang = activeSettings?.sourceLanguage || 'auto';
+//     const style = (activeSettings?.translationStyle || 'DEFAULT').toUpperCase();
+
+//     console.log(`🌐 Translating to ${targetLang}:`, text);
+
+//     // ———————————————————————————
+//     // 🔹 Системный промпт с контекстом
+//     const basePrompt = {
+//       DEFAULT: `You are a professional simultaneous interpreter.
+// Translate spoken text accurately and naturally.
+// Preserve meaning, emotion, and intent.
+// Use proper grammar, number, gender, and case in ${targetLang}.
+// Sound like a native speaker.
+// Previous translations:
+// ${transcriptHistory.slice(-5).map(h => `- "${h.original}" → "${h.translated}"`).join('\n')}
+// Translate the following text now. Output ONLY the translation. No explanations.`,
+      
+//       KIDS: `Translate to ${targetLang} for a 5-year-old child.
+// Use very simple words.
+// Fairy-tale tone.
+// Fun, warm, magical.
+// Previous translations:
+// ${transcriptHistory.slice(-5).map(h => `- "${h.original}" → "${h.translated}"`).join('\n')}
+// Output ONLY the translation.`,
+
+//       KABBALAH: `You are a strictly technical translation engine for Kabbalah study.
+// Rules:
+// 1. NEVER translate Hebrew or Aramaic terms. Use standard academic Romanization only.
+// 2. Translate all other text accurately to ${targetLang}.
+// 3. Preserve original structure and formality.
+// 4. Do NOT interpret, explain, or add anything.
+// 5. Previous translations:
+// ${transcriptHistory.slice(-5).map(h => `- "${h.original}" → "${h.translated}"`).join('\n')}
+// Output ONLY the translation.`,
+
+//       TECHNICAL: `Technical translation to ${targetLang}.
+// Keep all terms exact. Do NOT simplify. Formal style.
+// Previous translations:
+// ${transcriptHistory.slice(-5).map(h => `- "${h.original}" → "${h.translated}"`).join('\n')}
+// Output ONLY the translation.`,
+
+//       SLANG: `Translate to ${targetLang} using modern youth slang.
+// Casual, meme-aware, TikTok-style.
+// Previous translations:
+// ${transcriptHistory.slice(-5).map(h => `- "${h.original}" → "${h.translated}"`).join('\n')}
+// Output ONLY the translation.`,
+
+//       POETIC: `Translate to ${targetLang} poetically.
+// Use rhythm, metaphors, expressive language.
+// Sound like original poetry.
+// Previous translations:
+// ${transcriptHistory.slice(-5).map(h => `- "${h.original}" → "${h.translated}"`).join('\n')}
+// Output ONLY the translation.`,
+//     };
+
+//     // ———————————————————————————
+//     const res = await fetch('https://api.openai.com/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${OPENAI_KEY}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         model: 'gpt-4o-mini',
+//         messages: [
+//           { role: 'system', content: basePrompt[style] || basePrompt.DEFAULT },
+//           ...history.slice(-24), 
+//           { role: 'user', content: text },
+//         ],
+//         temperature: style === 'TECHNICAL' || style === 'KABBALAH' ? 0.1 : 0.35,
+//         top_p: 0.9,
+//       }),
+//     });
+
+//     const data = await res.json();
+//     const translatedText = data?.choices?.[0]?.message?.content;
+
+//     if (!translatedText) {
+//       console.error('❌ No translation received');
+//       return;
+//     }
+
+//     console.log('✅ Translation:', translatedText);
+
+//     // 📊 Логируем перевод
+//     window.opikTracker?.logTranslation(text, translatedText, {
+//       sourceLang,
+//       targetLang,
+//       style,
+//       mode: captureMode,
+//       startTime,
+//     });
+
+//     // 📜 Сохраняем в историю для summary
+//     if (!sessionStartTime) sessionStartTime = Date.now();
+//     transcriptHistory.push({
+//       original: text,
+//       translated: translatedText,
+//       timestamp: Date.now(),
+//     });
+
+//     // Отправка субтитров
+//     chrome.runtime.sendMessage({
+//       type: 'SUBTITLES_FROM_OFFSCREEN',
+//       text: translatedText,
+//       tabId: currentTabId,
+//     }).catch(() => {});
+
+//     // Обновляем историю (для UI, но не для mini)
+//     history.push(
+//       { role: 'user', content: text },
+//       { role: 'assistant', content: translatedText },
+//     );
+//     if (history.length > 40) history.splice(0, 10);
+
+//     // Воспроизведение голоса
+//     if (activeSettings?.enableVoice) playTTS(translatedText);
+
+//   } catch (e) {
+//     console.error('❌ Translation Error:', e);
+//   }
+// }
+
+
+// ============================================================
+// TTS
+// ============================================================
 async function translateAndVoice(text) {
   if (!isRecording || !text?.trim()) return;
 
@@ -433,16 +660,21 @@ async function translateAndVoice(text) {
     console.log(`🌐 Translating to ${targetLang}:`, text);
 
     const prompts = {
-      // DEFAULT: `Translate to ${targetLang} accurately and naturally. Keep original meaning.`,
-      DEFAULT: `You are a professional interpreter. Translate to ${targetLang} for real-time spoken interpretation.
+      DEFAULT: `You are a professional simultaneous interpreter for live speech.
 
-Produce translations that sound natural to native speakers. Avoid literal translations.
-When encountering idioms, use equivalent phrases in ${targetLang}.
-
-Translation should feel like original speech.`,
+TRANSLATION PRINCIPLES for ${targetLang}:
+1. **MEANING OVER WORDS** - Convey the meaning, don't translate words literally
+2. **GRAMMAR NATIVE** - Use natural ${targetLang} grammar structures
+3. **SPOKEN LANGUAGE** - Optimize for oral delivery, not written text
+4. **CONTEXT AWARE** - Consider conversation flow and previous dialogue
+5. **NATURAL FLOW** - Make it sound like original speech in ${targetLang}`,
 
       KIDS: `Translate to ${targetLang} for a 5-year-old child. Use simple words, fairy tale style. Make it magical and fun!`,
-      KABBALAH: `Translate to ${targetLang} using Kabbalah concepts. Use kabalistic terminology. Hewbrew words transcription, keep consistancy. Translation ONLY!!!! Do not intrpritate! When encountering idioms, use equivalent phrases in ${targetLang}.`,
+      KABBALAH: `You are a strictly technical translation engine for Kabbalah study. Translate context usinh kabbalistic terminology
+//       Your task has THREE RULES:
+// 1. All Hebrew and Aramaic terms transcription (e.g., "Sefirot", "Tzimtzum", "Ein Sof", "Atika Kadisha", "Zeir Anpin", "Malchut", "Keter", "Chochma", "Binah", "Da'at", "Yesod", "Malkhut") using ${targetLang} literation. NEVER translate these terms.
+// 2. TRANSLATE all other text accurately to ${targetLang}, maintaining the original sentence structure and formality.
+// 3. DO NOT INTERPRET, EXPLAIN, or ADD any commentary, examples, or personal insights. Provide only the direct translation with transliterated terms.`,
       TECHNICAL: `Technical translation to ${targetLang}. Keep all terms exact (do NOT simplify). Use formal style.`,
       SLANG: `Translate to ${targetLang} using modern youth slang, memes, casual speech. Sound like a TikTok teen.`,
       POETIC: `Translate to ${targetLang} poetically. Use metaphors, beautiful language, rhythm. Make it sound like a poem.`,
@@ -458,10 +690,11 @@ Translation should feel like original speech.`,
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: prompts[style] || prompts.DEFAULT },
-          ...history.slice(-6),
+          ...history.slice(-24),
           { role: 'user', content: text },
         ],
-        temperature: 0.1,
+        temperature: style === 'TECHNICAL' || style === 'KABBALAH' ? 0.1 : 0.35,
+        top_p: 0.9,
       }),
     });
 
@@ -505,7 +738,7 @@ Translation should feel like original speech.`,
       { role: 'user', content: text },
       { role: 'assistant', content: translatedText },
     );
-    if (history.length > 12) history.splice(0, 2);
+    if (history.length > 40) history.splice(0, 10);
 
     if (activeSettings?.enableVoice) playTTS(translatedText);
   } catch (e) {
@@ -513,9 +746,6 @@ Translation should feel like original speech.`,
   }
 }
 
-// ============================================================
-// TTS
-// ============================================================
 async function playTTS(text) {
   if (!isRecording || !text?.trim()) return;
 
@@ -775,7 +1005,7 @@ Write ONLY in ${langName}.`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Summarize this transcript:\n\n${text}` },
         ],
-        temperature: 0.3,
+        temperature: 0.1,
         max_tokens: 2000,
       }),
     });

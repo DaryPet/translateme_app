@@ -107,17 +107,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         expandBtn.addEventListener('click', toggleCollapse);
     }
     
+    // function toggleCollapse() {
+    //     const main = document.getElementById('mainContent');
+    //     const collapsed = document.getElementById('collapsedContent');
+        
+    //     if (main.style.display !== 'none') {
+    //         main.style.display = 'none';
+    //         collapsed.style.display = 'block';
+    //     } else {
+    //         main.style.display = 'block';
+    //         collapsed.style.display = 'none';
+    //     }
+    // }
+
     function toggleCollapse() {
         const main = document.getElementById('mainContent');
         const collapsed = document.getElementById('collapsedContent');
         
-        if (main.style.display !== 'none') {
+        const isMinimizing = main.style.display !== 'none';
+        
+        if (isMinimizing) {
             main.style.display = 'none';
             collapsed.style.display = 'block';
         } else {
             main.style.display = 'block';
             collapsed.style.display = 'none';
         }
+
+        // ОТПРАВЛЯЕМ СИГНАЛ В CONTENT.JS ИЗМЕНИТЬ РАЗМЕР IFRAME
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            if (tabs[0]?.id) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    type: 'RESIZE_FRAME',
+                    minimized: isMinimizing
+                }).catch(err => console.log("Content script not ready"));
+            }
+        });
     }
     
     // ==================== ИНИЦИАЛИЗАЦИЯ ====================

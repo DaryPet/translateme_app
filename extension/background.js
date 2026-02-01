@@ -685,17 +685,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+// async function initialize() {
+//   try {
+//     // Создаем offscreen документ при запуске
+//     await ensureOffscreenDocument();
+//     console.log('✅ Background service worker initialized with voice support');
+//   } catch (error) {
+//     console.error('Failed to initialize:', error);
+//   }
+// }
+
+// // Запускаем инициализацию
+// initialize();
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+// ==================== ИНИЦИАЛИЗАЦИЯ И ВЫЗОВ МЕНЮ (ОБНОВЛЕНО) ====================
 async function initialize() {
   try {
-    // Создаем offscreen документ при запуске
     await ensureOffscreenDocument();
-    console.log('✅ Background service worker initialized with voice support');
+
+    // Слушаем клик по иконке расширения
+    chrome.action.onClicked.addListener((tab) => {
+      if (tab.url && !tab.url.startsWith('chrome://')) {
+        // Шлем сигнал в content.js
+        chrome.tabs.sendMessage(tab.id, { action: "OPEN_UI" }).catch((err) => {
+          console.log("Обновите страницу для появления меню:", err.message);
+        });
+      }
+    });
+
+    console.log('✅ Background initialized - FLOATING UI MODE ACTIVE');
   } catch (error) {
     console.error('Failed to initialize:', error);
   }
 }
 
-// Запускаем инициализацию
 initialize();
 
 console.log('✅ Background ready');
