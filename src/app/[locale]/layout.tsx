@@ -224,7 +224,8 @@ export default async function LocaleLayout({
             flex: 1,
             position: 'relative',
             // УДАЛИТЬ backgroundImage или поменять на свой фон
-            backgroundColor: '#ffffff', // Временный белый фон
+            // backgroundColor: '#ffffff', // Временный белый фон
+            background: 'linear-gradient(135deg, #0a0e1a 0%, #141825 100%)',
           }}
         >
           <Box

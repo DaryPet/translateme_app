@@ -361,19 +361,24 @@
       "title": "Standard",
       "cta": "Get Standard",
       "features": {
-        "1": "60 cards per month",
-        "2": "Basic interpretations",
-        "3": "Email support"
+        "1": "7 hours",
+        "2": "Live Translated Subtitles",
+        "3": "AI Voice Translator",
+        "4": "4 Modes of translation",
+        "5": "50 languages",
+        "6": "24/7 availability"
       }
     },
     "premium": {
       "title": "Premium",
       "cta": "Get Premium",
       "features": {
-        "1": "150 cards per month",
-        "2": "Detailed readings",
-        "3": "Priority 24/7 support",
-        "4": "Exclusive guides"
+        "1": "14 hours",
+        "2": "Live Translated Subtitles",
+        "3": "AI Voice Translator",
+        "4": "4 Modes of translation",
+        "5": "50 languages",
+        "6": "24/7 availability"
       }
     },
     "cancelSubscription": "Unsubscribe",
