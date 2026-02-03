@@ -4,173 +4,330 @@
     <meta charset="UTF-8" />
     <title>Translateme Translator</title>
     <style>
-      body {
-        width: 320px;
-        padding: 0;
+      * {
         margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 340px;
+        height: 600px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: white;
-        max-height: 600px;
-        overflow-y: auto;
+        background: #0a0e1a;
+        color: #e2e8f0;
+        overflow: hidden;
       }
+
       .container {
-        padding: 15px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
       }
+
+      /* ============= HEADER ============= */
       .header {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+        padding: 12px 14px;
+        position: relative;
+        overflow: hidden;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        flex-shrink: 0;
       }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top right, rgba(255,255,255,0.15), transparent);
+        animation: shimmer 6s ease-in-out infinite;
+      }
+
+      @keyframes shimmer {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); }
+      }
+
       .logo-section {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        position: relative;
+        z-index: 1;
       }
+
       .logo {
         font-size: 18px;
-        font-weight: bold;
-        background: linear-gradient(90deg, #667eea, #764ba2);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-weight: 900;
+        color: white;
+        letter-spacing: -0.5px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
       }
+
       .subtitle {
-        font-size: 11px;
-        opacity: 0.7;
+        font-size: 9px;
+        color: rgba(255,255,255,0.8);
+        margin-top: 1px;
+        font-weight: 500;
       }
+
       .collapse-btn {
-        background: rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 2;
+        background: rgba(255,255,255,0.2);
         border: none;
         color: white;
-        width: 24px;
-        height: 24px;
-        border-radius: 4px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
         cursor: pointer;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
+        font-size: 14px;
+        transition: all 0.3s;
+        backdrop-filter: blur(10px);
       }
+
       .collapse-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255,255,255,0.3);
+        transform: scale(1.1);
       }
-      .status-card {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 15px;
+
+      /* ============= MAIN CONTENT ============= */
+      #mainContent {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* ============= STATUS ============= */
+      .status-bar {
+        background: #141825;
+        padding: 8px 14px;
         text-align: center;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        flex-shrink: 0;
       }
+
       .status-indicator {
         display: inline-block;
-        width: 8px;
-        height: 8px;
+        width: 7px;
+        height: 7px;
         background: #ef4444;
         border-radius: 50%;
-        margin-right: 6px;
-        animation: pulse 2s infinite;
+        margin-right: 5px;
       }
+
       .status-indicator.active {
         background: #10b981;
+        animation: pulse 2s infinite;
       }
+
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      }
+
       .status-indicator.error {
-        animation: none;
         background: #ef4444;
+        animation: none;
       }
-      .minutes-display {
-        font-size: 28px;
-        font-weight: bold;
-        text-align: center;
-        margin: 15px 0;
-        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+
+      #statusText {
+        font-size: 12px;
+        font-weight: 600;
+        color: #94a3b8;
+      }
+
+      /* ============= CONTENT AREA ============= */
+      .content-area {
+        flex: 1;
+        padding: 10px 14px 10px 14px;
+        overflow-y: auto;
+        background: #0f172a;
+      }
+
+      /* ============= MINUTES COMPACT ============= */
+      .minutes-compact {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+      }
+
+      .minutes-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+      }
+
+      .minutes-value {
+        font-size: 24px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
       }
-      .minutes-label {
-        text-align: center;
-        font-size: 12px;
-        opacity: 0.7;
-        margin-bottom: 20px;
+
+      .minutes-text {
+        font-size: 10px;
+        color: #64748b;
+        font-weight: 600;
       }
-      .controls {
-        display: flex;
+
+      .account-badge {
+        background: transparent;
+        color: #8b5cf6;
+        padding: 0;
+        border-radius: 0;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      /* ============= CONTROLS ============= */
+      .main-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
       }
+
       button {
-        flex: 1;
         padding: 10px;
         border: none;
-        border-radius: 6px;
-        font-weight: 600;
+        border-radius: 8px;
+        font-weight: 700;
         cursor: pointer;
+        font-size: 12px;
         transition: all 0.2s;
-        font-size: 13px;
-      }
-      .btn-primary {
-        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-        color: white;
-      }
-      .btn-primary:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-      }
-      .btn-secondary {
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.25);
-      }
-      .btn-danger {
-        background: #ef4444;
-        color: white;
-      }
-      .settings {
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .setting-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-        font-size: 13px;
-      }
-      .setting-label {
-        min-width: 120px;
-      }
-      .switch {
         position: relative;
-        display: inline-block;
+        overflow: hidden;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+      }
+
+      .btn-secondary {
+        background: #1e293b;
+        color: #94a3b8;
+        border: 1px solid #334155;
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: #334155;
+        border-color: #475569;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ============= LANGUAGE GRID ============= */
+      .lang-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .lang-item {
+        background: #1e293b;
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid #334155;
+      }
+
+      .lang-label {
+        font-size: 9px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      select {
+        width: 100%;
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 5px 6px;
+        font-size: 11px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #6366f1;
+      }
+
+      /* ============= OPTIONS COMPACT ============= */
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .option-card {
+        background: #1e293b;
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid #334155;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .option-label-small {
+        font-size: 9px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+      }
+
+      /* ============= TOGGLE SWITCH SMALL ============= */
+      .switch-small {
+        position: relative;
         width: 40px;
         height: 22px;
       }
-      .switch input {
+
+      .switch-small input {
         opacity: 0;
         width: 0;
         height: 0;
       }
-      .slider {
+
+      .slider-small {
         position: absolute;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #374151;
-        transition: 0.4s;
-        border-radius: 34px;
+        inset: 0;
+        background-color: #334155;
+        transition: 0.3s;
+        border-radius: 22px;
       }
-      .slider:before {
+
+      .slider-small:before {
         position: absolute;
         content: '';
         height: 16px;
@@ -178,155 +335,270 @@
         left: 3px;
         bottom: 3px;
         background-color: white;
-        transition: 0.4s;
+        transition: 0.3s;
         border-radius: 50%;
       }
-      input:checked + .slider {
-        background-color: #8b5cf6;
+
+      input:checked + .slider-small {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
       }
-      input:checked + .slider:before {
+
+      input:checked + .slider-small:before {
         transform: translateX(18px);
       }
-      select {
-        background: #374151;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 4px 8px;
-        font-size: 13px;
-        min-width: 140px;
+
+      /* ============= VOLUME COMPACT ============= */
+      .volume-compact {
+        background: #1e293b;
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid #334155;
+        margin-bottom: 10px;
       }
-      input[type="range"] {
+
+      .volume-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .volume-slider {
         width: 100%;
         height: 4px;
-        background: #374151;
+        background: #334155;
         border-radius: 2px;
         outline: none;
-        margin: 0 10px;
+        -webkit-appearance: none;
       }
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+
+      .volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        cursor: pointer;
+        border-radius: 50%;
       }
-      .collapsed {
-        display: none;
+
+      .volume-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        cursor: pointer;
+        border-radius: 50%;
+        border: none;
       }
-      .expanded {
-        display: block;
+
+      #volumeValue {
+        font-size: 12px;
+        font-weight: 700;
+        color: #8b5cf6;
+      }
+
+      /* ============= ACTION BUTTONS ============= */
+      .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .buy-btn-inline {
+        background: rgba(139, 92, 246, 0.15);
+        color: #8b5cf6;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .buy-btn-inline:hover {
+        background: rgba(139, 92, 246, 0.25);
+        border-color: rgba(139, 92, 246, 0.5);
+      }
+
+      #summaryBtn {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        color: white !important;
+        border: none !important;
+      }
+
+      #summaryStatus {
+        text-align: center;
+        font-size: 9px;
+        color: #64748b;
+        margin-top: 4px;
+      }
+
+      /* ============= COLLAPSED ============= */
+      #collapsedContent {
+        padding: 20px;
+        text-align: center;
+      }
+
+      #collapsedContent .logo {
+        font-size: 18px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 6px;
+      }
+
+      #collapsedContent .subtitle {
+        font-size: 11px;
+        color: #64748b;
+        margin-bottom: 12px;
+      }
+
+      #expandBtn {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      /* ============= SCROLLBAR ============= */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0a0e1a;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 2px;
       }
     </style>
   </head>
   <body>
     <div class="container">
+      <!-- HEADER -->
       <div class="header">
         <div class="logo-section">
-          <div>
-            <div class="logo">Translateme</div>
-            <div class="subtitle">Real-time video translator</div>
-          </div>
+          <div class="logo">Translateme</div>
+          <div class="subtitle">Real-time AI translation</div>
         </div>
         <button class="collapse-btn" id="collapseBtn">−</button>
       </div>
 
+      <!-- MAIN CONTENT -->
       <div id="mainContent">
-        <div class="status-card">
+        <!-- STATUS BAR -->
+        <div class="status-bar">
           <span class="status-indicator" id="statusIndicator"></span>
           <span id="statusText">Checking...</span>
         </div>
 
-        <div class="minutes-display" id="minutesDisplay">--</div>
-        <div class="minutes-label">minutes available</div>
-
-        <div class="controls">
-          <button class="btn-primary" id="startBtn">Start Translation</button>
-          <button class="btn-secondary" id="stopBtn" disabled>Stop</button>
-        </div>
-
-        <div class="controls">
-          <button class="btn-secondary" id="buyBtn">Buy Minutes</button>
-          <button class="btn-secondary" id="settingsBtn">Settings</button>
-        </div>
-
-        <div class="controls">
-          <button class="btn-secondary" id="summaryBtn" disabled style="background: linear-gradient(90deg, #10b981, #059669);">
-            📄 Summary PDF
-          </button>
-        </div>
-        <div id="summaryStatus" style="text-align: center; font-size: 11px; opacity: 0.7; margin-bottom: 10px; display: none;">
-          <span id="transcriptInfo">0 min of text collected</span>
-        </div>
-
-        <div class="settings" id="settingsPanel">
-          <div class="setting-row">
-            <span class="setting-label">Translate from:</span>
-            <select id="sourceLanguage">
-              <!-- Опции будут добавлены динамически из langConfig.js -->
-            </select>
-          </div>
-
-          <div class="setting-row">
-            <span class="setting-label">Translate to:</span>
-            <select id="targetLanguage">
-              <!-- Опции будут добавлены динамически из langConfig.js -->
-            </select>
-          </div>
-
-          <div class="setting-row">
-            <span class="setting-label">Voice gender:</span>
-            <select id="voiceGender">
-              <!-- Опции будут добавлены динамически из langConfig.js -->
-            </select>
-          </div>
-
-          <div class="setting-row">
-            <span class="setting-label">Translation style:</span>
-            <select id="translationStyle">
-              <!-- Опции будут добавлены динамически из langConfig.js -->
-            </select>
+        <!-- SCROLLABLE CONTENT -->
+        <div class="content-area">
+          <!-- MINUTES COMPACT -->
+          <div class="minutes-compact">
+            <div class="minutes-info">
+              <div class="minutes-value" id="minutesDisplay">--</div>
+              <div class="minutes-text">minutes</div>
+            </div>
+            <button class="buy-btn-inline" id="buyBtn">💳 Buy</button>
           </div>
           
-          <div class="setting-row">
-            <span class="setting-label">Show subtitles</span>
-            <label class="switch">
-              <input type="checkbox" id="showSubtitles" checked />
-              <span class="slider"></span>
-            </label>
+          <!-- ACCOUNT INFO -->
+          <div style="text-align: center; font-size: 10px; color: #64748b; margin-bottom: 10px;">
+            <span id="accountEmail">Not signed in</span>
           </div>
-          
-          <div class="setting-row">
-            <span class="setting-label">Voice dubbing</span>
-            <label class="switch">
-              <input type="checkbox" id="enableVoice" checked />
-              <span class="slider"></span>
-            </label>
+
+          <!-- MAIN CONTROLS -->
+          <div class="main-controls">
+            <button class="btn-primary" id="startBtn">▶ Start</button>
+            <button class="btn-secondary" id="stopBtn" disabled>■ Stop</button>
           </div>
-          
-          <div class="setting-row">
-            <span class="setting-label">Original volume</span>
-            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-              <input type="range" id="originalVolume" min="0" max="100" value="100">
-              <span id="volumeValue" style="min-width: 35px; text-align: right;">100%</span>
+
+          <!-- LANGUAGE SELECTION -->
+          <div class="lang-grid">
+            <div class="lang-item">
+              <div class="lang-label">🎤 From</div>
+              <select id="sourceLanguage"></select>
+            </div>
+            <div class="lang-item">
+              <div class="lang-label">🌍 To</div>
+              <select id="targetLanguage"></select>
             </div>
           </div>
-          
-          <div class="setting-row">
-            <span class="setting-label">Mute original</span>
-            <label class="switch">
-              <input type="checkbox" id="muteOriginal" />
-              <span class="slider"></span>
-            </label>
+
+          <!-- VOICE & STYLE -->
+          <div class="options-grid">
+            <div class="option-card">
+              <div class="option-label-small">👤 Voice</div>
+              <select id="voiceGender"></select>
+            </div>
+            <div class="option-card">
+              <div class="option-label-small">🎨 Style</div>
+              <select id="translationStyle"></select>
+            </div>
+          </div>
+
+          <!-- TOGGLES -->
+          <div class="options-grid">
+            <div class="option-card">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="option-label-small">📝 Subtitles</div>
+                <label class="switch-small">
+                  <input type="checkbox" id="showSubtitles" checked />
+                  <span class="slider-small"></span>
+                </label>
+              </div>
+            </div>
+            <div class="option-card">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="option-label-small">🎙️ Dubbing</div>
+                <label class="switch-small">
+                  <input type="checkbox" id="enableVoice" checked />
+                  <span class="slider-small"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- VOLUME MIXER -->
+          <div class="volume-compact">
+            <div class="volume-header">
+              <div class="option-label-small">🔊 Original Volume</div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="volumeValue">100%</span>
+                <label class="switch-small">
+                  <input type="checkbox" id="muteOriginal" />
+                  <span class="slider-small"></span>
+                </label>
+              </div>
+            </div>
+            <input type="range" class="volume-slider" id="originalVolume" min="0" max="100" value="100">
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="action-buttons">
+            <button class="btn-secondary" id="settingsBtn" style="display:none;">⚙️ Settings</button>
+            <button class="btn-secondary" id="summaryBtn" disabled>📄 Summary PDF</button>
+          </div>
+          <div id="summaryStatus" style="display: none;">
+            <span id="transcriptInfo">0 min collected</span>
           </div>
         </div>
-
-        <div class="footer" style="text-align: center; margin-top: 15px; font-size: 10px; opacity: 0.6;">
-          Connected to account: <span id="accountEmail">Not signed in</span>
-        </div>
       </div>
-      
-      <div id="collapsedContent" style="display: none; text-align: center; padding: 10px;">
-        <div class="logo" style="font-size: 14px; margin-bottom: 5px;">Translateme</div>
-        <div style="font-size: 10px; opacity: 0.7; margin-bottom: 10px;">Translation Active</div>
-        <button class="collapse-btn" id="expandBtn" style="margin: 0 auto;">+</button>
+
+      <!-- COLLAPSED VIEW -->
+      <div id="collapsedContent" style="display: none;">
+        <div class="logo">Translateme</div>
+        <div class="subtitle">Translation Active</div>
+        <button id="expandBtn">+</button>
       </div>
     </div>
 
