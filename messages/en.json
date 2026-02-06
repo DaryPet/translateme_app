@@ -12,6 +12,9 @@
     "demoButton": "Watch Demo",
     "freeTrial": "3 free minutes every month • No credit card required"
   },
+  "Common": {
+    "loading": "Loading..."
+  },
 
   "Header": {
     "features": "Features",
@@ -373,7 +376,7 @@
       "title": "Premium",
       "cta": "Get Premium",
       "features": {
-        "1": "14 hours",
+        "1": "14 hours", 
         "2": "Live Translated Subtitles",
         "3": "AI Voice Translator",
         "4": "4 Modes of translation",

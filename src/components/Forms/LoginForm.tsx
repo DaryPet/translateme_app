@@ -10,7 +10,7 @@ import NextLink from 'next/link';
 
 import { LoginFormValues } from 'src/types/auth';
 import { getLoginSchema } from 'src/validations/loginSchema';
-import { GoogleLoginButton } from '../GoogleLoginButton';
+// import { GoogleLoginButton } from '../GoogleLoginButton';
 
 export const LoginForm = () => {
   const t = useTranslations();
@@ -63,7 +63,7 @@ export const LoginForm = () => {
               <Button type="submit" variant="contained" disabled={isSubmitting}>
                 {t('login')}
               </Button>
-              <GoogleLoginButton />
+              {/* <GoogleLoginButton /> */}
               <MuiLink
                 component={NextLink}
                 href="/reset-password-request"

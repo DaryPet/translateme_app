@@ -5,6 +5,10 @@
   "keyFeatures": "Esto no es adivinación. Es una visión alineada con el alma, impulsada por la psicología de la profundidad y la IA inteligente.",
   "modernTechnologies": "Utilizamos tecnologías modernas para garantizar la estabilidad y facilidad de uso, mientras nos enfocamos en las necesidades del usuario para hacer este proyecto lo más útil posible en diversos campos.",
 
+  "Common": {
+    "loading": "Cargando..."
+  },
+
   "Hero": {
     "seoTitle": "TranslateMe - Traducción de audio en tiempo real para Chrome",
     "title": "Traducción de audio en tiempo real",

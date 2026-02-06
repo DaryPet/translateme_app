@@ -39,15 +39,8 @@ export const LanguageSwitcher = () => {
         height: '38px',
         marginRight: '10px',
         borderRadius: '6px',
-        '& .MuiSelect-icon': {
-          color: 'white',
-        },
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: 'transparent',
-        },
-        '&:hover': {
-          backgroundColor: 'secondary.dark',
-        },
+        bgcolor: '#6366f1',
+        '&:hover': { bgcolor: '#4f46e5' },
       }}
     >
       <MenuItem value="en">EN</MenuItem>

@@ -1,130 +1,3 @@
-// import { NextIntlClientProvider } from 'next-intl';
-// import { notFound } from 'next/navigation';
-// import { getMessages } from '@/i18n/request';
-// import { Header } from '@/components/Header';
-// import { Toaster } from 'react-hot-toast';
-// import { Footer } from '@/components/Footer';
-// import { Box, Container } from '@mui/material';
-// import { SideRail } from '@/components/nav/SideRail';
-
-// export async function generateStaticParams() {
-//   return [{ locale: 'en' }, { locale: 'uk' }, { locale: 'ru' }, { locale: 'es' }];
-// }
-
-// export async function generateMetadata({
-//   params,
-// }: {
-//   params: { locale: string };
-// }) {
-//   const { locale } = await Promise.resolve(params);
-//   const messages = await getMessages(locale);
-
-//   const baseUrl = process.env.NEXT_PUBLIC_DOMAIN;
-//   const fullUrl = `${baseUrl}/${locale}`;
-//   const ogImage = `${baseUrl}/og-image-${locale}.png`;
-
-//   return {
-//     title: messages.page_title,
-//     description: messages.page_description,
-//     openGraph: {
-//       title: messages.page_title,
-//       description: messages.page_description,
-//       url: fullUrl,
-//       siteName: 'SoulDestiny',
-//       images: [{ url: ogImage, width: 1200, height: 630, alt: `DestinyDraw preview for ${locale}` }],
-//       locale,
-//       type: 'website',
-//     },
-//     twitter: {
-//       card: 'summary_large_image',
-//       title: messages.page_title,
-//       description: messages.page_description,
-//       images: [ogImage],
-//     },
-//     other: {
-//       'script:ld+json': JSON.stringify({
-//         '@context': 'https://schema.org',
-//         '@type': 'WebSite',
-//         name: messages.page_title,
-//         url: fullUrl,
-//         inLanguage: locale,
-//         description: messages.page_description,
-//       }),
-//     },
-//   };
-// }
-
-// export default async function LocaleLayout({
-//   children,
-//   params,
-// }: Readonly<{
-//   children: React.ReactNode;
-//   params: { locale: string };
-// }>) {
-//   const { locale } = await Promise.resolve(params);
-//   let messages;
-//   try {
-//     messages = await getMessages(locale);
-//   } catch {
-//     notFound();
-//   }
-
-//   return (
-//     <NextIntlClientProvider locale={locale} messages={messages}>
-//       <div
-//         style={{
-//           display: 'flex',
-//           flexDirection: 'column',
-//           minHeight: '100vh',
-//           margin: 0,
-//           padding: 0,
-//           width: '100%',
-//           maxWidth: '100vw',
-//           overflowX: 'hidden',
-//           boxSizing: 'border-box',
-//         }}
-//       >
-//         <Toaster position="top-right" />
-//         <Header />
-
-//         {/* фиксированная узкая боковая панель */}
-//         <SideRail />
-
-//         {/* Фоновый слой на всю ширину окна */}
-//         <Box
-//           sx={{
-//             flex: 1,
-//             position: 'relative',
-//             backgroundImage: 'url(/background.webp)',
-//             backgroundSize: 'cover',
-//             backgroundPosition: 'center',
-//             backgroundRepeat: 'no-repeat',
-//           }}
-//         >
-//           {/* Контент: симметричные отступы, центр всегда сохраняется */}
-//           <Box
-//             sx={{
-//               pt: 2,
-//               px: { xs: 0, sm: 4 },
-//               '@media (min-width:701px)': {
-//                 // вместо одностороннего pl даём одинаковые поля с двух сторон
-//                 px: '64px',
-//               },
-//             }}
-//           >
-//             <Container maxWidth="lg" sx={{ mx: 'auto' }}>
-//               {children}
-//             </Container>
-//           </Box>
-//         </Box>
-
-//         <Footer />
-//       </div>
-//     </NextIntlClientProvider>
-//   );
-// }
-
-
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { getMessages } from 'src/i18n/request';
@@ -132,7 +5,6 @@ import { Header } from 'src/components/Header';
 import { Toaster } from 'react-hot-toast';
 import { Footer } from 'src/components/Footer';
 import { Box, Container } from '@mui/material';
-import { SideRail } from 'src/components/nav/SideRail';
 
 export async function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'uk' }, { locale: 'ru' }, { locale: 'es' }];
@@ -223,8 +95,6 @@ export default async function LocaleLayout({
           sx={{
             flex: 1,
             position: 'relative',
-            // УДАЛИТЬ backgroundImage или поменять на свой фон
-            // backgroundColor: '#ffffff', // Временный белый фон
             background: 'linear-gradient(135deg, #0a0e1a 0%, #141825 100%)',
           }}
         >
@@ -243,7 +113,7 @@ export default async function LocaleLayout({
           </Box>
         </Box>
 
-        <Footer /> {/* Этот компонент нужно будет переделать позже */}
+        <Footer /> 
       </div>
     </NextIntlClientProvider>
   );
