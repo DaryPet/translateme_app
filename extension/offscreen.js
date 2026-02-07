@@ -139,13 +139,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  // if (request.type === 'GENERATE_SUMMARY') {
+  //   console.log('📝 Generating summary...');
+  //   generateSummary(request.text, request.targetLang)
+  //     .then((summary) => sendResponse({ success: true, summary }))
+  //     .catch((err) => sendResponse({ success: false, error: err.message }));
+  //   return true;
+  // }
+
+  // СТАЛО:
   if (request.type === 'GENERATE_SUMMARY') {
     console.log('📝 Generating summary...');
-    generateSummary(request.text, request.targetLang)
+
+    const duration =
+      request.durationMinutes ||
+      (sessionStartTime
+        ? Math.round((Date.now() - sessionStartTime) / 60000)
+        : 0);
+
+    generateSummary(request.text, request.targetLang, duration)
       .then((summary) => sendResponse({ success: true, summary }))
       .catch((err) => sendResponse({ success: false, error: err.message }));
     return true;
   }
+  //
 
   if (request.type === 'CREATE_PDF') {
     console.log('📄 Creating summary file...');
@@ -536,7 +553,7 @@ async function processWhisperSTT(blob) {
 // Previous translations:
 // ${transcriptHistory.slice(-5).map(h => `- "${h.original}" → "${h.translated}"`).join('\n')}
 // Translate the following text now. Output ONLY the translation. No explanations.`,
-      
+
 //       KIDS: `Translate to ${targetLang} for a 5-year-old child.
 // Use very simple words.
 // Fairy-tale tone.
@@ -586,7 +603,7 @@ async function processWhisperSTT(blob) {
 //         model: 'gpt-4o-mini',
 //         messages: [
 //           { role: 'system', content: basePrompt[style] || basePrompt.DEFAULT },
-//           ...history.slice(-24), 
+//           ...history.slice(-24),
 //           { role: 'user', content: text },
 //         ],
 //         temperature: style === 'TECHNICAL' || style === 'KABBALAH' ? 0.1 : 0.35,
@@ -642,7 +659,6 @@ async function processWhisperSTT(blob) {
 //     console.error('❌ Translation Error:', e);
 //   }
 // }
-
 
 // ============================================================
 // TTS
@@ -954,13 +970,87 @@ function createPDF(summaryText, title = 'Video Summary', durationMinutes = 0) {
 // ============================================================
 // SUMMARY GENERATION
 // ============================================================
-async function generateSummary(text, targetLang = 'ru') {
+// async function generateSummary(text, targetLang = 'ru') {
+//   if (!text || text.trim().length < 100) {
+//     throw new Error('Not enough text for summary');
+//   }
+
+//   console.log(
+//     `📝 Generating summary in ${targetLang}, text length: ${text.length}`,
+//   );
+
+//   const langNames = {
+//     ru: 'Russian',
+//     en: 'English',
+//     he: 'Hebrew',
+//     es: 'Spanish',
+//     fr: 'French',
+//     de: 'German',
+//     it: 'Italian',
+//     pt: 'Portuguese',
+//     zh: 'Chinese',
+//     ja: 'Japanese',
+//     ko: 'Korean',
+//     ar: 'Arabic',
+//   };
+
+//   const langName = langNames[targetLang] || targetLang;
+
+//   const systemPrompt = `You are an expert summarizer. Create a comprehensive summary in ${langName}.
+
+// Structure your summary as follows:
+// 1. **Overview** (2-3 sentences about the main topic)
+// 2. **Key Points** (bullet points of the most important information)
+// 3. **Main Topics Discussed** (detailed breakdown of topics)
+// 4. **Notable Quotes or Statements** (if any memorable phrases)
+// 5. **Conclusions** (main takeaways)
+
+// The summary should be 1-2 pages when printed. Be thorough but concise.
+// Write ONLY in ${langName}.`;
+
+//   try {
+//     const res = await fetch('https://api.openai.com/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${OPENAI_KEY}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         model: 'gpt-4o-mini',
+//         messages: [
+//           { role: 'system', content: systemPrompt },
+//           { role: 'user', content: `Summarize this transcript:\n\n${text}` },
+//         ],
+//         temperature: 0.1,
+//         max_tokens: 2000,
+//       }),
+//     });
+
+//     const data = await res.json();
+//     const summary = data?.choices?.[0]?.message?.content;
+
+//     if (!summary) {
+//       throw new Error('No summary generated');
+//     }
+
+//     console.log('✅ Summary generated, length:', summary.length);
+//     return summary;
+//   } catch (e) {
+//     console.error('❌ Summary generation error:', e);
+//     throw e;
+//   }
+// }
+
+// ============================================================
+// SUMMARY GENERATION WITH SELF-CHECK QUESTIONS
+// ============================================================
+async function generateSummary(text, targetLang = 'ru', durationMinutes = 0) {
   if (!text || text.trim().length < 100) {
     throw new Error('Not enough text for summary');
   }
 
   console.log(
-    `📝 Generating summary in ${targetLang}, text length: ${text.length}`,
+    `📝 Generating summary in ${targetLang}, text length: ${text.length}, duration: ${durationMinutes} min`,
   );
 
   const langNames = {
@@ -980,7 +1070,16 @@ async function generateSummary(text, targetLang = 'ru') {
 
   const langName = langNames[targetLang] || targetLang;
 
-  const systemPrompt = `You are an expert summarizer. Create a comprehensive summary in ${langName}.
+  // Определяем количество вопросов на основе длительности
+  let numQuestions = 3; // По умолчанию 3 вопроса
+  if (durationMinutes <= 3) {
+    numQuestions = 1;
+  } else if (durationMinutes <= 10) {
+    numQuestions = 2;
+  }
+  // Для видео 60-120 минут всё равно 3 вопроса (как указано в ТЗ)
+
+  const systemPrompt = `You are an expert summarizer and educator. Create a comprehensive summary in ${langName}.
 
 Structure your summary as follows:
 1. **Overview** (2-3 sentences about the main topic)
@@ -988,6 +1087,14 @@ Structure your summary as follows:
 3. **Main Topics Discussed** (detailed breakdown of topics)
 4. **Notable Quotes or Statements** (if any memorable phrases)
 5. **Conclusions** (main takeaways)
+6. **Self-Check Questions** (exactly ${numQuestions} ${numQuestions === 1 ? 'question' : 'questions'} for self-assessment and learning)
+
+For the Self-Check Questions section:
+- Create EXACTLY ${numQuestions} thought-provoking ${numQuestions === 1 ? 'question' : 'questions'} based on the video content
+- Questions should test understanding of KEY CONCEPTS from the video
+- Make questions challenging but fair
+- Format: "**Question ${numQuestions === 1 ? '1' : '1-' + numQuestions}:**" followed by the question
+- Do NOT provide answers - these are for self-reflection
 
 The summary should be 1-2 pages when printed. Be thorough but concise.
 Write ONLY in ${langName}.`;
@@ -1003,10 +1110,13 @@ Write ONLY in ${langName}.`;
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Summarize this transcript:\n\n${text}` },
+          {
+            role: 'user',
+            content: `Video duration: ${durationMinutes} minutes\n\nSummarize this transcript and create ${numQuestions} self-check ${numQuestions === 1 ? 'question' : 'questions'}:\n\n${text}`,
+          },
         ],
-        temperature: 0.1,
-        max_tokens: 2000,
+        temperature: 0.3,
+        max_tokens: 2500,
       }),
     });
 
@@ -1017,7 +1127,7 @@ Write ONLY in ${langName}.`;
       throw new Error('No summary generated');
     }
 
-    console.log('✅ Summary generated, length:', summary.length);
+    console.log('✅ Summary with questions generated, length:', summary.length);
     return summary;
   } catch (e) {
     console.error('❌ Summary generation error:', e);
