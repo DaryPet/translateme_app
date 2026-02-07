@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   stopBtn.addEventListener('click', stopTranslation);
 
   document.getElementById('buyBtn')?.addEventListener('click', () => {
-    alert('Buy minutes functionality coming soon!');
+    window.open('https://translateme-app.vercel.app/', '_blank');
   });
   document.getElementById('goToWebsiteBtn')?.addEventListener('click', openWebsite);
 
@@ -1107,6 +1107,54 @@ async function updateMinutesDisplay() {
   const accountEmail = document.getElementById('accountEmail');
 
   try {
+     // ================ ДОБАВИЛ ТУТ: ЗАПРОС БАЛАНСА ИЗ API ================
+    // 1. Запрашиваем баланс минут через background
+    const response = await new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: 'GET_MINUTES_BALANCE' }, resolve);
+    });
+    
+    if (response.success && response.balance) {
+      const balance = response.balance;
+      
+      // 2. Обновляем email
+      chrome.storage.local.get(['account'], (storage) => {
+        if (storage.account && storage.account.email) {
+          accountEmail.textContent = storage.account.email;
+        } else if (balance.email) {
+          accountEmail.textContent = balance.email;
+        } else {
+          accountEmail.textContent = 'Guest user';
+        }
+      });
+      
+      // 3. Рассчитываем доступные минуты
+      const freeMinutesAvailable = balance.free_minutes_available || 0;
+      const paidMinutesLeft = balance.paid_minutes_left || 0;
+      const totalAvailable = freeMinutesAvailable + paidMinutesLeft;
+      
+      // 4. Обновляем отображение минут
+      minutesDisplay.textContent = totalAvailable > 99 ? '∞' : totalAvailable.toFixed(1);
+      
+      // 5. Цвет в зависимости от лимита
+      if (totalAvailable <= 0) {
+        minutesDisplay.style.color = '#ef4444';
+      } else if (totalAvailable <= 1) {
+        minutesDisplay.style.color = '#f59e0b';
+      } else {
+        minutesDisplay.style.color = '#10b981';
+      }
+      
+      // 6. Сохраняем для других функций
+      chrome.storage.local.set({ 
+        guestMinutesUsed: (balance.free_minutes_used || 0),
+        minutesBalance: balance 
+      });
+      
+      return;
+    }
+    // ================ КОНЕЦ НОВОГО КОДА ================
+      // Fallback на старую логику (если API не работает)
+    
     const result = await chrome.storage.local.get(['account', 'guestMinutesUsed']);
 
     if (result.account) {
@@ -1173,8 +1221,12 @@ async function updateBlockState() {
 }
 
 function openWebsite() {
-  chrome.tabs.create({ url: WEBSITE_URL + '/en/register' });
+  // chrome.tabs.create({ url: WEBSITE_URL + '/en/register' });
+  chrome.tabs.create({ 
+    url: 'https://translateme-app.vercel.app' 
+  });
 }
+
 
 async function displayStoredError() {
   try {
