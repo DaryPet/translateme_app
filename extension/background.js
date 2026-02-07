@@ -4,6 +4,9 @@ let isCapturing = false;
 let currentTabId = null;
 let currentSettings = null;
 let offscreenReady = false;
+let sessionStartTime = null;
+let guestAutoStopTimerId = null;
+const GUEST_FREE_MINUTES = 3;
 
 // ==================== ОСНОВНАЯ ФУНКЦИЯ ====================
 async function startTabCapture(tabId, settings, sendResponse) {
@@ -62,6 +65,11 @@ async function startTabCapture(tabId, settings, sendResponse) {
       } else {
         isCapturing = true;
         offscreenReady = true;
+        sessionStartTime = Date.now();
+        chrome.storage.local.set({ sessionStartTime: sessionStartTime, captureActive: true });
+        if (settings.isGuest) {
+          guestAutoStopTimerId = setTimeout(performGuestAutoStop, GUEST_FREE_MINUTES * 60 * 1000);
+        }
         sendResponse({ success: true, message: 'Capture started' });
       }
     });
@@ -137,6 +145,36 @@ async function waitForOffscreenReady(retries = 10, delay = 500) {
   throw new Error('Offscreen document not responding after retries');
 }
 
+// ==================== АВТО-СТОП ПО ЛИМИТУ ГОСТЯ (3 мин) ====================
+function performGuestAutoStop() {
+  if (!isCapturing || !guestAutoStopTimerId) return;
+  guestAutoStopTimerId = null;
+  console.log('⏱️ Guest 3 min limit reached — auto-stopping');
+
+  chrome.runtime.sendMessage({ type: 'STOP_CAPTURE' }, () => {
+    const elapsedMin = sessionStartTime ? (Date.now() - sessionStartTime) / 60000 : GUEST_FREE_MINUTES;
+    sessionStartTime = null;
+
+    if (currentTabId) {
+      chrome.tabs.sendMessage(currentTabId, { type: 'STOP_SUBTITLES' }).catch(() => {});
+    }
+
+    isCapturing = false;
+    currentTabId = null;
+    currentSettings = null;
+    offscreenReady = false;
+
+    chrome.storage.local.set({ captureActive: false, sessionStartTime: null });
+    chrome.storage.local.get(['account', 'guestMinutesUsed']).then((r) => {
+      if (!r.account) {
+        const used = (r.guestMinutesUsed || 0) + elapsedMin;
+        chrome.storage.local.set({ guestMinutesUsed: used });
+        console.log('📊 Guest limit reached, minutes:', used.toFixed(2));
+      }
+    }).catch(() => {});
+  });
+}
+
 // ==================== ОСТАНОВКА ====================
 function stopTabCapture(sendResponse) {
   console.log('🛑 Stopping capture...');
@@ -145,13 +183,20 @@ function stopTabCapture(sendResponse) {
     sendResponse({ success: false, error: 'Not capturing' });
     return;
   }
+
+  if (guestAutoStopTimerId) {
+    clearTimeout(guestAutoStopTimerId);
+    guestAutoStopTimerId = null;
+  }
   
   // 1. Отправляем команду остановки в Offscreen
   chrome.runtime.sendMessage({
     type: 'STOP_CAPTURE'
   }, (response) => {
     // Игнорируем ошибки - offscreen может быть уже закрыт
-    
+    const elapsedMin = sessionStartTime ? (Date.now() - sessionStartTime) / 60000 : 0;
+    sessionStartTime = null;
+
     // 2. Останавливаем субтитры в content script
     if (currentTabId) {
       chrome.tabs.sendMessage(currentTabId, {
@@ -160,15 +205,28 @@ function stopTabCapture(sendResponse) {
         console.log('Tab might be closed or not ready:', err.message);
       });
     }
-    
+
     // 3. Сбрасываем состояние
     isCapturing = false;
     currentTabId = null;
     currentSettings = null;
     offscreenReady = false;
-    
+
     console.log('✅ Capture stopped');
     sendResponse({ success: true, message: 'Capture stopped' });
+
+    chrome.storage.local.set({ captureActive: false, sessionStartTime: null });
+
+    // 4. Fire-and-forget: добавляем минуты гостю (без await — не блокируем sendResponse)
+    if (elapsedMin > 0) {
+      chrome.storage.local.get(['account', 'guestMinutesUsed']).then((r) => {
+        if (!r.account) {
+          const used = (r.guestMinutesUsed || 0) + elapsedMin;
+          chrome.storage.local.set({ guestMinutesUsed: used });
+          console.log('📊 Guest minutes:', used.toFixed(2));
+        }
+      }).catch(() => {});
+    }
   });
 }
 
@@ -228,12 +286,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   switch (request.type) {
     case 'START_TAB_CAPTURE':
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (!tabs[0]) {
-          sendResponse({ success: false, error: 'No active tab' });
+      chrome.storage.local.get(['account', 'guestMinutesUsed'], (storage) => {
+        if (!storage.account && (storage.guestMinutesUsed || 0) >= GUEST_FREE_MINUTES) {
+          sendResponse({ success: false, error: 'GUEST_LIMIT_EXCEEDED' });
           return;
         }
-        startTabCapture(tabs[0].id, request.settings, sendResponse);
+        const isGuest = !storage.account;
+        const settings = { ...request.settings, isGuest };
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (!tabs[0]) {
+            sendResponse({ success: false, error: 'No active tab' });
+            return;
+          }
+          startTabCapture(tabs[0].id, settings, sendResponse);
+        });
       });
       return true;
       

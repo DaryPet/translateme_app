@@ -1,6 +1,9 @@
 // popup.js - ПОЛНЫЙ РАБОЧИЙ КОД С ВЫБОРОМ ГОЛОСА И СТИЛЯ ПЕРЕВОДА
 console.log('🔴 POPUP LOADED - ENHANCED WITH VOICE SELECTION');
 
+const WEBSITE_URL = 'https://translateme.app';
+const GUEST_FREE_MINUTES = 3;
+
 // КОНФИГУРАЦИЯ ЯЗЫКОВ И ГОЛОСОВ (ВЗЯТО ИЗ langConfig.js)
 const LANGUAGE_CONFIG = {
   // --- Whisper (Семитские и сложные языки для Live) ---
@@ -71,6 +74,7 @@ let isCapturing = false;
 let isUserInteracting = false;
 let volumeSliderInteraction = false;
 let statusErrorTimer = null;
+let countdownIntervalId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   // ИНИЦИАЛИЗИРУЕМ СЕЛЕКТЫ С ЯЗЫКАМИ ИЗ КОНФИГА
@@ -151,7 +155,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('🔧 Initializing popup...');
 
   await loadSavedSettings();
+  updateMinutesDisplay();
+  updateBlockState();
   await displayStoredError();
+
+  chrome.storage.local.get(['account', 'captureActive', 'sessionStartTime'], (r) => {
+    if (!r.account && r.captureActive && r.sessionStartTime && !countdownIntervalId) {
+      countdownIntervalId = setInterval(updateGuestCountdown, 2000);
+    }
+  });
 
   // ==================== ЛОГИКА ПОЛЗУНКА И MUTE ====================
   function updateVolumeDisplay() {
@@ -301,6 +313,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('buyBtn')?.addEventListener('click', () => {
     alert('Buy minutes functionality coming soon!');
   });
+  document.getElementById('goToWebsiteBtn')?.addEventListener('click', openWebsite);
 
 //   document.getElementById('settingsBtn')?.addEventListener('click', () => {
 //     const settingsPanel = document.getElementById('settingsPanel');
@@ -860,12 +873,26 @@ async function startTranslation() {
 
       updateMinutesDisplay();
 
+      // Реальный счётчик: для гостя запускаем обновление каждые 2 сек
+      const r = await chrome.storage.local.get(['account']);
+      if (!r.account) {
+        if (countdownIntervalId) clearInterval(countdownIntervalId);
+        countdownIntervalId = setInterval(updateGuestCountdown, 2000);
+      }
+
       console.log('✅ Translation started successfully');
     } else {
       const errorMessage = response?.error || 'Unknown error';
-      alert(`Failed to start: ${errorMessage}`);
-      startBtn.disabled = false;
-      statusText.textContent = 'Ready to translate';
+      if (errorMessage === 'GUEST_LIMIT_EXCEEDED') {
+        statusText.textContent = '3 free minutes used. Sign up for 5 min/month or Pro';
+        updateBlockState();
+        updateMinutesDisplay();
+        startBtn.disabled = true;
+      } else {
+        alert(`Failed to start: ${errorMessage}`);
+        startBtn.disabled = false;
+        statusText.textContent = 'Ready to translate';
+      }
     }
   } catch (error) {
     console.error('❌ Start translation error:', error);
@@ -910,7 +937,12 @@ async function stopTranslation() {
       delete statusText.dataset.restoreText;
       delete statusIndicator.dataset.restoreActive;
 
+      if (countdownIntervalId) {
+        clearInterval(countdownIntervalId);
+        countdownIntervalId = null;
+      }
       updateMinutesDisplay();
+      updateBlockState();
 
       console.log(
         `✅ Stopped successfully. Duration: ${response.duration || 0}s`,
@@ -1075,20 +1107,73 @@ async function updateMinutesDisplay() {
   const accountEmail = document.getElementById('accountEmail');
 
   try {
-    const result = await chrome.storage.local.get(['account']);
+    const result = await chrome.storage.local.get(['account', 'guestMinutesUsed']);
 
     if (result.account) {
       accountEmail.textContent = result.account.email || 'Not signed in';
       minutesDisplay.textContent = result.account.minutes || '∞';
     } else {
       accountEmail.textContent = 'Not signed in';
-      minutesDisplay.textContent = '∞';
+      const used = result.guestMinutesUsed || 0;
+      const remaining = Math.max(0, GUEST_FREE_MINUTES - used);
+      minutesDisplay.textContent = remaining.toFixed(1);
     }
   } catch (error) {
     console.error('❌ Failed to update account display:', error);
     minutesDisplay.textContent = '--';
     accountEmail.textContent = 'Error loading';
   }
+}
+
+function updateGuestCountdown() {
+  const minutesDisplay = document.getElementById('minutesDisplay');
+  const accountEmail = document.getElementById('accountEmail');
+  if (!minutesDisplay) return;
+
+  chrome.storage.local.get(['account', 'sessionStartTime', 'captureActive', 'guestMinutesUsed'], (r) => {
+    if (r.account) return;
+
+    if (!r.captureActive || !r.sessionStartTime) {
+      const used = r.guestMinutesUsed || 0;
+      const remaining = Math.max(0, GUEST_FREE_MINUTES - used);
+      minutesDisplay.textContent = remaining.toFixed(1);
+      if (!r.captureActive && isCapturing) {
+        isCapturing = false;
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusText = document.getElementById('statusText');
+        const statusIndicator = document.getElementById('statusIndicator');
+        if (startBtn) startBtn.disabled = true;
+        if (stopBtn) stopBtn.disabled = true;
+        if (statusText) statusText.textContent = '3 free minutes used. Sign up for 5 min/month or Pro';
+        if (statusIndicator) statusIndicator.classList.remove('active');
+        updateBlockState();
+        if (countdownIntervalId) { clearInterval(countdownIntervalId); countdownIntervalId = null; }
+      }
+      return;
+    }
+
+    const elapsedMin = (Date.now() - r.sessionStartTime) / 60000;
+    const remaining = Math.max(0, GUEST_FREE_MINUTES - elapsedMin);
+    minutesDisplay.textContent = remaining.toFixed(1);
+  });
+}
+
+async function updateBlockState() {
+  const startBtn = document.getElementById('startBtn');
+  const blockOverlay = document.getElementById('guestBlockOverlay');
+
+  try {
+    const r = await chrome.storage.local.get(['account', 'guestMinutesUsed']);
+    const isBlocked = !r.account && (r.guestMinutesUsed || 0) >= GUEST_FREE_MINUTES;
+
+    if (blockOverlay) blockOverlay.style.display = isBlocked ? 'flex' : 'none';
+    if (startBtn) startBtn.disabled = isBlocked;
+  } catch (e) {}
+}
+
+function openWebsite() {
+  chrome.tabs.create({ url: WEBSITE_URL + '/en/register' });
 }
 
 async function displayStoredError() {
