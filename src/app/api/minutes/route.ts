@@ -1,16 +1,32 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
-    const url = new URL(request.url);
+    const cookieStore = await cookies();
     
-    // Получаем google_id из query параметров (для гостей Chrome расширения)
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name: string, value: string, options: any) {
+            cookieStore.set({ name, value, ...options });
+          },
+          remove(name: string, options: any) {
+            cookieStore.set({ name, value: '', ...options });
+          },
+        },
+      }
+    );
+    
+    const url = new URL(request.url);
     const googleId = url.searchParams.get('google_id');
     
-    // Проверяем авторизацию через Supabase (для пользователей сайта)
     const { data: { user: supabaseUser } } = await supabase.auth.getUser();
     
     let userData: any = null;
@@ -74,8 +90,9 @@ export async function GET(request: Request) {
       }
     }
     
-    const freeMinutesUsed = userData?.free_minutes_used || 0;
-    const paidMinutesLeft = userData?.paid_minutes_left || 0;
+    // const freeMinutesUsed = userData?.free_minutes_used || 0;
+    const freeMinutesUsed = Math.ceil(userData?.free_minutes_used || 0);
+    const paidMinutesLeft = Math.ceil(userData?.paid_minutes_left || 0);
     const canUseFree = freeMinutesUsed < 3;
     
     return NextResponse.json({
@@ -99,7 +116,26 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const cookieStore = await cookies();
+    
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name: string, value: string, options: any) {
+            cookieStore.set({ name, value, ...options });
+          },
+          remove(name: string, options: any) {
+            cookieStore.set({ name, value: '', ...options });
+          },
+        },
+      }
+    );
+    
     const body = await request.json();
     const { minutes_used, google_id, fingerprint, user_id } = body;
     
@@ -234,8 +270,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       minutes_used: minutes_used,
-      free_minutes_used: freeMinutesUsed + freeMinutesToUse,
-      paid_minutes_left: paidMinutesLeft - paidMinutesToUse,
+      free_minutes_used: Math.ceil(freeMinutesUsed + freeMinutesToUse),
+      paid_minutes_left: Math.ceil(paidMinutesLeft - paidMinutesToUse),
       source,
       user_id: targetUserId
     });

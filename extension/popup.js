@@ -1207,17 +1207,45 @@ function updateGuestCountdown() {
   });
 }
 
+// async function updateBlockState() {
+//   const startBtn = document.getElementById('startBtn');
+//   const blockOverlay = document.getElementById('guestBlockOverlay');
+
+//   try {
+//     const r = await chrome.storage.local.get(['account', 'guestMinutesUsed']);
+//     const isBlocked = !r.account && (r.guestMinutesUsed || 0) >= GUEST_FREE_MINUTES;
+
+//     if (blockOverlay) blockOverlay.style.display = isBlocked ? 'flex' : 'none';
+//     if (startBtn) startBtn.disabled = isBlocked;
+//   } catch (e) {}
+// }
+
 async function updateBlockState() {
   const startBtn = document.getElementById('startBtn');
   const blockOverlay = document.getElementById('guestBlockOverlay');
 
   try {
-    const r = await chrome.storage.local.get(['account', 'guestMinutesUsed']);
-    const isBlocked = !r.account && (r.guestMinutesUsed || 0) >= GUEST_FREE_MINUTES;
+    // 1. Проверяем баланс из БД
+    const response = await chrome.runtime.sendMessage({ 
+      type: 'GET_MINUTES_BALANCE' 
+    });
+    
+    let isBlocked = false;
+    
+    if (response.success && response.balance) {
+      // Блокировка по данным БД
+      isBlocked = !response.balance.allowed || response.balance.free_minutes_available <= 0;
+    } else {
+      // Fallback на localStorage для гостей
+      const r = await chrome.storage.local.get(['account', 'guestMinutesUsed']);
+      isBlocked = !r.account && (r.guestMinutesUsed || 0) >= GUEST_FREE_MINUTES;
+    }
 
     if (blockOverlay) blockOverlay.style.display = isBlocked ? 'flex' : 'none';
     if (startBtn) startBtn.disabled = isBlocked;
-  } catch (e) {}
+  } catch (e) {
+    console.log('Block state error:', e);
+  }
 }
 
 function openWebsite() {
