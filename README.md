@@ -1,125 +1,125 @@
 # Translateme
 
-Chrome-расширение и веб-платформа для **перевода видео в реальном времени**: субтитры, озвучка, конспект в PDF и учёт минут через БД.
+Chrome extension and web platform for **real-time video translation**: subtitles, voice dubbing, summary PDF, and minute tracking via the database.
 
 ---
 
-## Возможности расширения
+## Extension capabilities
 
-### Перевод и озвучка в реальном времени
-- **Живой перевод** — речь из вкладки (YouTube, Vimeo, Coursera, любой сайт с видео) распознаётся и переводится на лету.
-- **Озвучка (TTS)** — переведённый текст озвучивается голосом OpenAI (мужской / женский / нейтральный). Можно приглушить оригинал и слушать только перевод.
-- **Регулировка громкости** — отдельный слайдер громкости оригинала и перевода.
+### Real-time translation and voice dubbing
+- **Live translation** — speech from the tab (YouTube, Vimeo, Coursera, any site with video) is recognized and translated on the fly.
+- **Voice dubbing (TTS)** — translated text is spoken with OpenAI voices (male / female / neutral). You can mute the original and listen only to the translation.
+- **Volume control** — separate slider for original and translation volume.
 
-### Субтитры
-- Субтитры поверх видео, в том числе в **полноэкранном режиме** и внутри **iframe** (Vimeo, встроенные плееры).
-- Отображение внизу по центру; поддержка любых сайтов с видео.
+### Subtitles
+- Subtitles overlay the video, including **fullscreen mode** and inside **iframes** (Vimeo, embedded players).
+- Display at the bottom center; works on any site with video.
 
-### Конспект видео (Summary PDF)
-- Накопление переведённого текста за сессию.
-- Кнопка **Summary PDF** — генерация краткого конспекта (1–2 страницы) через GPT и **скачивание PDF** с поддержкой кириллицы и любого языка.
+### Video summary (Summary PDF)
+- Accumulated translated text over the session.
+- **Summary PDF** button — generates a short summary (1–2 pages) via GPT and **downloads a PDF** with Cyrillic and any language support.
 
-### Учёт минут и БД
-- Баланс минут запрашивается с бэкенда (API на Vercel), а не только из локального хранилища.
-- Гости: лимит бесплатных минут; залогиненные пользователи — платные минуты из БД (Supabase).
-- Списание минут при записи перевода (POST на `/api/minutes`).
+### Minutes and database
+- Minute balance is fetched from the backend (API on Vercel), not only from local storage.
+- Guests: free minute limit; logged-in users — paid minutes from the DB (Supabase).
+- Minutes are deducted when recording translation (POST to `/api/minutes`).
 
-### Плавающая панель (OPEN_UI)
-- По клику на иконку расширения на странице открывается плавающая панель с iframe настроек (тот же popup), прижатая к правому краю экрана.
-
----
-
-## Стили перевода
-
-В настройках можно выбрать **стиль перевода** — он задаёт системный промпт для модели (GPT-4o-mini):
-
-| Стиль | Описание |
-|-------|----------|
-| **Default (Natural Speech)** | Профессиональный синхронный перевод: естественная речь, смысл важнее буквальности, грамматика целевого языка. |
-| **Kids** | Простой язык, сказочный тон, для детей ~5 лет. |
-| **Kabbalah** | Строго технический перевод для каббалистических текстов: термины (иврит/арамей) транслитерируются, остальное переводится без интерпретаций. |
-| **Scientific** | Технический/научный стиль: точные термины, формальный язык, без упрощений. |
-| **Children** | Вариант «для детей», простые формулировки. |
-
-В коде также предусмотрены стили **Slang** (молодёжный сленг, мемы) и **Poetic** (поэтичный перевод) — при необходимости их можно включить в UI.
+### Floating panel (OPEN_UI)
+- Clicking the extension icon on the page opens a floating panel with the settings iframe (same as popup), aligned to the right edge of the screen.
 
 ---
 
-## Языки
+## Translation styles
 
-### Популярные и быстрые (Deepgram Nova-3, WebSocket)
-Распознавание в реальном времени с минимальной задержкой:
+In settings you can choose a **translation style** — it sets the system prompt for the model (GPT-4o-mini):
 
-- **Английский** (US, UK, Australia, India, New Zealand)  
-- **Русский, украинский**  
-- **Немецкий, французский, испанский** (в т.ч. LatAm), **итальянский, португальский** (и бразильский)  
-- **Китайский** (упрощённый и традиционный), **японский, корейский**  
-- **Хинди, турецкий, польский, голландский, шведский, финский, норвежский, датский**  
-- **Вьетнамский, тайский, индонезийский, малайский**  
-- **Греческий, чешский, венгерский, румынский, болгарский, хорватский, словенский, словацкий**  
-- **Эстонский, латышский, литовский**  
-- **Каннада, маратхи, тамильский, телугу**  
-- **Каталанский**  
-- **Авто (default)** — язык определяется моделью.
+| Style | Description |
+|-------|-------------|
+| **Default (Natural Speech)** | Professional simultaneous interpretation: natural speech, meaning over literal wording, correct grammar in the target language. |
+| **Kids** | Simple language, fairy-tale tone, for children ~5 years old. |
+| **Kabbalah** | Strict technical translation for Kabbalistic texts: terms (Hebrew/Aramaic) are transliterated, the rest translated without interpretation. |
+| **Scientific** | Technical/scientific style: exact terms, formal language, no simplification. |
+| **Children** | “For children” variant, simple wording. |
 
-### Сложные / семитские (OpenAI Whisper, batch)
-Для лучшего качества распознавания иврита, арабского и персидского используется **Whisper** (пакетная обработка по интервалам), а не потоковый WebSocket:
-
-- **Иврит (he)**  
-- **Арабский (ar)**  
-- **Персидский (fa)**  
-
-Конфиг: `extension/langConfig.js` — для `he`, `ar`, `fa` заданы `model: 'whisper-large'` и интервал (например 10000 ms).
+The code also includes **Slang** (youth slang, memes) and **Poetic** (poetic translation) styles — they can be enabled in the UI if needed.
 
 ---
 
-## Технологии (скорость и точность)
+## Languages
 
-- **Распознавание речи (STT)**  
-  - **Deepgram Nova-3** по WebSocket — основной режим: самая быстрая потоковая распознавание, низкая задержка.  
-  - **OpenAI Whisper** — для иврита, арабского, персидского, где потоковые модели слабее.
+### Popular and fast (Deepgram Nova-3, WebSocket)
+Real-time recognition with minimal latency:
 
-- **Перевод**  
-  - **OpenAI GPT-4o-mini** — быстрая и дешёвая модель, подходит для живого перевода и разных стилей (в т.ч. Kabbalah, Technical, Kids).
+- **English** (US, UK, Australia, India, New Zealand)  
+- **Russian, Ukrainian**  
+- **German, French, Spanish** (incl. LatAm), **Italian, Portuguese** (and Brazilian)  
+- **Chinese** (Simplified and Traditional), **Japanese, Korean**  
+- **Hindi, Turkish, Polish, Dutch, Swedish, Finnish, Norwegian, Danish**  
+- **Vietnamese, Thai, Indonesian, Malay**  
+- **Greek, Czech, Hungarian, Romanian, Bulgarian, Croatian, Slovenian, Slovak**  
+- **Estonian, Latvian, Lithuanian**  
+- **Kannada, Marathi, Tamil, Telugu**  
+- **Catalan**  
+- **Auto (default)** — language detected by the model.
 
-- **Озвучка (TTS)**  
-  - **OpenAI TTS-1**, голоса: **Nova** (нейтральный), **Shimmer** (женский), **Onyx** (мужский), **Alloy** (auto).
+### Complex / Semitic (OpenAI Whisper, batch)
+For better recognition quality for Hebrew, Arabic, and Persian, **Whisper** is used (batch processing at intervals) instead of streaming WebSocket:
 
-- **Аудио в расширении**  
-  - **Audio Worklet API** (PCM 16 kHz, моно) для передачи потока в Deepgram без лишних задержек.  
+- **Hebrew (he)**  
+- **Arabic (ar)**  
+- **Persian (fa)**  
+
+Config: `extension/langConfig.js` — for `he`, `ar`, `fa` the `model: 'whisper-large'` and interval (e.g. 10000 ms) are set.
+
+---
+
+## Technologies (speed and accuracy)
+
+- **Speech recognition (STT)**  
+  - **Deepgram Nova-3** over WebSocket — main mode: fastest streaming recognition, low latency.  
+  - **OpenAI Whisper** — for Hebrew, Arabic, Persian, where streaming models are weaker.
+
+- **Translation**  
+  - **OpenAI GPT-4o-mini** — fast and cost-effective model, suitable for live translation and all styles (incl. Kabbalah, Technical, Kids).
+
+- **Voice (TTS)**  
+  - **OpenAI TTS-1**, voices: **Nova** (neutral), **Shimmer** (female), **Onyx** (male), **Alloy** (auto).
+
+- **Audio in the extension**  
+  - **Audio Worklet API** (PCM 16 kHz, mono) to send the stream to Deepgram with minimal delay.  
   - Tab capture → AudioContext → Worklet → WebSocket.
 
-- **Мониторинг**  
-  - **Opik (Comet)** — трейсы переводов, STT и TTS (duration, input/output length и т.д.), UUID v7.
+- **Monitoring**  
+  - **Opik (Comet)** — traces for translation, STT and TTS (duration, input/output length, etc.), UUID v7.
 
 ---
 
-## Стек проекта
+## Project stack
 
-- **Расширение**: Chrome Manifest V3, Vanilla JS, Audio Worklet, Offscreen Document.
-- **Бэкенд/минуты**: Next.js API Routes, Supabase (пользователи, минуты), Stripe (подписки).
-- **Фронт сайта**: Next.js, React, i18n, PWA.
-
----
-
-## Установка расширения
-
-1. Клонировать репозиторий.
-2. Создать `extension/secrets.js` (по образцу `secrets.example.js`): ключи OpenAI, Deepgram, при необходимости Opik.
-3. В Chrome: `chrome://extensions/` → «Режим разработчика» → «Загрузить распакованное расширение» → выбрать папку `extension/`.
-
-Расширение обращается к API минут на `API_BASE_URL` (в коде — `https://translateme-app.vercel.app`). Для локальной разработки можно подменить URL в `extension/background.js`.
+- **Extension**: Chrome Manifest V3, Vanilla JS, Audio Worklet, Offscreen Document.
+- **Backend / minutes**: Next.js API Routes, Supabase (users, minutes), Stripe (subscriptions).
+- **Site frontend**: Next.js, React, i18n, PWA.
 
 ---
 
-## Конфигурация языков и голосов
+## Extension installation
 
-- **Языки**: `extension/langConfig.js` — `LANGUAGE_CONFIG` (коды языков, модель nova-3 или whisper-large, интервал).
-- **Голоса TTS**: в том же файле — `VOICE_CONFIG` (male, female, neutral, auto → имена голосов OpenAI).
-- **Промпты стилей перевода**: `extension/offscreen.js`, объект `prompts` внутри функции перевода (DEFAULT, KIDS, KABBALAH, TECHNICAL, SLANG, POETIC).
+1. Clone the repository.
+2. Create `extension/secrets.js` (from `secrets.example.js`): OpenAI, Deepgram, and optionally Opik keys.
+3. In Chrome: `chrome://extensions/` → “Developer mode” → “Load unpacked” → select the `extension/` folder.
+
+The extension calls the minutes API at `API_BASE_URL` (in code: `https://translateme-app.vercel.app`). For local development you can override the URL in `extension/background.js`.
 
 ---
 
-## Лицензия
+## Language and voice configuration
 
-© 2026 Translateme. Все права защищены.
+- **Languages**: `extension/langConfig.js` — `LANGUAGE_CONFIG` (language codes, model nova-3 or whisper-large, interval).
+- **TTS voices**: same file — `VOICE_CONFIG` (male, female, neutral, auto → OpenAI voice names).
+- **Translation style prompts**: `extension/offscreen.js`, `prompts` object inside the translation function (DEFAULT, KIDS, KABBALAH, TECHNICAL, SLANG, POETIC).
+
+---
+
+## License
+
+© 2026 Translateme. All rights reserved.
