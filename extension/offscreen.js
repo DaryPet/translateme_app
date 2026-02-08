@@ -10,7 +10,6 @@ console.log('🔍 Opik check:', {
   trackerLoaded: !!window.opikTracker,
 });
 
-// API ключи загружаются из secrets.js (добавлен в .gitignore)
 const DEEPGRAM_KEY = window.SECRETS?.DEEPGRAM_API_KEY || '';
 const OPENAI_KEY = window.SECRETS?.OPENAI_API_KEY || '';
 
@@ -20,10 +19,6 @@ if (!DEEPGRAM_KEY || !OPENAI_KEY) {
   );
 }
 
-// Проверяем конфиги
-console.log('📋 LANGUAGE_CONFIG loaded:', !!window.LANGUAGE_CONFIG);
-console.log('🎤 VOICE_CONFIG loaded:', !!window.VOICE_CONFIG);
-console.log('📊 OPIK tracker loaded:', !!window.opikTracker);
 if (!window.opikTracker) {
   console.warn(
     '⚠️ Opik tracker not loaded. Check offscreen.html script order.',
@@ -42,25 +37,20 @@ let speechQueue = [],
   isPlaying = false,
   history = [];
 
-// Накопление транскрипта для Summary
 let transcriptHistory = [];
 let sessionStartTime = null;
 
-// WebSocket для Deepgram
 let deepgramSocket = null;
 let mediaRecorder = null;
 let workletNode = null;
 
-// Режим работы: 'websocket' (Deepgram live) или 'whisper' (OpenAI batch)
 let captureMode = 'websocket';
 
-// --- МЕХАНИЗМ ВЫЖИВАНИЯ (KEEP-ALIVE) ---
 setInterval(() => {
   if (isRecording) {
     chrome.runtime
       .sendMessage({ type: 'OFFSCREEN_KEEP_ALIVE' })
       .catch(() => {});
-    // Также поддерживаем WebSocket живым
     if (deepgramSocket && deepgramSocket.readyState === WebSocket.OPEN) {
       deepgramSocket.send(JSON.stringify({ type: 'KeepAlive' }));
     }
@@ -68,7 +58,6 @@ setInterval(() => {
 }, 10000);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('🎧 Offscreen received:', request.type);
 
   if (request.type === 'PING') {
     sendResponse({ success: true });
@@ -76,7 +65,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.type === 'START_CAPTURE') {
-    console.log('🚀 WebSocket LIVE capture starting...');
     initCapture(request.streamId, request.settings, request.tabId)
       .then((res) => sendResponse(res))
       .catch((err) => sendResponse({ success: false, error: err.message }));
@@ -89,27 +77,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.type === 'UPDATE_SETTINGS') {
-    console.log('⚙️ Updating settings:', request.settings);
     activeSettings = { ...activeSettings, ...request.settings };
     updateVolume();
     sendResponse({ success: true });
   }
 
   if (request.type === 'UPDATE_VOLUME') {
-    console.log('🔊 Updating volume:', request.settings);
     activeSettings = { ...activeSettings, ...request.settings };
     updateVolume();
     sendResponse({ success: true });
   }
 
   if (request.type === 'UPDATE_VOICE') {
-    console.log('🎤 Updating voice:', request.settings);
     activeSettings = { ...activeSettings, ...request.settings };
     sendResponse({ success: true });
   }
 
   if (request.type === 'UPDATE_SETTINGS_FROM_POPUP') {
-    console.log('📨 Updating settings from popup:', request.settings);
     activeSettings = { ...activeSettings, ...request.settings };
     updateVolume();
     sendResponse({ success: true });
@@ -134,22 +118,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'CLEAR_TRANSCRIPT') {
     transcriptHistory = [];
     sessionStartTime = null;
-    console.log('🗑️ Transcript history cleared');
     sendResponse({ success: true });
     return true;
   }
 
-  // if (request.type === 'GENERATE_SUMMARY') {
-  //   console.log('📝 Generating summary...');
-  //   generateSummary(request.text, request.targetLang)
-  //     .then((summary) => sendResponse({ success: true, summary }))
-  //     .catch((err) => sendResponse({ success: false, error: err.message }));
-  //   return true;
-  // }
 
-  // СТАЛО:
   if (request.type === 'GENERATE_SUMMARY') {
-    console.log('📝 Generating summary...');
 
     const duration =
       request.durationMinutes ||
@@ -162,10 +136,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .catch((err) => sendResponse({ success: false, error: err.message }));
     return true;
   }
-  //
 
   if (request.type === 'CREATE_PDF') {
-    console.log('📄 Creating summary file...');
     createPDF(request.summary, request.title, request.duration)
       .then((dataUrl) => sendResponse({ success: true, pdfDataUrl: dataUrl }))
       .catch((err) => sendResponse({ success: false, error: err.message }));
@@ -182,7 +154,6 @@ function connectDeepgramWebSocket(lang) {
   return new Promise((resolve, reject) => {
     const model = 'nova-3';
 
-    // URL с параметрами для минимальной задержки
     const wsUrl =
       `wss://api.deepgram.com/v1/listen?` +
       `model=${model}` +
@@ -195,33 +166,22 @@ function connectDeepgramWebSocket(lang) {
       `&punctuate=true` +
       `&smart_format=true`;
 
-    console.log('🔌 Connecting to Deepgram WebSocket:', wsUrl);
 
     deepgramSocket = new WebSocket(wsUrl, ['token', DEEPGRAM_KEY]);
 
     deepgramSocket.onopen = () => {
-      console.log('✅ Deepgram WebSocket CONNECTED!');
       resolve();
     };
 
     deepgramSocket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-
-        // Получаем транскрипцию
         const transcript = data.channel?.alternatives?.[0]?.transcript;
         const isFinal = data.is_final;
         const confidence = data.channel?.alternatives?.[0]?.confidence || 0;
 
-        console.log(
-          `📝 Deepgram: "${transcript}" (final: ${isFinal}, conf: ${confidence})`,
-        );
-
-        // Обрабатываем только финальные результаты с текстом
         if (transcript && transcript.trim().length > 2 && isFinal) {
-          console.log('🎯 Final transcript, sending to translate:', transcript);
 
-          // 📊 Opik: логируем STT
           window.opikTracker?.logSTT(transcript, {
             provider: 'deepgram',
             language: lang,
@@ -232,20 +192,16 @@ function connectDeepgramWebSocket(lang) {
           translateAndVoice(transcript);
         }
       } catch (e) {
-        console.error('❌ Error parsing Deepgram response:', e);
+        // console.error('❌ Error parsing Deepgram response:', e);
       }
     };
 
     deepgramSocket.onerror = (error) => {
-      console.error('❌ Deepgram WebSocket ERROR:', error);
       reject(error);
     };
 
     deepgramSocket.onclose = (event) => {
-      console.log('📴 Deepgram WebSocket closed:', event.code, event.reason);
-      // Автоматическое переподключение если запись активна
       if (isRecording && event.code !== 1000) {
-        console.log('🔄 Attempting to reconnect...');
         setTimeout(() => {
           if (isRecording) {
             connectDeepgramWebSocket(
@@ -269,21 +225,15 @@ async function initCapture(streamId, settings, tabId) {
     currentTabId = tabId;
     const lang = settings?.sourceLanguage || 'en';
 
-    // Определяем режим на основе конфига языка
     const langConfig = (window.LANGUAGE_CONFIG &&
       window.LANGUAGE_CONFIG[lang]) ||
       window.LANGUAGE_CONFIG?.default || { model: 'nova-3' };
 
-    // Если модель whisper-* — используем batch mode (OpenAI Whisper)
     captureMode = langConfig.model?.startsWith('whisper')
       ? 'whisper'
       : 'websocket';
 
-    console.log(
-      `🎤 Starting capture: lang=${lang}, mode=${captureMode}, model=${langConfig.model}`,
-    );
 
-    // 1. Захватываем аудио с вкладки
     audioStream = await navigator.mediaDevices.getUserMedia({
       audio: {
         mandatory: {
@@ -292,7 +242,7 @@ async function initCapture(streamId, settings, tabId) {
         },
       },
     });
-    console.log('✅ Audio stream obtained');
+
 
     // 2. Настраиваем AudioContext для контроля громкости
     // Для WebSocket нужен 16kHz, для Whisper можно 48kHz (но 16kHz тоже ок)
@@ -817,18 +767,11 @@ function handleQueue() {
 // ============================================================
 function updateVolume() {
   if (!gainNode || !audioContext) {
-    console.log('🔇 Volume update skipped - no audio context');
     return;
   }
   const vol = activeSettings?.muteOriginal
     ? 0
     : activeSettings?.originalVolume || 1;
-  console.log(
-    '🔊 Setting volume to:',
-    vol,
-    'mute:',
-    activeSettings?.muteOriginal,
-  );
   gainNode.gain.setTargetAtTime(vol, audioContext.currentTime, 0.1);
 }
 

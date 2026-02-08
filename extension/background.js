@@ -1,5 +1,3 @@
-// console.log('🤖 Background service worker loaded - WITH VOICE SUPPORT');
-
 let isCapturing = false;
 let currentTabId = null;
 let currentSettings = null;
@@ -10,19 +8,18 @@ const GUEST_FREE_MINUTES = 3;
 const API_BASE_URL = 'https://translateme-app.vercel.app';
 let minutesBalance = null;
 
-// ================ ИЗМЕНИЛ ТОЛЬКО ЧТО ЗДЕСЬ: ДОБАВИЛ ФУНКЦИИ ДЛЯ БД ================
 async function getUserId() {
   // Временно используем тестовый fingerprint для проверки БД
-  return 'test_fingerprint_123'; // ← ИЗМЕНЕНИЕ: тестовый ID для проверки БД
+  return 'test_fingerprint_123';
 }
 
 async function checkMinutesAvailability() {
   try {
     const userId = await getUserId();
-    console.log('🔍 Checking minutes in DB for:', userId);
 
     const response = await fetch(
-      `http://localhost:3000/api/minutes?fingerprint=${userId}`,
+      // `http://localhost:3000/api/minutes?fingerprint=${userId}`,
+      `${API_BASE_URL}/api/minutes?fingerprint=${userId}`,
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -31,8 +28,6 @@ async function checkMinutesAvailability() {
 
     if (response.ok) {
       const data = await response.json();
-      console.log('📊 DB response:', data);
-
       const allowed = data.free_minutes_used <= 3;
       const free_minutes_available = Math.max(0, 3 - data.free_minutes_used);
 
@@ -51,19 +46,11 @@ async function checkMinutesAvailability() {
 
       return formattedData;
     } else {
-      //   console.log('❌ DB check failed, using fallback');
-      //   // Fallback на localStorage
-      //   const localData = await chrome.storage.local.get(['guestMinutesUsed']);
-      //   return {
-      //     allowed: true,
-      //     free_minutes_available: Math.max(0, GUEST_FREE_MINUTES - (localData.guestMinutesUsed || 0))
-      //   };
-      console.log('❌ DB check error, using localStorage:', error);
       const localData = await chrome.storage.local.get(['guestMinutesUsed']);
       const used = localData.guestMinutesUsed || 0;
       const remaining = Math.max(0, GUEST_FREE_MINUTES - used);
       return {
-        allowed: remaining > 0, // ← ЗАВИСИМОСТЬ ОТ ОСТАТКА
+        allowed: remaining > 0,
         free_minutes_available: remaining,
         free_minutes_used: used,
         paid_minutes_left: 0,
@@ -73,18 +60,11 @@ async function checkMinutesAvailability() {
       };
     }
   } catch (error) {
-    // console.log('❌ DB check error, using localStorage:', error);
-    // const localData = await chrome.storage.local.get(['guestMinutesUsed']);
-    // return {
-    //   allowed: true,
-    //   free_minutes_available: Math.max(0, GUEST_FREE_MINUTES - (localData.guestMinutesUsed || 0))
-    // };
-    console.log('❌ DB check error, using localStorage:', error);
     const localData = await chrome.storage.local.get(['guestMinutesUsed']);
     const used = localData.guestMinutesUsed || 0;
     const remaining = Math.max(0, GUEST_FREE_MINUTES - used);
     return {
-      allowed: remaining > 0, // ← ЗАВИСИМОСТЬ ОТ ОСТАТКА
+      allowed: remaining > 0,
       free_minutes_available: remaining,
       free_minutes_used: used,
       paid_minutes_left: 0,
@@ -98,20 +78,8 @@ async function checkMinutesAvailability() {
 async function deductMinutesUsed(minutesUsed) {
   try {
     const userId = await getUserId();
-    console.log('📤 Deducting minutes in DB:', minutesUsed, 'for:', userId);
-
-    // ИЗМЕНЕНИЕ: Списание минут в БД
-    // const response = await fetch(`${API_BASE_URL}/api/minutes/use`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     fingerprint: userId,
-    //     google_id: userId.startsWith('google_') ? userId : null,
-    //     minutes_used: minutesUsed
-    //   })
-    // });
-
-    const response = await fetch(`http://localhost:3000/api/minutes`, {
+    // const response = await fetch(`http://localhost:3000/api/minutes`,
+    const response = await fetch(`${API_BASE_URL}/api/minutes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -122,17 +90,14 @@ async function deductMinutesUsed(minutesUsed) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log('✅ DB deduction successful:', data);
       return data;
     } else {
-      console.log('❌ DB deduction failed');
       // Fallback на localStorage
       const localData = await chrome.storage.local.get(['guestMinutesUsed']);
       const newUsed = (localData.guestMinutesUsed || 0) + minutesUsed;
       await chrome.storage.local.set({ guestMinutesUsed: newUsed });
     }
   } catch (error) {
-    console.log('❌ DB deduction error, using localStorage:', error);
     const localData = await chrome.storage.local.get(['guestMinutesUsed']);
     const newUsed = (localData.guestMinutesUsed || 0) + minutesUsed;
     await chrome.storage.local.set({ guestMinutesUsed: newUsed });
@@ -141,7 +106,6 @@ async function deductMinutesUsed(minutesUsed) {
 
 // ==================== ОСНОВНАЯ ФУНКЦИЯ ====================
 async function startTabCapture(tabId, settings, sendResponse) {
-  console.log('🎤 Starting tab capture for tab:', tabId);
 
   if (isCapturing) {
     sendResponse({ success: false, error: 'Already capturing' });
@@ -149,9 +113,7 @@ async function startTabCapture(tabId, settings, sendResponse) {
   }
 
   try {
-    // ИЗМЕНЕНИЕ: ПРОВЕРКА МИНУТ ПЕРЕД СТАРТОМ
     const minutesCheck = await checkMinutesAvailability();
-    console.log('📊 Minutes check before start:', minutesCheck);
 
     if (!minutesCheck.allowed || minutesCheck.free_minutes_available <= 0) {
       sendResponse({
@@ -162,7 +124,6 @@ async function startTabCapture(tabId, settings, sendResponse) {
       return;
     }
 
-    // Проверяем, что вкладка существует
     try {
       await chrome.tabs.get(tabId);
     } catch (error) {
@@ -177,7 +138,6 @@ async function startTabCapture(tabId, settings, sendResponse) {
       enableVoice: settings.enableVoice !== false,
     };
 
-    console.log('⚙️ Current settings:', currentSettings);
 
     offscreenReady = false;
     await ensureOffscreenDocument();
@@ -187,8 +147,6 @@ async function startTabCapture(tabId, settings, sendResponse) {
     const streamId = await chrome.tabCapture.getMediaStreamId({
       targetTabId: tabId,
     });
-
-    console.log('✅ Stream ID received:', streamId);
 
     chrome.runtime.sendMessage(
       {
@@ -212,12 +170,6 @@ async function startTabCapture(tabId, settings, sendResponse) {
           offscreenReady = true;
           sessionStartTime = Date.now();
 
-          // Запускаем таймер автостопа
-          // guestAutoStopTimerId = setTimeout(() => {
-          //   performGuestAutoStop();
-          // }, GUEST_FREE_MINUTES * 60 * 1000);
-
-          // Запускаем таймер автостопа
           guestAutoStopTimerId = setTimeout(
             () => {
               performGuestAutoStop();
@@ -225,7 +177,6 @@ async function startTabCapture(tabId, settings, sendResponse) {
             GUEST_FREE_MINUTES * 60 * 1000,
           );
 
-          // ДОБАВИТЬ: интервал проверки минут каждые 30 секунд
           let minutesCheckInterval = setInterval(async () => {
             if (!isCapturing) {
               clearInterval(minutesCheckInterval);
@@ -239,17 +190,11 @@ async function startTabCapture(tabId, settings, sendResponse) {
             }
           }, 30000);
 
-          console.log(
-            '✅ Capture started, auto-stop in',
-            GUEST_FREE_MINUTES,
-            'minutes',
-          );
           sendResponse({ success: true, message: 'Capture started' });
         }
       },
     );
   } catch (error) {
-    console.error('❌ Capture failed:', error);
     isCapturing = false;
     currentTabId = null;
     offscreenReady = false;
@@ -263,28 +208,22 @@ async function ensureOffscreenDocument() {
     const hasDocument = await chrome.offscreen.hasDocument?.();
 
     if (hasDocument) {
-      console.log('📄 Closing existing offscreen document...');
       try {
         await chrome.offscreen.closeDocument();
         await new Promise((resolve) => setTimeout(resolve, 300));
-        console.log('✅ Old offscreen document closed');
       } catch (closeError) {
-        console.log('⚠️ Could not close document:', closeError.message);
+        // console.log('⚠️ Could not close document:', closeError.message);
       }
     }
-
-    console.log('📄 Creating NEW offscreen document...');
     await chrome.offscreen.createDocument({
       url: chrome.runtime.getURL('offscreen.html'),
       reasons: ['USER_MEDIA'],
       justification: 'Capture tab audio for translation service',
     });
 
-    console.log('✅ New offscreen document created');
 
     await new Promise((resolve) => setTimeout(resolve, 500));
   } catch (error) {
-    console.error('Failed to create offscreen document:', error);
     throw error;
   }
 }
@@ -293,10 +232,6 @@ async function ensureOffscreenDocument() {
 async function waitForOffscreenReady(retries = 10, delay = 500) {
   for (let i = 0; i < retries; i++) {
     try {
-      console.log(
-        `⏳ Testing offscreen connection (attempt ${i + 1}/${retries})...`,
-      );
-
       const response = await new Promise((resolve, reject) => {
         chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
           if (chrome.runtime.lastError) {
@@ -306,11 +241,8 @@ async function waitForOffscreenReady(retries = 10, delay = 500) {
           }
         });
       });
-
-      console.log('✅ Offscreen document is responding:', response);
       return true;
     } catch (error) {
-      console.log(`❌ Offscreen not responding yet: ${error.message}`);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
@@ -322,22 +254,18 @@ async function waitForOffscreenReady(retries = 10, delay = 500) {
 function performGuestAutoStop() {
   if (!isCapturing || !guestAutoStopTimerId) return;
   guestAutoStopTimerId = null;
-  console.log('⏱️ Guest 3 min limit reached — auto-stopping');
 
   stopTabCapture(() => {
     const elapsedMin = sessionStartTime
       ? (Date.now() - sessionStartTime) / 60000
       : GUEST_FREE_MINUTES;
 
-    // ИЗМЕНЕНИЕ: СПИСАНИЕ МИНУТ В БД
     deductMinutesUsed(elapsedMin);
-    console.log('📊 Auto-stop minutes deducted:', elapsedMin.toFixed(2));
   });
 }
 
 // ==================== ОСТАНОВКА ====================
 function stopTabCapture(sendResponse) {
-  console.log('🛑 Stopping capture...');
 
   if (!isCapturing) {
     sendResponse({ success: false, error: 'Not capturing' });
@@ -365,7 +293,7 @@ function stopTabCapture(sendResponse) {
             type: 'STOP_SUBTITLES',
           })
           .catch((err) => {
-            console.log('Tab might be closed or not ready:', err.message);
+            // console.log('Tab might be closed or not ready:', err.message);
           });
       }
 
@@ -374,16 +302,12 @@ function stopTabCapture(sendResponse) {
       currentSettings = null;
       offscreenReady = false;
 
-      console.log('✅ Capture stopped');
-
       if (typeof sendResponse === 'function') {
         sendResponse({ success: true, message: 'Capture stopped' });
       }
 
-      // ИЗМЕНЕНИЕ: СПИСАНИЕ МИНУТ В БД
       if (elapsedMin > 0.1) {
         await deductMinutesUsed(elapsedMin);
-        console.log('📊 Manual stop minutes deducted:', elapsedMin.toFixed(2));
       }
     },
   );
@@ -391,12 +315,6 @@ function stopTabCapture(sendResponse) {
 
 // ==================== ОБНОВЛЕНИЕ ГРОМКОСТИ И ГОЛОСА ====================
 function updateVolumeFromPopup(settings, sendResponse) {
-  console.log(
-    '🔊 Background updating volume/voice:',
-    settings,
-    'isCapturing:',
-    isCapturing,
-  );
 
   if (!isCapturing) {
     sendResponse({ success: false, error: 'Not capturing' });
@@ -460,7 +378,6 @@ function updateVolumeFromPopup(settings, sendResponse) {
 
 // ==================== ОБРАБОТЧИК СООБЩЕНИЙ ====================
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('🤖 Background received:', request.type);
 
   switch (request.type) {
     case 'START_TAB_CAPTURE':
@@ -469,10 +386,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendResponse({ success: false, error: 'No active tab' });
           return;
         }
-
-        // ИЗМЕНЕНИЕ: ПРОВЕРКА МИНУТ ПЕРЕД СТАРТОМ
         const minutesCheck = await checkMinutesAvailability();
-        console.log('📊 Pre-start minutes check:', minutesCheck);
 
         if (!minutesCheck.allowed || minutesCheck.free_minutes_available <= 0) {
           sendResponse({
@@ -507,10 +421,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true;
 
     case 'UPDATE_SETTINGS':
-      console.log(
-        '📨 Background forwarding UPDATE_SETTINGS:',
-        request.settings,
-      );
       chrome.runtime.sendMessage(
         {
           type: 'UPDATE_SETTINGS',
@@ -550,7 +460,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true;
 
     case 'OFFSCREEN_ERROR':
-      console.error('📡 Offscreen reported error:', request.error);
       chrome.storage.local
         .set({ lastOffscreenError: request.error })
         .catch((err) => {
@@ -560,15 +469,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true;
 
     case 'OFFSCREEN_KEEP_ALIVE':
-      console.log('❤️ Offscreen keep-alive received');
       sendResponse({ success: true });
       return true;
 
     case 'OFFSCREEN_JS_LOADED':
-      console.log(
-        '✅ Offscreen.js script loaded successfully!',
-        request.timestamp,
-      );
       offscreenReady = true;
       sendResponse({ success: true });
       return true;
@@ -641,7 +545,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true;
 
     case 'GET_MINUTES_BALANCE':
-      // ИЗМЕНЕНИЕ: ВОЗВРАЩАЕМ БАЛАНС ИЗ БД
       checkMinutesAvailability()
         .then((balance) => {
           sendResponse({ success: true, balance });
@@ -652,7 +555,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true;
 
     default:
-      console.warn('⚠️ Unknown message type in background:', request.type);
       sendResponse({ error: 'Unknown message type' });
   }
 });
@@ -665,12 +567,10 @@ async function initialize() {
     chrome.action.onClicked.addListener((tab) => {
       if (tab.url && !tab.url.startsWith('chrome://')) {
         chrome.tabs.sendMessage(tab.id, { action: 'OPEN_UI' }).catch((err) => {
-          console.log('Обновите страницу для появления меню:', err.message);
+        //   console.log('Обновите страницу для появления меню:', err.message);
         });
       }
     });
-
-    console.log('✅ Background initialized with DB minutes tracking');
   } catch (error) {
     console.error('Failed to initialize:', error);
   }
@@ -678,4 +578,3 @@ async function initialize() {
 
 initialize();
 
-console.log('✅ Background ready');
